@@ -1,0 +1,69 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # API Gateway
+  - job_name: 'api-gateway'
+    static_configs:
+      - targets: ['api-gateway:3000']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Channel Manager Service
+  - job_name: 'channel-manager'
+    static_configs:
+      - targets: ['channel-manager:3001']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # AI Assistant Service (when implemented)
+  - job_name: 'ai-assistant'
+    static_configs:
+      - targets: ['ai-assistant:3002']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Coupon Service (when implemented)
+  - job_name: 'coupon-service'
+    static_configs:
+      - targets: ['coupon-service:3003']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Traffic Manager Service (when implemented)
+  - job_name: 'traffic-manager'
+    static_configs:
+      - targets: ['traffic-manager:3004']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Analytics Service (when implemented)
+  - job_name: 'analytics-service'
+    static_configs:
+      - targets: ['analytics-service:3005']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Retention Engine (when implemented)
+  - job_name: 'retention-engine'
+    static_configs:
+      - targets: ['retention-engine:3006']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # PostgreSQL Exporter (optional)
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 30s
+
+  # Redis Exporter (optional)
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 30s

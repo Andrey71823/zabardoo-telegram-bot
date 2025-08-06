@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Compliance Dashboard - Zabardoo Admin</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background: #f8f9fa;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #667eea;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .compliance-score {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .compliance-score.warning {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+        }
+
+        .compliance-score.danger {
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-revoked {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .alert-warning {
+            background: #fff3e0;
+            color: #f57c00;
+            border: 1px solid #ffcc02;
+        }
+
+        .alert-danger {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .consent-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            background: #ccc;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #4CAF50;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 21px;
+            height: 21px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(25px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛡️ Data Compliance Dashboard</h1>
+        <p>Indian Data Protection & Privacy Compliance Management</p>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('overview')">Overview</button>
+            <button class="tab" onclick="showTab('consents')">Consent Management</button>
+            <button class="tab" onclick="showTab('deletions')">Data Deletions</button>
+            <button class="tab" onclick="showTab('grievances')">Grievances</button>
+            <button class="tab" onclick="showTab('reports')">Compliance Reports</button>
+            <button class="tab" onclick="showTab('settings')">Settings</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card compliance-score" id="complianceScoreCard">
+                    <h3 id="complianceScore">95%</h3>
+                    <p>Overall Compliance Score</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="activeConsents">1,247</h3>
+                    <p>Active User Consents</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="pendingDeletions">3</h3>
+                    <p>Pending Data Deletions</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="openGrievances">1</h3>
+                    <p>Open Grievances</p>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h2>📊 Compliance Trends</h2>
+                    <div class="chart-container">
+                        <canvas id="complianceChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>🔒 Data Localization Status</h2>
+                    <div id="localizationStatus">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Loading localization status...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>⚠️ Compliance Alerts</h2>
+                <div id="complianceAlerts">
+                    <div class="alert alert-success">
+                        ✅ All payment data is properly localized in India
+                    </div>
+                    <div class="alert alert-warning">
+                        ⚠️ 3 data deletion requests are pending review
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consent Management Tab -->
+        <div id="consents" class="tab-content">
+            <div class="card">
+                <h2>👤 User Consent Management</h2>
+                <div class="form-group">
+                    <label>Search User</label>
+                    <input type="text" id="userSearch" placeholder="Enter user ID or email">
+                </div>
+                <button class="btn btn-primary" onclick="searchUser()">Search</button>
+            </div>
+
+            <div class="card" id="userConsentCard" style="display: none;">
+                <h2>User Consent Status</h2>
+                <div id="userConsentDetails">
+                    <!-- User consent details will be loaded here -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📈 Consent Analytics</h2>
+                <div class="chart-container">
+                    <canvas id="consentChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Deletions Tab -->
+        <div id="deletions" class="tab-content">
+            <div class="card">
+                <h2>🗑️ Data Deletion Requests</h2>
+                <button class="btn btn-primary" onclick="refreshDeletionRequests()">Refresh</button>
+                <button class="btn btn-success" onclick="processAllPending()">Process All Pending</button>
+                
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Request ID</th>
+                            <th>User</th>
+                            <th>Type</th>
+                            <th>Requested Data</th>
+                            <th>Status</th>
+                            <th>Requested At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deletionRequestsTable">
+                        <tr>
+                            <td colspan="7" class="loading">Loading deletion requests...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>📊 Deletion Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3 id="totalDeletions">45</h3>
+                        <p>Total Deletions This Month</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="avgProcessingTime">7.2</h3>
+                        <p>Avg Processing Days</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grievances Tab -->
+        <div id="grievances" class="tab-content">
+            <div class="card">
+                <h2>📝 Submit New Grievance</h2>
+                <form id="grievanceForm">
+                    <div class="form-group">
+                        <label>User ID</label>
+                        <input type="text" id="grievanceUserId" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Grievance Type</label>
+                        <select id="grievanceType" required>
+                            <option value="">Select Type</option>
+                            <option value="data_protection">Data Protection</option>
+                            <option value="content_moderation">Content Moderation</option>
+                            <option value="account_suspension">Account Suspension</option>
+                            <option value="privacy_violation">Privacy Violation</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="grievanceDescription" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="grievancePriority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Grievance</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>📋 Grievance List</h2>
+                <div id="grievanceList">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading grievances...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compliance Reports Tab -->
+        <div id="reports" class="tab-content">
+            <div class="card">
+                <h2>📊 Generate Compliance Report</h2>
+                <div class="form-group">
+                    <label>Report Type</label>
+                    <select id="reportType">
+                        <option value="monthly">Monthly Compliance Report</option>
+                        <option value="gdpr">PDPB Compliance Report</option>
+                        <option value="rbi">RBI Guidelines Report</option>
+                        <option value="it_rules">IT Rules 2021 Report</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="generateReport()">Generate Report</button>
+                <button class="btn btn-success" onclick="exportReport()">Export PDF</button>
+            </div>
+
+            <div class="card" id="reportResults" style="display: none;">
+                <h2>📄 Report Results</h2>
+                <div id="reportContent">
+                    <!-- Report content will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <h2>⚙️ Compliance Settings</h2>
+                
+                <h3>Data Retention Policies</h3>
+                <div class="form-group">
+                    <label>Personal Data Retention (days)</label>
+                    <input type="number" id="personalDataRetention" value="730">
+                </div>
+                <div class="form-group">
+                    <label>Financial Data Retention (days)</label>
+                    <input type="number" id="financialDataRetention" value="2555">
+                </div>
+                <div class="form-group">
+                    <label>Behavioral Data Retention (days)</label>
+                    <input type="number" id="behavioralDataRetention" value="365">
+                </div>
+
+                <h3>Automated Processing</h3>
+                <div class="consent-toggle">
+                    <span>Auto-process expired data</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
+                </div>
+                <div class="consent-toggle">
+                    <span>Auto-approve anonymization requests</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
+                </div>
+                <div class="consent-toggle">
+                    <span>Send compliance alerts</span>
+                    <div class="toggle-switch active" onclick="toggleSetting(this)"></div>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+
+            <div class="card">
+                <h2>🔧 System Maintenance</h2>
+                <button class="btn btn-primary" onclick="processExpiredData()">Process Expired Data</button>
+                <button class="btn btn-primary" onclick="refreshComplianceReport()">Refresh Compliance Report</button>
+                <button class="btn btn-danger" onclick="runDataAudit()">Run Data Audit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+
+            // Load tab-specific data
+            loadTabData(tabName);
+        }
+
+        // Load data for specific tabs
+        function loadTabData(tabName) {
+            switch(tabName) {
+                case 'overview':
+                    loadOverviewData();
+                    break;
+                case 'consents':
+                    loadConsentData();
+                    break;
+                case 'deletions':
+                    loadDeletionData();
+                    break;
+                case 'grievances':
+                    loadGrievanceData();
+                    break;
+            }
+        }
+
+        // Load overview data
+        async function loadOverviewData() {
+            try {
+                const response = await fetch('/api/admin/data-compliance/report/compliance');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateComplianceScore(data.data.complianceScore);
+                    loadDataLocalizationStatus();
+                    initializeComplianceChart();
+                }
+            } catch (error) {
+                console.error('Error loading overview data:', error);
+            }
+        }
+
+        // Update compliance score
+        function updateComplianceScore(score) {
+            const scoreElement = document.getElementById('complianceScore');
+            const cardElement = document.getElementById('complianceScoreCard');
+            
+            scoreElement.textContent = score + '%';
+            
+            // Update card color based on score
+            cardElement.className = 'stat-card compliance-score';
+            if (score < 70) {
+                cardElement.classList.add('danger');
+            } else if (score < 85) {
+                cardElement.classList.add('warning');
+            }
+        }
+
+        // Load data localization status
+        async function loadDataLocalizationStatus() {
+            try {
+                const response = await fetch('/api/admin/data-compliance/localization/status');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const statusHtml = `
+                        <div class="consent-toggle">
+                            <span>Payment Data</span>
+                            <span class="status-badge status-active">✅ Localized</span>
+                        </div>
+                        <div class="consent-toggle">
+                            <span>Personal Data</span>
+                            <span class="status-badge status-active">✅ Localized</span>
+                        </div>
+                        <div class="consent-toggle">
+                            <span>Sensitive Data</span>
+                            <span class="status-badge status-active">✅ Localized</span>
+                        </div>
+                        <p style="margin-top: 1rem; color: #666; font-size: 0.9rem;">
+                            Last audit: ${new Date(data.data.lastComplianceCheck).toLocaleDateString()}
+                        </p>
+                    `;
+                    document.getElementById('localizationStatus').innerHTML = statusHtml;
+                }
+            } catch (error) {
+                console.error('Error loading localization status:', error);
+            }
+        }
+
+        // Initialize compliance chart
+        function initializeComplianceChart() {
+            const ctx = document.getElementById('complianceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Compliance Score',
+                        data: [92, 94, 91, 95, 93, 95],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load consent data
+        function loadConsentData() {
+            const ctx = document.getElementById('consentChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Data Collection', 'Marketing', 'Analytics', 'Cookies', 'Third Party'],
+                    datasets: [{
+                        data: [1247, 892, 1156, 1089, 234],
+                        backgroundColor: [
+                            '#4CAF50',
+                            '#2196F3',
+                            '#FF9800',
+                            '#9C27B0',
+                            '#F44336'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Search user function
+        async function searchUser() {
+            const userId = document.getElementById('userSearch').value;
+            if (!userId) return;
+
+            try {
+                const response = await fetch(`/api/admin/data-compliance/consent/dashboard/${userId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayUserConsents(data.data);
+                    document.getElementById('userConsentCard').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error searching user:', error);
+            }
+        }
+
+        // Display user consents
+        function displayUserConsents(userData) {
+            const consentsHtml = Object.entries(userData.consents).map(([type, consent]) => `
+                <div class="consent-toggle">
+                    <span>${type.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</span>
+                    <div class="toggle-switch ${consent.granted ? 'active' : ''}" 
+                         onclick="toggleUserConsent('${userData.userId}', '${type}', ${!consent.granted})">
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('userConsentDetails').innerHTML = consentsHtml;
+        }
+
+        // Toggle user consent
+        async function toggleUserConsent(userId, consentType, grant) {
+            try {
+                const endpoint = grant ? '/api/admin/data-compliance/consent/grant' : '/api/admin/data-compliance/consent/revoke';
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId, consentType })
+                });
+                
+                if (response.ok) {
+                    searchUser(); // Refresh user data
+                }
+            } catch (error) {
+                console.error('Error toggling consent:', error);
+            }
+        }
+
+        // Load deletion data
+        function loadDeletionData() {
+            // Simulate loading deletion requests
+            setTimeout(() => {
+                const tableHtml = `
+                    <tr>
+                        <td>DEL-001</td>
+                        <td>user123@example.com</td>
+                        <td>Full Deletion</td>
+                        <td>All Data</td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                        <td>2024-01-15</td>
+                        <td>
+                            <button class="btn btn-success" onclick="processDeletion('DEL-001')">Process</button>
+                            <button class="btn btn-danger" onclick="rejectDeletion('DEL-001')">Reject</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>DEL-002</td>
+                        <td>user456@example.com</td>
+                        <td>Anonymization</td>
+                        <td>Personal Data</td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                        <td>2024-01-16</td>
+                        <td>
+                            <button class="btn btn-success" onclick="processDeletion('DEL-002')">Process</button>
+                            <button class="btn btn-danger" onclick="rejectDeletion('DEL-002')">Reject</button>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('deletionRequestsTable').innerHTML = tableHtml;
+            }, 1000);
+        }
+
+        // Process deletion request
+        async function processDeletion(requestId) {
+            try {
+                const response = await fetch(`/api/admin/data-compliance/deletion/process/${requestId}`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    alert('Deletion request processed successfully');
+                    loadDeletionData();
+                }
+            } catch (error) {
+                console.error('Error processing deletion:', error);
+            }
+        }
+
+        // Load grievance data
+        function loadGrievanceData() {
+            document.getElementById('grievanceList').innerHTML = `
+                <div class="consent-toggle">
+                    <div>
+                        <strong>GRV-001</strong> - Data Protection Issue<br>
+                        <small>User: user123@example.com | Priority: High | Status: Open</small>
+                    </div>
+                    <span class="status-badge status-pending">Open</span>
+                </div>
+            `;
+        }
+
+        // Submit grievance form
+        document.getElementById('grievanceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                userId: document.getElementById('grievanceUserId').value,
+                grievanceType: document.getElementById('grievanceType').value,
+                description: document.getElementById('grievanceDescription').value,
+                priority: document.getElementById('grievancePriority').value
+            };
+
+            try {
+                const response = await fetch('/api/admin/data-compliance/grievance/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    alert('Grievance submitted successfully');
+                    document.getElementById('grievanceForm').reset();
+                    loadGrievanceData();
+                }
+            } catch (error) {
+                console.error('Error submitting grievance:', error);
+            }
+        });
+
+        // Generate report
+        async function generateReport() {
+            const reportType = document.getElementById('reportType').value;
+            
+            try {
+                const response = await fetch('/api/admin/data-compliance/report/compliance');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const reportHtml = `
+                        <h3>Compliance Report - ${reportType}</h3>
+                        <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+                        <p><strong>Compliance Score:</strong> ${data.data.complianceScore}%</p>
+                        <p><strong>Data Minimization:</strong> ${data.data.dataMinimization ? '✅ Compliant' : '❌ Non-compliant'}</p>
+                        <p><strong>Purpose Limitation:</strong> ${data.data.purposeLimitation ? '✅ Compliant' : '❌ Non-compliant'}</p>
+                        <p><strong>Storage Minimization:</strong> ${data.data.storageMinimization ? '✅ Compliant' : '❌ Non-compliant'}</p>
+                        <p><strong>Payment Data Localization:</strong> ${data.data.paymentDataLocalization ? '✅ Compliant' : '❌ Non-compliant'}</p>
+                    `;
+                    
+                    document.getElementById('reportContent').innerHTML = reportHtml;
+                    document.getElementById('reportResults').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error generating report:', error);
+            }
+        }
+
+        // Toggle setting
+        function toggleSetting(element) {
+            element.classList.toggle('active');
+        }
+
+        // Save settings
+        function saveSettings() {
+            alert('Settings saved successfully');
+        }
+
+        // Process expired data
+        async function processExpiredData() {
+            try {
+                const response = await fetch('/api/admin/data-compliance/process/expired-data', {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    alert('Expired data processed successfully');
+                }
+            } catch (error) {
+                console.error('Error processing expired data:', error);
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOverviewData();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление Уведомлениями и Кампаниями</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .campaign-card {
+            transition: transform 0.2s;
+            border-left: 4px solid #007bff;
+        }
+        .campaign-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        .campaign-preview {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+        .ab-test-variant {
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .template-card {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .template-card:hover {
+            background-color: #f8f9fa;
+            border-color: #007bff;
+        }
+        .notification-form {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 bg-dark text-white p-3">
+                <h5><i class="fas fa-bell"></i> Уведомления</h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#campaigns" onclick="showSection('campaigns')">
+                            <i class="fas fa-bullhorn"></i> Кампании
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#bulk" onclick="showSection('bulk')">
+                            <i class="fas fa-paper-plane"></i> Массовая рассылка
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#templates" onclick="showSection('templates')">
+                            <i class="fas fa-file-alt"></i> Шаблоны
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#analytics" onclick="showSection('analytics')">
+                            <i class="fas fa-chart-bar"></i> Аналитика
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 p-4">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 id="section-title">Управление Кампаниями</h2>
+                    <div>
+                        <button class="btn btn-primary" onclick="showCreateCampaignModal()">
+                            <i class="fas fa-plus"></i> Создать Кампанию
+                        </button>
+                        <button class="btn btn-success" onclick="showBulkNotificationModal()">
+                            <i class="fas fa-paper-plane"></i> Массовая Рассылка
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Campaigns Section -->
+                <div id="campaigns-section" class="section">
+                    <!-- Campaign Stats -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card metric-card">
+                                <div class="card-body text-center">
+                                    <h3 id="total-campaigns">0</h3>
+                                    <p class="mb-0">Всего Кампаний</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card metric-card">
+                                <div class="card-body text-center">
+                                    <h3 id="active-campaigns">0</h3>
+                                    <p class="mb-0">Активных</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card metric-card">
+                                <div class="card-body text-center">
+                                    <h3 id="total-sent">0</h3>
+                                    <p class="mb-0">Отправлено</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card metric-card">
+                                <div class="card-body text-center">
+                                    <h3 id="avg-open-rate">0%</h3>
+                                    <p class="mb-0">Средний Open Rate</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>            
+        <!-- Filters -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <select class="form-select" id="status-filter">
+                                        <option value="">Все статусы</option>
+                                        <option value="draft">Черновик</option>
+                                        <option value="scheduled">Запланировано</option>
+                                        <option value="running">Выполняется</option>
+                                        <option value="paused">Приостановлено</option>
+                                        <option value="completed">Завершено</option>
+                                        <option value="cancelled">Отменено</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="type-filter">
+                                        <option value="">Все типы</option>
+                                        <option value="broadcast">Рассылка</option>
+                                        <option value="targeted">Таргетированная</option>
+                                        <option value="automated">Автоматическая</option>
+                                        <option value="ab_test">A/B Тест</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="search-input" placeholder="Поиск по названию...">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-outline-primary w-100" onclick="loadCampaigns()">
+                                        <i class="fas fa-search"></i> Поиск
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campaigns List -->
+                    <div id="campaigns-list" class="row">
+                        <!-- Campaigns will be loaded here -->
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav aria-label="Campaigns pagination">
+                        <ul class="pagination justify-content-center" id="campaigns-pagination">
+                            <!-- Pagination will be generated here -->
+                        </ul>
+                    </nav>
+                </div>
+
+                <!-- Bulk Notification Section -->
+                <div id="bulk-section" class="section" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-paper-plane"></i> Массовая Рассылка</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="bulk-notification-form">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Заголовок</label>
+                                            <input type="text" class="form-control" id="bulk-title" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Тип</label>
+                                            <select class="form-select" id="bulk-type" required>
+                                                <option value="info">Информация</option>
+                                                <option value="warning">Предупреждение</option>
+                                                <option value="promotion">Акция</option>
+                                                <option value="system">Системное</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Сообщение</label>
+                                    <textarea class="form-control" id="bulk-message" rows="4" required></textarea>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Получатели</label>
+                                            <select class="form-select" id="bulk-recipients" required>
+                                                <option value="all_users">Все пользователи</option>
+                                                <option value="segment">По сегментам</option>
+                                                <option value="custom_list">Пользовательский список</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Канал</label>
+                                            <select class="form-select" id="bulk-channel" required>
+                                                <option value="telegram">Telegram</option>
+                                                <option value="email">Email</option>
+                                                <option value="push">Push</option>
+                                                <option value="sms">SMS</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Запланировать отправку (опционально)</label>
+                                    <input type="datetime-local" class="form-control" id="bulk-scheduled">
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-paper-plane"></i> Отправить
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Templates Section -->
+                <div id="templates-section" class="section" style="display: none;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4>Шаблоны Уведомлений</h4>
+                        <button class="btn btn-primary" onclick="showCreateTemplateModal()">
+                            <i class="fas fa-plus"></i> Создать Шаблон
+                        </button>
+                    </div>
+                    <div id="templates-list" class="row">
+                        <!-- Templates will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Analytics Section -->
+                <div id="analytics-section" class="section" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Производительность Кампаний</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="performance-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Типы Кампаний</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="types-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Campaign Modal -->
+    <div class="modal fade" id="createCampaignModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Создать Кампанию</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body notification-form">
+                    <form id="create-campaign-form">
+                        <!-- Basic Info -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Название кампании *</label>
+                                    <input type="text" class="form-control" id="campaign-name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Тип кампании *</label>
+                                    <select class="form-select" id="campaign-type" required>
+                                        <option value="broadcast">Рассылка</option>
+                                        <option value="targeted">Таргетированная</option>
+                                        <option value="automated">Автоматическая</option>
+                                        <option value="ab_test">A/B Тест</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Описание</label>
+                            <textarea class="form-control" id="campaign-description" rows="2"></textarea>
+                        </div>
+
+                        <!-- Content -->
+                        <h6 class="mt-4">Содержание</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Заголовок *</label>
+                                    <input type="text" class="form-control" id="campaign-title" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Канал доставки *</label>
+                                    <select class="form-select" id="campaign-channel" required>
+                                        <option value="telegram">Telegram</option>
+                                        <option value="email">Email</option>
+                                        <option value="push">Push</option>
+                                        <option value="sms">SMS</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Сообщение *</label>
+                            <textarea class="form-control" id="campaign-message" rows="4" required></textarea>
+                        </div>
+
+                        <!-- Targeting -->
+                        <h6 class="mt-4">Целевая Аудитория</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Тип аудитории</label>
+                                    <select class="form-select" id="audience-type">
+                                        <option value="all">Все пользователи</option>
+                                        <option value="segment">По сегментам</option>
+                                        <option value="custom">Пользовательский список</option>
+                                        <option value="filters">По фильтрам</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Приоритет (1-10)</label>
+                                    <input type="number" class="form-control" id="campaign-priority" min="1" max="10" value="5">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Scheduling -->
+                        <h6 class="mt-4">Планирование</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Тип запуска</label>
+                                    <select class="form-select" id="schedule-type">
+                                        <option value="immediate">Немедленно</option>
+                                        <option value="scheduled">Запланировано</option>
+                                        <option value="recurring">Повторяющаяся</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Дата и время (для запланированных)</label>
+                                    <input type="datetime-local" class="form-control" id="scheduled-at">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- A/B Testing -->
+                        <div id="ab-test-section" style="display: none;">
+                            <h6 class="mt-4">A/B Тестирование</h6>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="enable-ab-test">
+                                <label class="form-check-label" for="enable-ab-test">
+                                    Включить A/B тестирование
+                                </label>
+                            </div>
+                            <div id="ab-variants" style="display: none;">
+                                <!-- A/B variants will be added here -->
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" onclick="createCampaign()">Создать Кампанию</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Campaign Details Modal -->
+    <div class="modal fade" id="campaignDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="campaign-details-title">Детали Кампании</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="campaign-details-body">
+                    <!-- Campaign details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <div id="campaign-actions">
+                        <!-- Action buttons will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+        let campaigns = [];
+        let templates = [];
+        let campaignStats = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCampaignStats();
+            loadCampaigns();
+            loadTemplates();
+            
+            // Setup event listeners
+            document.getElementById('campaign-type').addEventListener('change', function() {
+                const abTestSection = document.getElementById('ab-test-section');
+                if (this.value === 'ab_test') {
+                    abTestSection.style.display = 'block';
+                } else {
+                    abTestSection.style.display = 'none';
+                }
+            });
+
+            document.getElementById('enable-ab-test').addEventListener('change', function() {
+                const abVariants = document.getElementById('ab-variants');
+                if (this.checked) {
+                    abVariants.style.display = 'block';
+                    generateABVariants();
+                } else {
+                    abVariants.style.display = 'none';
+                }
+            });
+
+            // Setup form submissions
+            document.getElementById('bulk-notification-form').addEventListener('submit', sendBulkNotification);
+            
+            // Setup search
+            document.getElementById('search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loadCampaigns();
+                }
+            });
+        });
+
+        // Section management
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+            
+            // Show selected section
+            document.getElementById(section + '-section').style.display = 'block';
+            
+            // Update title
+            const titles = {
+                'campaigns': 'Управление Кампаниями',
+                'bulk': 'Массовая Рассылка',
+                'templates': 'Шаблоны Уведомлений',
+                'analytics': 'Аналитика Кампаний'
+            };
+            document.getElementById('section-title').textContent = titles[section];
+            
+            // Load section-specific data
+            if (section === 'analytics') {
+                loadAnalytics();
+            }
+        }
+
+        // Load campaign statistics
+        async function loadCampaignStats() {
+            try {
+                const response = await fetch('/api/admin/notification-campaigns/campaigns/stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    campaignStats = data.data;
+                    updateStatsDisplay();
+                }
+            } catch (error) {
+                console.error('Error loading campaign stats:', error);
+            }
+        }
+
+        function updateStatsDisplay() {
+            document.getElementById('total-campaigns').textContent = campaignStats.totalCampaigns || 0;
+            document.getElementById('active-campaigns').textContent = campaignStats.activeCampaigns || 0;
+            document.getElementById('total-sent').textContent = (campaignStats.totalSent || 0).toLocaleString();
+            document.getElementById('avg-open-rate').textContent = (campaignStats.averageOpenRate || 0).toFixed(1) + '%';
+        }
+
+        // Load campaigns
+        async function loadCampaigns() {
+            try {
+                const params = new URLSearchParams({
+                    page: currentPage,
+                    limit: 12
+                });
+
+                const status = document.getElementById('status-filter').value;
+                const type = document.getElementById('type-filter').value;
+                const search = document.getElementById('search-input').value;
+
+                if (status) params.append('status', status);
+                if (type) params.append('type', type);
+                if (search) params.append('search', search);
+
+                const response = await fetch(`/api/admin/notification-campaigns/campaigns?${params}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    campaigns = data.data.campaigns;
+                    totalPages = data.data.totalPages;
+                    displayCampaigns();
+                    updatePagination();
+                }
+            } catch (error) {
+                console.error('Error loading campaigns:', error);
+            }
+        }
+
+        function displayCampaigns() {
+            const container = document.getElementById('campaigns-list');
+            container.innerHTML = '';
+
+            campaigns.forEach(campaign => {
+                const statusClass = getStatusClass(campaign.status);
+                const typeIcon = getTypeIcon(campaign.type);
+                
+                const card = document.createElement('div');
+                card.className = 'col-md-4 mb-3';
+                card.innerHTML = `
+                    <div class="card campaign-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="card-title">${campaign.name}</h6>
+                                <span class="badge ${statusClass} status-badge">${getStatusText(campaign.status)}</span>
+                            </div>
+                            <p class="card-text text-muted small">${campaign.description || 'Без описания'}</p>
+                            <div class="row text-center mb-3">
+                                <div class="col-4">
+                                    <small class="text-muted">Отправлено</small>
+                                    <div class="fw-bold">${campaign.metrics.sentCount}</div>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted">Открыто</small>
+                                    <div class="fw-bold">${campaign.metrics.openRate.toFixed(1)}%</div>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted">Клики</small>
+                                    <div class="fw-bold">${campaign.metrics.clickRate.toFixed(1)}%</div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="${typeIcon}"></i> ${getTypeText(campaign.type)}
+                                </small>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary" onclick="viewCampaign('${campaign.id}')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-outline-success" onclick="executeCampaign('${campaign.id}')" 
+                                            ${campaign.status === 'running' ? 'disabled' : ''}>
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="btn btn-outline-secondary" onclick="duplicateCampaign('${campaign.id}')">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Helper functions for display
+        function getStatusClass(status) {
+            const classes = {
+                'draft': 'bg-secondary',
+                'scheduled': 'bg-info',
+                'running': 'bg-success',
+                'paused': 'bg-warning',
+                'completed': 'bg-primary',
+                'cancelled': 'bg-danger'
+            };
+            return classes[status] || 'bg-secondary';
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                'draft': 'Черновик',
+                'scheduled': 'Запланировано',
+                'running': 'Выполняется',
+                'paused': 'Приостановлено',
+                'completed': 'Завершено',
+                'cancelled': 'Отменено'
+            };
+            return texts[status] || status;
+        }
+
+        function getTypeIcon(type) {
+            const icons = {
+                'broadcast': 'fas fa-bullhorn',
+                'targeted': 'fas fa-crosshairs',
+                'automated': 'fas fa-robot',
+                'ab_test': 'fas fa-flask'
+            };
+            return icons[type] || 'fas fa-envelope';
+        }
+
+        function getTypeText(type) {
+            const texts = {
+                'broadcast': 'Рассылка',
+                'targeted': 'Таргетированная',
+                'automated': 'Автоматическая',
+                'ab_test': 'A/B Тест'
+            };
+            return texts[type] || type;
+        }
+
+        // Pagination
+        function updatePagination() {
+            const pagination = document.getElementById('campaigns-pagination');
+            pagination.innerHTML = '';
+
+            // Previous button
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Предыдущая</a>`;
+            pagination.appendChild(prevLi);
+
+            // Page numbers
+            for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+                pagination.appendChild(li);
+            }
+
+            // Next button
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Следующая</a>`;
+            pagination.appendChild(nextLi);
+        }
+
+        function changePage(page) {
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                loadCampaigns();
+            }
+        }
+
+        // Modal functions
+        function showCreateCampaignModal() {
+            const modal = new bootstrap.Modal(document.getElementById('createCampaignModal'));
+            modal.show();
+        }
+
+        function showBulkNotificationModal() {
+            showSection('bulk');
+        }
+
+        // Campaign operations
+        async function createCampaign() {
+            try {
+                const campaignData = {
+                    name: document.getElementById('campaign-name').value,
+                    description: document.getElementById('campaign-description').value,
+                    type: document.getElementById('campaign-type').value,
+                    status: 'draft',
+                    priority: parseInt(document.getElementById('campaign-priority').value),
+                    targetAudience: {
+                        // This would be more complex in real implementation
+                        filters: { isActive: true }
+                    },
+                    content: {
+                        title: document.getElementById('campaign-title').value,
+                        message: document.getElementById('campaign-message').value
+                    },
+                    schedule: {
+                        type: document.getElementById('schedule-type').value,
+                        scheduledAt: document.getElementById('scheduled-at').value ? 
+                                   new Date(document.getElementById('scheduled-at').value) : null
+                    },
+                    delivery: {
+                        channel: document.getElementById('campaign-channel').value,
+                        respectUserPreferences: true
+                    },
+                    tags: []
+                };
+
+                const response = await fetch('/api/admin/notification-campaigns/campaigns', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(campaignData)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('createCampaignModal')).hide();
+                    loadCampaigns();
+                    loadCampaignStats();
+                    alert('Кампания создана успешно!');
+                } else {
+                    alert('Ошибка создания кампании: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error creating campaign:', error);
+                alert('Ошибка создания кампании');
+            }
+        }
+
+        async function executeCampaign(campaignId) {
+            if (!confirm('Запустить кампанию?')) return;
+
+            try {
+                const response = await fetch(`/api/admin/notification-campaigns/campaigns/${campaignId}/execute`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ executionType: 'manual' })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadCampaigns();
+                    loadCampaignStats();
+                    alert('Кампания запущена!');
+                } else {
+                    alert('Ошибка запуска кампании: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error executing campaign:', error);
+                alert('Ошибка запуска кампании');
+            }
+        }
+
+        async function duplicateCampaign(campaignId) {
+            try {
+                const response = await fetch(`/api/admin/notification-campaigns/campaigns/${campaignId}/duplicate`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    loadCampaigns();
+                    alert('Кампания скопирована!');
+                } else {
+                    alert('Ошибка копирования кампании: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error duplicating campaign:', error);
+                alert('Ошибка копирования кампании');
+            }
+        }
+
+        async function viewCampaign(campaignId) {
+            try {
+                const response = await fetch(`/api/admin/notification-campaigns/campaigns/${campaignId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showCampaignDetails(data.data);
+                } else {
+                    alert('Ошибка загрузки кампании: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error loading campaign:', error);
+                alert('Ошибка загрузки кампании');
+            }
+        }
+
+        function showCampaignDetails(campaign) {
+            document.getElementById('campaign-details-title').textContent = campaign.name;
+            
+            const body = document.getElementById('campaign-details-body');
+            body.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Основная информация</h6>
+                        <p><strong>Тип:</strong> ${getTypeText(campaign.type)}</p>
+                        <p><strong>Статус:</strong> <span class="badge ${getStatusClass(campaign.status)}">${getStatusText(campaign.status)}</span></p>
+                        <p><strong>Приоритет:</strong> ${campaign.priority}</p>
+                        <p><strong>Канал:</strong> ${campaign.delivery.channel}</p>
+                        <p><strong>Создано:</strong> ${new Date(campaign.createdAt).toLocaleString()}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Метрики</h6>
+                        <p><strong>Целевая аудитория:</strong> ${campaign.metrics.targetCount}</p>
+                        <p><strong>Отправлено:</strong> ${campaign.metrics.sentCount}</p>
+                        <p><strong>Доставлено:</strong> ${campaign.metrics.deliveredCount}</p>
+                        <p><strong>Открыто:</strong> ${campaign.metrics.openedCount} (${campaign.metrics.openRate.toFixed(1)}%)</p>
+                        <p><strong>Клики:</strong> ${campaign.metrics.clickedCount} (${campaign.metrics.clickRate.toFixed(1)}%)</p>
+                        <p><strong>Конверсии:</strong> ${campaign.metrics.convertedCount} (${campaign.metrics.conversionRate.toFixed(1)}%)</p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <h6>Содержание</h6>
+                    <div class="campaign-preview">
+                        <h6>${campaign.content.title}</h6>
+                        <p>${campaign.content.message}</p>
+                    </div>
+                </div>
+            `;
+
+            const modal = new bootstrap.Modal(document.getElementById('campaignDetailsModal'));
+            modal.show();
+        }
+
+        // Bulk notification
+        async function sendBulkNotification(e) {
+            e.preventDefault();
+            
+            try {
+                const notificationData = {
+                    title: document.getElementById('bulk-title').value,
+                    message: document.getElementById('bulk-message').value,
+                    type: document.getElementById('bulk-type').value,
+                    recipients: {
+                        type: document.getElementById('bulk-recipients').value
+                    },
+                    channel: document.getElementById('bulk-channel').value,
+                    scheduledAt: document.getElementById('bulk-scheduled').value ? 
+                               new Date(document.getElementById('bulk-scheduled').value) : null
+                };
+
+                const response = await fetch('/api/admin/notification-campaigns/bulk-notifications', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(notificationData)
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('bulk-notification-form').reset();
+                    alert('Массовая рассылка отправлена!');
+                } else {
+                    alert('Ошибка отправки: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error sending bulk notification:', error);
+                alert('Ошибка отправки массовой рассылки');
+            }
+        }
+
+        // Templates
+        async function loadTemplates() {
+            try {
+                const response = await fetch('/api/admin/notification-campaigns/templates');
+                const data = await response.json();
+                
+                if (data.success) {
+                    templates = data.data;
+                    displayTemplates();
+                }
+            } catch (error) {
+                console.error('Error loading templates:', error);
+            }
+        }
+
+        function displayTemplates() {
+            const container = document.getElementById('templates-list');
+            container.innerHTML = '';
+
+            templates.forEach(template => {
+                const card = document.createElement('div');
+                card.className = 'col-md-4 mb-3';
+                card.innerHTML = `
+                    <div class="card template-card h-100">
+                        <div class="card-body">
+                            <h6 class="card-title">${template.name}</h6>
+                            <p class="card-text text-muted small">${template.description}</p>
+                            <div class="mb-2">
+                                <span class="badge bg-info">${template.category}</span>
+                                <span class="badge bg-secondary">Использовано: ${template.usage.timesUsed}</span>
+                            </div>
+                            <div class="campaign-preview">
+                                <strong>${template.content.title}</strong>
+                                <p class="small">${template.content.message}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function showCreateTemplateModal() {
+            // This would show a template creation modal
+            alert('Функция создания шаблонов будет добавлена');
+        }
+
+        // Analytics
+        function loadAnalytics() {
+            if (campaignStats.performanceTrend) {
+                drawPerformanceChart();
+                drawTypesChart();
+            }
+        }
+
+        function drawPerformanceChart() {
+            const ctx = document.getElementById('performance-chart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: campaignStats.performanceTrend.map(item => item.date),
+                    datasets: [{
+                        label: 'Отправлено',
+                        data: campaignStats.performanceTrend.map(item => item.sent),
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }, {
+                        label: 'Открыто',
+                        data: campaignStats.performanceTrend.map(item => item.opened),
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        function drawTypesChart() {
+            const ctx = document.getElementById('types-chart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: campaignStats.campaignsByType.map(item => getTypeText(item.type)),
+                    datasets: [{
+                        data: campaignStats.campaignsByType.map(item => item.count),
+                        backgroundColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 205, 86)',
+                            'rgb(75, 192, 192)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // A/B Testing helpers
+        function generateABVariants() {
+            const container = document.getElementById('ab-variants');
+            container.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="ab-test-variant">
+                            <h6>Вариант A (50%)</h6>
+                            <div class="mb-2">
+                                <label class="form-label">Заголовок</label>
+                                <input type="text" class="form-control" id="variant-a-title">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Сообщение</label>
+                                <textarea class="form-control" id="variant-a-message" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="ab-test-variant">
+                            <h6>Вариант B (50%)</h6>
+                            <div class="mb-2">
+                                <label class="form-label">Заголовок</label>
+                                <input type="text" class="form-control" id="variant-b-title">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Сообщение</label>
+                                <textarea class="form-control" id="variant-b-message" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Критерий победителя</label>
+                        <select class="form-select" id="winner-criteria">
+                            <option value="click_rate">Процент кликов</option>
+                            <option value="conversion_rate">Процент конверсий</option>
+                            <option value="engagement_rate">Процент вовлеченности</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Длительность теста (часы)</label>
+                        <input type="number" class="form-control" id="test-duration" value="24" min="1">
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

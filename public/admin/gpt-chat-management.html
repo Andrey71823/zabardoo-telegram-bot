@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT Chat Management - Zabardoo Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #fafbfc;
+            min-height: 100vh;
+            color: #1a1a1a;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .sidebar {
+            background: #ffffff;
+            min-height: 100vh;
+            border-right: 1px solid #e8eaed;
+            box-shadow: none;
+        }
+        
+        .sidebar .nav-link {
+            color: #5f6368;
+            padding: 12px 20px;
+            margin: 2px 12px;
+            border-radius: 8px;
+            transition: all 0.15s ease;
+            font-weight: 500;
+            font-size: 14px;
+            border: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar .nav-link:hover {
+            color: #1a73e8;
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar .nav-link.active {
+            color: #1a73e8;
+            background-color: #e8f0fe;
+        }
+        
+        .main-content {
+            background: #fafbfc;
+            min-height: 100vh;
+            padding: 24px;
+        }
+        
+        .dashboard-card {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: none;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px;
+            font-weight: 600;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .stat-card-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        
+        .stat-card-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        }
+        
+        .stat-card-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+        }
+        
+        .stat-card-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+        }
+        
+        .chat-interface {
+            height: 500px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 80%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .message.user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.assistant {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .personality-selector {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .personality-btn {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .personality-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .table thead th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 15px;
+        }
+        
+        .table tbody td {
+            padding: 15px;
+            border-color: #f0f0f0;
+        }
+        
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .prompt-template {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .template-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .template-description {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        
+        .template-example {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 0.85em;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar p-0">
+                <div class="p-3">
+                    <h4 class="text-white mb-4">
+                        <i class="fas fa-robot me-2"></i>
+                        GPT Chat Admin
+                    </h4>
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#overview">
+                            <i class="fas fa-tachometer-alt me-2"></i>
+                            Overview
+                        </a>
+                        <a class="nav-link" href="#chat-test">
+                            <i class="fas fa-comments me-2"></i>
+                            Test Chat
+                        </a>
+                        <a class="nav-link" href="#templates">
+                            <i class="fas fa-file-alt me-2"></i>
+                            Prompt Templates
+                        </a>
+                        <a class="nav-link" href="#analytics">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            Analytics
+                        </a>
+                        <a class="nav-link" href="#settings">
+                            <i class="fas fa-cog me-2"></i>
+                            Settings
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="text-dark">
+                        <i class="fas fa-robot me-2"></i>
+                        GPT Chat Management
+                    </h2>
+                    <div>
+                        <button class="btn btn-primary me-2">
+                            <i class="fas fa-sync-alt me-1"></i>
+                            Refresh Data
+                        </button>
+                        <button class="btn btn-outline-primary">
+                            <i class="fas fa-download me-1"></i>
+                            Export Logs
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Active Chats</h6>
+                                    <h3 class="mb-0">1,247</h3>
+                                </div>
+                                <i class="fas fa-comments fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card stat-card-success">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Messages Today</h6>
+                                    <h3 class="mb-0">8,932</h3>
+                                </div>
+                                <i class="fas fa-paper-plane fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card stat-card-info">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Avg Response Time</h6>
+                                    <h3 class="mb-0">1.2s</h3>
+                                </div>
+                                <i class="fas fa-clock fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card stat-card-warning">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">Success Rate</h6>
+                                    <h3 class="mb-0">98.5%</h3>
+                                </div>
+                                <i class="fas fa-check-circle fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Test Interface -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-comments me-2"></i>
+                                    Test GPT Chat Interface
+                                </h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="chat-interface">
+                                    <div class="chat-messages" id="chatMessages">
+                                        <div class="message assistant">
+                                            <strong>Zabardoo AI:</strong> Hi! I'm your AI assistant for deal discovery. How can I help you find amazing deals today?
+                                        </div>
+                                        <div class="message user">
+                                            <strong>You:</strong> Find me the best deals on electronics
+                                        </div>
+                                        <div class="message assistant">
+                                            <strong>Zabardoo AI:</strong> Great! Here are the hottest electronics deals right now:
+                                            <br><br>
+                                            📱 <strong>Samsung Galaxy S24</strong> - 28% OFF (₹52,000)<br>
+                                            💻 <strong>MacBook Air M3</strong> - 15% OFF (₹85,000)<br>
+                                            🎧 <strong>Sony WH-1000XM5</strong> - 25% OFF (₹22,500)<br>
+                                            <br>
+                                            All with cashback up to 8%! Would you like more details on any of these?
+                                        </div>
+                                    </div>
+                                    <div class="chat-input">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Type your message..." id="chatInput">
+                                            <button class="btn btn-primary" onclick="sendMessage()">
+                                                <i class="fas fa-paper-plane"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="personality-selector">
+                            <h6 class="mb-3">
+                                <i class="fas fa-user-cog me-2"></i>
+                                AI Personality
+                            </h6>
+                            <div class="d-grid gap-2">
+                                <button class="personality-btn active" onclick="setPersonality('cool')">
+                                    <i class="fas fa-fire me-2"></i>
+                                    Cool & Trendy
+                                </button>
+                                <button class="personality-btn" onclick="setPersonality('funny')">
+                                    <i class="fas fa-laugh me-2"></i>
+                                    Funny & Witty
+                                </button>
+                                <button class="personality-btn" onclick="setPersonality('informative')">
+                                    <i class="fas fa-graduation-cap me-2"></i>
+                                    Informative & Professional
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-chart-line me-2"></i>
+                                    Chat Analytics
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="chatAnalyticsChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prompt Templates -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-file-alt me-2"></i>
+                                    Prompt Templates
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="prompt-template">
+                                            <div class="template-title">
+                                                <i class="fas fa-gift me-2"></i>
+                                                Best Gift for Girlfriend
+                                            </div>
+                                            <div class="template-description">
+                                                Helps users find romantic gifts and deals
+                                            </div>
+                                            <div class="template-example">
+                                                "Find me the best gift deals for my girlfriend"
+                                            </div>
+                                            <button class="btn btn-sm btn-primary mt-2">
+                                                <i class="fas fa-edit me-1"></i>
+                                                Edit Template
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="prompt-template">
+                                            <div class="template-title">
+                                                <i class="fas fa-shopping-cart me-2"></i>
+                                                Deals for Groceries
+                                            </div>
+                                            <div class="template-description">
+                                                Finds grocery and food delivery deals
+                                            </div>
+                                            <div class="template-example">
+                                                "Show me the best grocery deals available now"
+                                            </div>
+                                            <button class="btn btn-sm btn-primary mt-2">
+                                                <i class="fas fa-edit me-1"></i>
+                                                Edit Template
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="prompt-template">
+                                            <div class="template-title">
+                                                <i class="fas fa-money-bill-wave me-2"></i>
+                                                Best Cashback Now
+                                            </div>
+                                            <div class="template-description">
+                                                Shows highest cashback opportunities
+                                            </div>
+                                            <div class="template-example">
+                                                "Where's the best cashback now?"
+                                            </div>
+                                            <button class="btn btn-sm btn-primary mt-2">
+                                                <i class="fas fa-edit me-1"></i>
+                                                Edit Template
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Chat Logs -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-history me-2"></i>
+                                    Recent Chat Logs
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>User ID</th>
+                                                <th>Message</th>
+                                                <th>Response Time</th>
+                                                <th>Personality</th>
+                                                <th>Status</th>
+                                                <th>Timestamp</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>user_12345</td>
+                                                <td>Find me electronics deals</td>
+                                                <td>1.2s</td>
+                                                <td><span class="badge bg-primary">Cool</span></td>
+                                                <td><span class="badge bg-success">Success</span></td>
+                                                <td>2 min ago</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>user_67890</td>
+                                                <td>Best gift for girlfriend</td>
+                                                <td>0.9s</td>
+                                                <td><span class="badge bg-warning">Funny</span></td>
+                                                <td><span class="badge bg-success">Success</span></td>
+                                                <td>5 min ago</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>user_11111</td>
+                                                <td>Compare cashback rates</td>
+                                                <td>1.5s</td>
+                                                <td><span class="badge bg-info">Informative</span></td>
+                                                <td><span class="badge bg-success">Success</span></td>
+                                                <td>8 min ago</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Chat functionality
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const messages = document.getElementById('chatMessages');
+            
+            if (input.value.trim()) {
+                // Add user message
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user';
+                userMessage.innerHTML = `<strong>You:</strong> ${input.value}`;
+                messages.appendChild(userMessage);
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const aiMessage = document.createElement('div');
+                    aiMessage.className = 'message assistant';
+                    aiMessage.innerHTML = `<strong>Zabardoo AI:</strong> I understand you're looking for "${input.value}". Let me find the best deals for you! 🔍`;
+                    messages.appendChild(aiMessage);
+                    messages.scrollTop = messages.scrollHeight;
+                }, 1000);
+                
+                input.value = '';
+                messages.scrollTop = messages.scrollHeight;
+            }
+        }
+        
+        // Personality selection
+        function setPersonality(personality) {
+            document.querySelectorAll('.personality-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update chat personality
+            console.log(`Personality set to: ${personality}`);
+        }
+        
+        // Enter key support
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Initialize chart
+        const ctx = document.getElementById('chatAnalyticsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Cool', 'Funny', 'Informative'],
+                datasets: [{
+                    data: [45, 30, 25],
+                    backgroundColor: [
+                        '#667eea',
+                        '#764ba2',
+                        '#f093fb'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
