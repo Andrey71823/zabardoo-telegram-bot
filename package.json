@@ -4,7 +4,7 @@
   "description": "Zabardoo Telegram Bot - Coupon and Cashback Platform for India",
   "main": "dist/main.js",
   "scripts": {
-    "start": "node dist/main.js",
+    "start": "node server.js",
     "start:dev": "nodemon src/index.ts",
     "start:test": "NODE_ENV=test npm run start",
     "build": "tsc && npm run copy-assets",
