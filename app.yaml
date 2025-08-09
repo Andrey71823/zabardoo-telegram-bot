@@ -4,11 +4,12 @@ services:
 - name: web
   source_dir: /
   github:
-    repo: Andrey7823/zabardoo-telegram-bot
+    repo: Andrey71823/zabardoo-telegram-bot
     branch: main
     deploy_on_push: true
-  run_command: npm start
-  build_command: npm run build
+  # build only installs deps; TypeScript build не требуется для server.js
+  build_command: npm install --omit=dev --legacy-peer-deps
+  run_command: node server.js
   environment_slug: node-js
   instance_count: 1
   instance_size_slug: basic-xxs
@@ -17,7 +18,7 @@ services:
   - path: /
   health_check:
     http_path: /health
-    initial_delay_seconds: 30
+    initial_delay_seconds: 20
     period_seconds: 10
     timeout_seconds: 5
     success_threshold: 1
@@ -27,23 +28,9 @@ services:
     value: production
   - key: PORT
     value: "8080"
-  - key: TELEGRAM_BOT_TOKEN
-    value: YOUR_BOT_TOKEN_HERE
+  - key: ADMIN_TOKEN
+    scope: RUN_TIME
     type: SECRET
-  - key: OPENAI_API_KEY
-    value: YOUR_OPENAI_KEY_HERE
-    type: SECRET
-  - key: DATABASE_URL
-    value: YOUR_DATABASE_URL_HERE
-    type: SECRET
-  - key: REDIS_URL
-    value: YOUR_REDIS_URL_HERE
-    type: SECRET
-  - key: JWT_SECRET
-    value: YOUR_JWT_SECRET_HERE
-    type: SECRET
-  - key: WEBHOOK_URL
-    value: https://zabardoo-telegram-bot-xxxxx.ondigitalocean.app/webhook
 
 databases:
 - name: zabardoo-db
