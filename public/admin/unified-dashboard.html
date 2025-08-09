@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zabardoo Admin Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="/js/admin-nav.js" defer></script>
+    <script src="/admin/admin-nav.js" defer></script>
     <style>
         * {
             margin: 0;
@@ -289,14 +291,14 @@
 <body>
     <div class="dashboard-container">
         <!-- Mobile Menu Button -->
-        <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
             <i class="fas fa-bars"></i>
         </button>
         
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-title" onclick="goToHome()">
+                <div class="sidebar-title" id="sidebarTitle">
                     <i class="fas fa-robot"></i>
                     Zabardoo Admin
                 </div>
@@ -306,7 +308,7 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Navigation</div>
                     <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="goToHome()">
+                        <a href="/dashboard.html" target="frame" class="nav-link" data-action="home">
                             <i class="fas fa-home nav-icon"></i>
                             Home
                         </a>
@@ -316,21 +318,21 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Core Features</div>
                     <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="loadContent('/admin/gpt-chat-management-clean.html', 'GPT Chat Management', this)">
+                        <a href="/admin/gpt-chat-management-clean.html" target="frame" class="nav-link" data-url="/admin/gpt-chat-management-clean.html" data-title="GPT Chat Management">
                             <i class="fas fa-robot nav-icon"></i>
                             GPT Chat Management
                             <div class="status-indicator"></div>
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="loadContent('/admin/favorites-management.html', 'Favorites Management', this)">
+                        <a href="/admin/favorites-management.html" target="frame" class="nav-link" data-url="/admin/favorites-management.html" data-title="Favorites Management">
                             <i class="fas fa-heart nav-icon"></i>
                             Favorites Management
                             <div class="status-indicator"></div>
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="loadContent('/telegram-webapp/index.html', 'Telegram WebApp', this)">
+                        <a href="/telegram-webapp/index.html" target="frame" class="nav-link" data-url="/telegram-webapp/index.html" data-title="Telegram WebApp">
                             <i class="fab fa-telegram nav-icon"></i>
                             Telegram WebApp
                             <div class="status-indicator"></div>
@@ -341,14 +343,14 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Analytics & Business</div>
                     <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="loadContent('/business-dashboard.html', 'Business Dashboard', this)">
+                        <a href="/business-dashboard.html" target="frame" class="nav-link" data-url="/business-dashboard.html" data-title="Business Dashboard">
                             <i class="fas fa-chart-line nav-icon"></i>
                             Business Dashboard
                             <div class="status-indicator"></div>
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="loadContent('/monitoring-dashboard.html', 'System Monitoring', this)">
+                        <a href="/monitoring-dashboard.html" target="frame" class="nav-link" data-url="/monitoring-dashboard.html" data-title="System Monitoring">
                             <i class="fas fa-tachometer-alt nav-icon"></i>
                             System Monitoring
                             <div class="status-indicator"></div>
@@ -359,21 +361,21 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Management Tools</div>
                     <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="loadContent('/admin/coupon-management.html', 'Coupon Management', this)">
+                        <a href="/admin/coupon-management.html" target="frame" class="nav-link" data-url="/admin/coupon-management.html" data-title="Coupon Management">
                             <i class="fas fa-ticket-alt nav-icon"></i>
                             Coupon Management
                             <div class="status-indicator"></div>
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="loadContent('/admin/user-management.html', 'User Management', this)">
+                        <a href="/admin/user-management.html" target="frame" class="nav-link" data-url="/admin/user-management.html" data-title="User Management">
                             <i class="fas fa-users nav-icon"></i>
                             User Management
                             <div class="status-indicator"></div>
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="loadContent('/admin/notification-campaigns.html', 'Notification Campaigns', this)">
+                        <a href="/admin/notification-campaigns.html" target="frame" class="nav-link" data-url="/admin/notification-campaigns.html" data-title="Notification Campaigns">
                             <i class="fas fa-bell nav-icon"></i>
                             Notification Campaigns
                             <div class="status-indicator"></div>
@@ -384,7 +386,7 @@
                 <div class="nav-section">
                     <div class="nav-section-title">Security & Compliance</div>
                     <div class="nav-item">
-                        <a href="#" class="nav-link" onclick="loadContent('/admin/data-compliance.html', 'Data Compliance', this)">
+                        <a href="/admin/data-compliance.html" target="frame" class="nav-link" data-url="/admin/data-compliance.html" data-title="Data Compliance">
                             <i class="fas fa-shield-alt nav-icon"></i>
                             Data Compliance
                             <div class="status-indicator"></div>
@@ -402,15 +404,15 @@
                     Welcome to Zabardoo Admin
                 </h1>
                 <div class="content-actions">
-                    <button class="btn" onclick="goToHome()">
+                    <button class="btn" id="btnHome">
                         <i class="fas fa-home"></i>
                         Home
                     </button>
-                    <button class="btn" onclick="refreshContent()">
+                    <button class="btn" id="btnRefresh">
                         <i class="fas fa-sync-alt"></i>
                         Refresh
                     </button>
-                    <button class="btn btn-primary" onclick="openInNewTab()">
+                    <button class="btn btn-primary" id="btnOpenNew">
                         <i class="fas fa-external-link-alt"></i>
                         Open in New Tab
                     </button>
@@ -418,137 +420,10 @@
             </div>
             
             <div class="content-frame" id="contentFrame">
-                <iframe class="content-iframe" src="/dashboard.html"></iframe>
+                <iframe class="content-iframe" id="frame" name="frame" src="/dashboard.html"></iframe>
             </div>
         </div>
     </div>
     
-    <script>
-        // Disallow embedding in foreign iframes (defense in depth with CSP)
-        try { if (window.top !== window.self) { document.body.innerHTML = ''; } } catch (_) {}
-        let currentUrl = '';
-        let currentTitle = '';
-        
-        function loadContent(url, title, linkElement) {
-            // Update active state
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            linkElement.classList.add('active');
-            
-            // Update title
-            document.getElementById('contentTitle').innerHTML = `
-                <i class="${getIconForTitle(title)}"></i>
-                ${title}
-            `;
-            
-            // Show loading state
-            document.getElementById('contentFrame').innerHTML = `
-                <div class="loading-state">
-                    <div class="loading-spinner"></div>
-                    <div>Loading ${title}...</div>
-                </div>
-            `;
-            
-            // Load content in iframe
-            setTimeout(() => {
-                document.getElementById('contentFrame').innerHTML = `
-                    <iframe class="content-iframe" src="${url}" onload="hideLoading()"></iframe>
-                `;
-                currentUrl = url;
-                currentTitle = title;
-            }, 500);
-            
-            // Close mobile sidebar
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('open');
-            }
-        }
-        
-        function getIconForTitle(title) {
-            const icons = {
-                'GPT Chat Management': 'fas fa-robot',
-                'Favorites Management': 'fas fa-heart',
-                'Telegram WebApp': 'fab fa-telegram',
-                'Business Dashboard': 'fas fa-chart-line',
-                'System Monitoring': 'fas fa-tachometer-alt',
-                'Coupon Management': 'fas fa-ticket-alt',
-                'User Management': 'fas fa-users',
-                'Notification Campaigns': 'fas fa-bell',
-                'Data Compliance': 'fas fa-shield-alt'
-            };
-            return icons[title] || 'fas fa-cog';
-        }
-        
-        function hideLoading() {
-            // Loading is handled by iframe onload
-        }
-        
-        function refreshContent() {
-            if (currentUrl) {
-                const iframe = document.querySelector('.content-iframe');
-                if (iframe) {
-                    iframe.src = iframe.src;
-                }
-            }
-        }
-        
-        function openInNewTab() {
-            if (currentUrl) {
-                window.open(currentUrl, '_blank');
-            }
-        }
-        
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
-        
-        function goToHome() {
-            // Clear active states
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            // Set home as active
-            document.querySelector('[onclick*="goToHome"]').classList.add('active');
-            
-            // Update title
-            document.getElementById('contentTitle').innerHTML = `
-                <i class="fas fa-home"></i>
-                Welcome to Zabardoo Admin
-            `;
-            
-            // Load home dashboard
-            document.getElementById('contentFrame').innerHTML = `
-                <iframe class="content-iframe" src="/dashboard.html"></iframe>
-            `;
-            
-            // Clear current URL
-            currentUrl = '';
-            currentTitle = '';
-            
-            // Close mobile sidebar
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('open');
-            }
-        }
-        
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            if (window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                const menuBtn = document.querySelector('.mobile-menu-btn');
-                
-                if (!sidebar.contains(event.target) && !menuBtn.contains(event.target)) {
-                    sidebar.classList.remove('open');
-                }
-            }
-        });
-        
-        // Auto-load Home dashboard on page load
-        window.addEventListener('load', function() {
-            goToHome();
-        });
-    </script>
 </body>
 </html>

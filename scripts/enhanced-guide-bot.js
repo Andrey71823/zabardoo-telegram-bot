@@ -1088,7 +1088,7 @@ ${real.length === 0 ? '⚠️ No exact match found. Showing similar items.' : ''
       // Align bottom buttons with inline buttons (HTML + same logic)
       let response;
       let replyMarkup = this.getMainKeyboard();
-
+      
       switch (text) {
         case '🆘 Help':
           response = `🆘 <b>Zabardoo Bot Quick Help</b>
@@ -1124,7 +1124,7 @@ ${real.length === 0 ? '⚠️ No exact match found. Showing similar items.' : ''
 
 Need more help? Use /guide for detailed explanations!`;
           break;
-
+          
         case '📖 Guide':
           response = `📖 <b>COMPLETE GUIDE - What Each Button Does</b>
 
@@ -1188,7 +1188,7 @@ Need more help? Use /guide for detailed explanations!`;
 
 🎯 <b>GOLDEN RULE:</b> The more you use the bot, the more money you save! 💰`;
           break;
-
+          
         case '💰 Cashback': {
           const cashbackUser = this.getUser(message.from.id);
           response = `💰 <b>Your Cashback Summary</b>
@@ -1229,7 +1229,7 @@ ${profileUser.achievements.slice(-3).map(a => `🏅 ${a}`).join('\\n') || '🎯 
 🎮 Keep exploring to unlock more rewards!`;
           break;
         }
-
+          
         case '🔍 Find Deals':
           response = `🔍 <b>Top Deals for ${userName}!</b>
 
@@ -1249,7 +1249,7 @@ Choose a category below for more specific deals:`;
           replyMarkup = this.getCategoryKeyboard();
           this.awardXP(message.from.id, 5, 'browse_deals');
           break;
-
+          
         case '🧠 Ask Zabardoo':
         case '💬 Ask Zabardoo':
           response = `🧠 <b>Ask Zabardoo AI Assistant</b>
@@ -1280,7 +1280,7 @@ Choose a category below for more specific deals:`;
 🚀 <b>Just send me a message to start chatting!</b>`;
           this.awardXP(message.from.id, 8, 'ask_zabardoo');
           break;
-
+          
         case '🎲 Random Deal': {
           const randomDeals = [
             { name: 'iPhone 15 Pro', discount: '22%', price: '₹89,900', store: 'Amazon India', cashback: '6%' },
@@ -1307,7 +1307,7 @@ Choose a category below for more specific deals:`;
           this.awardXP(message.from.id, 10, 'random_deal');
           break;
         }
-
+          
         case '⚙️ Settings':
           response = `⚙️ <b>Notification Settings</b>
 
@@ -1345,7 +1345,7 @@ Current Settings:
             ]
           };
           break;
-
+          
         case '🌐 Language':
           response = `🌐 <b>Choose Your Language</b>
 
@@ -1405,7 +1405,7 @@ ${items}
 
 💡 Prices and availability are fetched live from stores.`;
               this.awardXP(message.from.id, 10, 'text_search');
-              break;
+          break;
             } else {
               response = `⚠️ <b>No exact matches found</b> for "${query}".
 

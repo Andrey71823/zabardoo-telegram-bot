@@ -247,6 +247,71 @@ app.get('/monitoring/alerts', (req, res) => {
   res.json(generateMockMonitoringAlerts());
 });
 
+// ------------------- Admin: Data Compliance mock API -------------------
+// These endpoints power public/admin/data-compliance.html
+// They return predictable JSON so the dashboard renders identically in local & prod.
+
+function generateComplianceSummary() {
+  // simple stable mock
+  return {
+    complianceScore: 95,
+    dataMinimization: true,
+    purposeLimitation: true,
+    storageMinimization: true,
+    paymentDataLocalization: true,
+    lastComplianceCheck: Date.now() - (2 * 24 * 60 * 60 * 1000)
+  };
+}
+
+app.get('/api/admin/data-compliance/report/compliance', (req, res) => {
+  res.json({ success: true, data: generateComplianceSummary() });
+});
+
+app.get('/api/admin/data-compliance/localization/status', (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      paymentDataLocalized: true,
+      personalDataLocalized: true,
+      sensitiveDataLocalized: true,
+      lastComplianceCheck: Date.now() - (6 * 60 * 60 * 1000)
+    }
+  });
+});
+
+app.get('/api/admin/data-compliance/consent/dashboard/:userId', (req, res) => {
+  const { userId } = req.params;
+  res.json({
+    success: true,
+    data: {
+      userId,
+      consents: {
+        dataCollection: { granted: true },
+        marketing: { granted: false },
+        analytics: { granted: true },
+        cookies: { granted: true },
+        thirdParty: { granted: false }
+      }
+    }
+  });
+});
+
+app.post('/api/admin/data-compliance/consent/grant', (req, res) => {
+  res.json({ success: true });
+});
+
+app.post('/api/admin/data-compliance/consent/revoke', (req, res) => {
+  res.json({ success: true });
+});
+
+app.post('/api/admin/data-compliance/deletion/process/:id', (req, res) => {
+  res.json({ success: true, id: req.params.id });
+});
+
+app.post('/api/admin/data-compliance/process/expired-data', (req, res) => {
+  res.json({ success: true, processed: true });
+});
+
 // Start server
 app.listen(port, () => {
   console.log(`🚀 Zabardoo Telegram Bot started on port ${port}`);
