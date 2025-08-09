@@ -20,6 +20,8 @@ app.use(helmet({
     directives: {
       "default-src": ["'self'"],
       "script-src": ["'self'", "'unsafe-inline'", 'https:'],
+      // allow inline event handlers (onclick) used by restored local UI
+      "script-src-attr": ["'unsafe-inline'"],
       "style-src": ["'self'", "'unsafe-inline'", 'https:'],
       "img-src": ["'self'", 'data:', 'https:'],
       "font-src": ["'self'", 'https:', 'data:'],
