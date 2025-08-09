@@ -23,25 +23,15 @@
             min-height: 100vh;
         }
         
-        .sidebar {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            min-height: 100vh;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
-        }
-        
-        .sidebar .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 0.75rem 1rem;
-            margin: 0.25rem 0;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-        
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            color: white;
-            background-color: rgba(255,255,255,0.1);
-            transform: translateX(5px);
-        }
+        .sidebar { background:#fff; border-right:1px solid #eef2f7; min-height:100vh; }
+        /* Fixed in-page section menu */
+        .section-menu { position: sticky; top: 24px; align-self: flex-start; height: calc(100vh - 24px); overflow: auto; padding-top: 0; }
+        .section-menu h4 { display: none; }
+        .section-menu .nav { margin-top: 0; }
+        .section-menu .nav-link { display:flex; align-items:center; gap:8px; }
+        .section-menu .nav-link.active { background:#eff6ff; color:#2563eb; font-weight:600; }
+        .sidebar .nav-link { color:#64748b; padding:10px 12px; margin:4px 0; border-radius:8px; transition: all .2s; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background:#f8fafc; color:#3b82f6; }
         
         .main-content {
             background: #f8fafc;
@@ -49,42 +39,15 @@
             padding: 32px;
         }
         
-        .dashboard-card {
-            background: #ffffff;
-            border-radius: 4px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f1f5f9;
-            transition: all 0.2s ease;
-            overflow: hidden;
-            height: 100%;
-        }
+        .dashboard-card { background:#fff; border-radius:12px; box-shadow:0 6px 16px rgba(0,0,0,0.05); border:1px solid #eef2f7; transition: all .2s; overflow:hidden; height:100%; }
         
         .dashboard-card:hover {
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
         
-        .card-header {
-            background: #ffffff;
-            color: #1e293b;
-            border: none;
-            border-bottom: 1px solid #f1f5f9;
-            padding: 20px;
-            font-weight: 600;
-        }
+        .card-header { background:#fff; color:#111827; border-bottom:1px solid #eef2f7; padding:16px; font-weight:700; }
         
-        .stat-card {
-            background: #ffffff;
-            color: #1e293b;
-            border-radius: 4px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f1f5f9;
-            transition: all 0.2s ease;
-            height: 120px;
-            display: flex;
-            align-items: center;
-        }
+        .stat-card { background:#fff; color:#111827; border-radius:12px; padding:16px; margin-bottom:16px; box-shadow:0 6px 16px rgba(0,0,0,0.05); border:1px solid #eef2f7; display:flex; align-items:center; height:110px; }
         
         .stat-card:hover {
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -106,29 +69,14 @@
             border-left: 4px solid #ef4444;
         }
         
-        .favorite-item {
-            background: #ffffff;
-            border-radius: 4px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f1f5f9;
-            border-left: 4px solid #3b82f6;
-            transition: all 0.2s ease;
-            min-height: 140px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+        .favorite-item { background:#fff; border-radius:12px; padding:16px; margin-bottom:14px; box-shadow:0 6px 16px rgba(0,0,0,0.05); border:1px solid #eef2f7; display:flex; flex-direction:column; justify-content:space-between; }
+        .badge { border-radius: 999px; font-weight: 600; margin-left: 8px; }
         
         .favorite-item:hover {
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
         
-        .favorite-item.expiring {
-            border-left-color: #ef4444;
-            background: #fef2f2;
-        }
+        .favorite-item.expiring { background:#fef2f2; border:1px solid #fee2e2; box-shadow:none; }
         
         .favorite-header {
             display: flex;
@@ -201,15 +149,7 @@
             border: 1px solid #fde68a;
         }
         
-        .btn-primary {
-            background: #3b82f6;
-            border: 1px solid #3b82f6;
-            border-radius: 4px;
-            padding: 8px 16px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        }
+        .btn-primary { background:#3b82f6; border:1px solid #3b82f6; border-radius:8px; padding:8px 14px; font-weight:600; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
         
         .btn-primary:hover {
             background: #2563eb;
@@ -230,11 +170,27 @@
             box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.1);
         }
         
+        .anchor-section { scroll-margin-top: 110px; margin-bottom: 24px; }
+
         .table {
             background: white;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Legend and layout styles for the favorites chart (Nexus style) */
+        .favorites-chart-wrap { display:flex; align-items:center; gap:20px; flex-wrap:nowrap; }
+        .favorites-chart { position:relative; height:160px; width:160px; }
+        .legend-list { display:flex; flex-direction:column; gap:8px; min-width:160px; }
+        .legend-item { display:flex; align-items:center; font-size:13px; color:#475569; }
+        .legend-dot { width:12px; height:12px; border-radius:50%; margin-right:8px; }
+        .legend-label { margin-right:6px; }
+        .legend-value { font-weight:700; color:#111827; }
+        .chart-card-auto { flex: initial !important; }
+        @media (max-width: 520px) {
+            .favorites-chart-wrap { justify-content:center; flex-wrap:wrap; }
+            .legend-list { flex-direction:row; flex-wrap:wrap; gap:10px 16px; min-width:auto; }
         }
         
         .table thead th {
@@ -319,7 +275,7 @@
         <div class="row">
             <!-- Sidebar -->
             <div class="col-md-2 sidebar p-0">
-                <div class="p-3">
+                <div class="p-3 section-menu">
                     <h4 class="text-white mb-4">
                         <i class="fas fa-heart me-2"></i>
                         Favorites Admin
@@ -368,7 +324,8 @@
                     </div>
                 </div>
 
-                <!-- Expiry Alert -->
+                <!-- Overview Section -->
+                <div id="overview" class="anchor-section" data-anchor="overview">
                 <div class="expiry-alert">
                     <i class="fas fa-exclamation-triangle fa-2x"></i>
                     <div>
@@ -432,8 +389,10 @@
                         </div>
                     </div>
                 </div>
+                </div> <!-- /overview -->
 
-                <!-- Filter Panel -->
+                <!-- Favorites Section -->
+                <div id="favorites" class="anchor-section" data-anchor="favorites">
                 <div class="filter-panel">
                     <h6 class="mb-3">
                         <i class="fas fa-filter me-2"></i>
@@ -622,17 +581,35 @@
                                 Launch Campaign
                             </button>
                         </div>
+                        </div>
+                    </div>
+                </div> <!-- /favorites -->
 
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-chart-pie me-2"></i>
-                                    Favorites by Category
-                                </h6>
-                            </div>
-                            <div class="card-body" style="padding: 20px;">
-                                <div style="position: relative; height: 250px; width: 100%;">
-                                    <canvas id="favoritesChart"></canvas>
+                <!-- Expiring Section (focused list) -->
+                <div id="expiring" class="anchor-section" data-anchor="expiring">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Expiring Soon</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="favorite-item expiring">
+                                <div class="favorite-header">
+                                    <div class="favorite-title"><i class="fas fa-tshirt me-2 text-warning"></i>Myntra Fashion Sale - 60% OFF</div>
+                                    <span class="badge bg-danger">Expiring Soon</span>
+                                </div>
+                                <div class="favorite-meta">
+                                    <span><i class="fas fa-user me-1"></i> user_67890</span>
+                                    <span><i class="fas fa-store me-1"></i> Myntra</span>
+                                    <span><i class="fas fa-tag me-1"></i> Fashion</span>
+                                    <span><i class="fas fa-exclamation-triangle me-1 text-danger"></i> Expires in 6 hours</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="text-muted">₹2,500</span>
+                                        <span class="fw-bold text-success ms-2">₹999</span>
+                                        <span class="badge bg-warning ms-2">5% Cashback</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-warning"><i class="fas fa-bell me-1"></i>Send Reminder</button>
                                 </div>
                             </div>
                         </div>
@@ -640,7 +617,7 @@
                 </div>
 
                 <!-- User History -->
-                <div class="row">
+                <div id="history" class="row anchor-section" data-anchor="history">
                     <div class="col-12">
                         <div class="dashboard-card">
                             <div class="card-header">
@@ -704,15 +681,57 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Analytics Section -->
+                <div id="analytics" class="anchor-section" data-anchor="analytics">
+                    <div class="dashboard-card">
+                        <div class="card-header"><h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Favorites by Category</h6></div>
+                        <div class="card-body" style="padding: 20px 20px 12px;">
+                            <div class="favorites-chart-wrap">
+                                <div class="favorites-chart"><canvas id="favoritesChart"></canvas></div>
+                                <div id="favoritesLegend" class="legend-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Keep single-page layout; smooth-scroll to anchors and highlight active
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href') || '';
+                if (href.startsWith('#')) {
+                    e.preventDefault();
+                    const id = href.substring(1);
+                    const target = document.getElementById(id);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.querySelectorAll('.sidebar .nav-link').forEach(a => a.classList.remove('active'));
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Keep active state while scrolling
+        const sections = ['overview','favorites','history','expiring','analytics'];
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('.sidebar .nav-link').forEach(a => a.classList.remove('active'));
+                    const link = document.querySelector(`.sidebar .nav-link[href="#${entry.target.id}"]`);
+                    if (link) link.classList.add('active');
+                }
+            });
+        }, { root: null, rootMargin: '-120px 0px -70% 0px', threshold: 0.01 });
+
+        sections.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
+
         // Initialize modern favorites chart
         const ctx = document.getElementById('favoritesChart').getContext('2d');
-        new Chart(ctx, {
+        const favoritesChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: ['Electronics', 'Fashion', 'Beauty', 'Food', 'Others'],
@@ -735,46 +754,28 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 cutout: '60%',
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 20,
-                            usePointStyle: true,
-                            pointStyle: 'circle',
-                            font: {
-                                size: 12,
-                                family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-                            },
-                            color: '#64748b'
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: '#1e293b',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: '#f1f5f9',
-                        borderWidth: 1,
-                        cornerRadius: 4,
-                        displayColors: true,
-                        callbacks: {
-                            label: function(context) {
-                                return context.label + ': ' + context.parsed + '%';
-                            }
-                        }
-                    }
-                },
-                animation: {
-                    animateRotate: true,
-                    duration: 1000
-                },
-                elements: {
-                    arc: {
-                        borderWidth: 2
-                    }
-                }
+                layout: { padding: 0 },
+                plugins: { legend: { display:false }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.parsed}%` } } }
             }
         });
+
+        // Render custom legend to the right of the chart (label + percentage)
+        function renderFavoritesLegend() {
+            const legend = document.getElementById('favoritesLegend');
+            const labels = favoritesChart.data.labels;
+            const data = favoritesChart.data.datasets[0].data;
+            const colors = favoritesChart.data.datasets[0].backgroundColor;
+            legend.innerHTML = labels.map((label, idx) => `
+                <div class="legend-item">
+                    <span class="legend-dot" style="background:${colors[idx]}"></span>
+                    <span class="legend-label">${label}</span>
+                    <span class="legend-value">${data[idx]}%</span>
+                </div>
+            `).join('');
+        }
+
+        renderFavoritesLegend();
+        window.addEventListener('resize', () => { favoritesChart.resize(); renderFavoritesLegend(); });
     </script>
 </body>
 </html>

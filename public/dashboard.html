@@ -1,605 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zabardoo Business Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zabardoo Admin – Home</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-         
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #eef2f7;
+      --shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+      --primary: #3b82f6;
+      --accent: #6366f1;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
 
-        
-        body {
-            font-family: 'Segoe UI', Tns-serif;
-            background: );
-         
-x;
-        }
-        
-        .dashboard-contai
-            max-width: 160px;
-            margin: 0 auto;
-         
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
 
-            box-shad,0.1);
-            overflow: hidden;
-        }
-        
-ader {
-            backgro);
-            color: white;
-            padding: 30px
-          flex;
-en;
-            align-it;
-        }
-        
-        .header-left h1 {
-         em;
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px;
+    }
 
-        }
-        
-        .header-left p {
-            font-size: 1em;
-            opacity: 0.9;
-        }
- 
-        .header-right 
-            text-align: right;
-        }
-        
-        .date-range-selector {
-            background: rgba(255,255,255,0.2
-         
- 8px;
-            padding: 10px 15px;
-            color: white;
-         m: 10px;
-   }
-        
-        .last-updated {
-            font-size: 0.9em;
-            opacity: 0.8;
-        }
-        
-{
-            display: grid;
-            grid-template-colu1fr));
-            gap: 20px;
-            padding: 30px;
-        }
-        
-ic-card {
-            background: 
+    .hero {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 25px;
-         ,0.1);
-eea;
-            transition: all 0.3s 
-            position: relate;
-         verf   o
-
-        .metric-change.negative {
-            color: #ef4444;
-        }
-
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .chart-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .chart-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-
-        .insights-section {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-
-        .insights-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .insight-item {
-            padding: 1rem;
-            border-left: 4px solid #667eea;
-            background: #f8fafc;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-
-        .alert.warning {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-        }
-
-        .alert.critical {
-            background: #fee2e2;
-            border-left: 4px solid #ef4444;
-        }
-
-        .alert.info {
-            background: #dbeafe;
-            border-left: 4px solid #3b82f6;
-        }
-
-        .controls {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      padding: 20px 20px;
             display: flex;
-            gap: 1rem;
             align-items: center;
-            flex-wrap: wrap;
-        }
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .hero h1 { font-size: 20px; margin: 0; font-weight: 700; }
+    .hero p { color: var(--muted); margin: 4px 0 0; font-size: 13px; }
 
-        .controls input, .controls select, .controls button {
-            padding: 0.5rem 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 0.9rem;
-        }
+    .quick-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .qa-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px;
+      background: #fff; color: #0f172a; text-decoration: none; font-weight: 600; font-size: 13px;
+      box-shadow: var(--shadow);
+    }
+    .qa-btn:hover { border-color: #dbe3ea; }
 
-        .controls button {
-            background: #667eea;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
+    .grid-2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; }
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 
-        .controls button:hover {
-            background: #5a67d8;
-        }
+    .card { background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+    .card-body { padding: 16px; }
+    .card h3 { margin: 0 0 8px; font-size: 13px; color: #475569; font-weight: 700; letter-spacing: 0.2px; }
+    .metric-value { font-size: 22px; font-weight: 800; color: #0f172a; }
+    .metric-sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .delta-up { color: var(--success); font-weight: 700; font-size: 12px; }
+    .delta-down { color: var(--danger); font-weight: 700; font-size: 12px; }
 
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #666;
-        }
+    .chart-card canvas { width: 100%; height: 220px; }
+    .chart-title { font-size: 13px; font-weight: 700; margin: 0 0 8px; color: #334155; }
 
-        .error {
-            background: #fee2e2;
-            color: #dc2626;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
+    .shortcuts { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 12px; }
+    .shortcut { padding: 12px; text-align: center; border: 1px solid var(--border); border-radius: 12px; background: #fff; box-shadow: var(--shadow); text-decoration: none; color: #0f172a; font-weight: 600; font-size: 12px; }
+    .shortcut i { display: block; font-size: 18px; margin-bottom: 6px; color: var(--primary); }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .metrics-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+    .activity { margin-top: 12px; }
+    .activity-item { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px dashed var(--border); padding: 10px 0; font-size: 13px; }
+    .activity-item:last-child { border-bottom: 0; }
+    .muted { color: var(--muted); font-size: 12px; }
+
+    @media (max-width: 1100px) { .metrics { grid-template-columns: repeat(2, 1fr); } .grid-2 { grid-template-columns: 1fr; } .shortcuts { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 680px) { .metrics { grid-template-columns: 1fr; } .shortcuts { grid-template-columns: repeat(2, 1fr); } }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>📊 Zabardoo Analytics Dashboard</h1>
-        <p>Real-time business metrics and insights for your Telegram coupon bot</p>
+  <div class="container">
+    <div class="hero">
+      <div>
+        <h1>Welcome to Zabardoo Admin</h1>
+        <p>Compact overview with live-like mock data. Everything styled in Nexus-light.</p>
+      </div>
+      <div class="quick-actions">
+        <a class="qa-btn" href="/admin/user-management.html"><i class="fas fa-users"></i> Users</a>
+        <a class="qa-btn" href="/admin/coupon-management.html"><i class="fas fa-ticket-alt"></i> Coupons</a>
+        <a class="qa-btn" href="/admin/notification-campaigns.html"><i class="fas fa-bell"></i> Campaigns</a>
+        <a class="qa-btn" href="/monitoring-dashboard.html"><i class="fas fa-tachometer-alt"></i> Monitoring</a>
+        <a class="qa-btn" href="/admin/favorites-management.html"><i class="fas fa-heart"></i> Favorites</a>
+        <a class="qa-btn" href="/telegram-webapp/index.html"><i class="fab fa-telegram"></i> WebApp</a>
+      </div>
     </div>
 
-    <div class="container">
-        <!-- Controls -->
-        <div class="controls">
-            <label>From:</label>
-            <input type="date" id="dateFrom" />
-            
-            <label>To:</label>
-            <input type="date" id="dateTo" />
-            
-            <button onclick="loadDashboard()">🔄 Refresh</button>
-            <button onclick="exportData('csv')">📊 Export CSV</button>
-            <button onclick="exportData('json')">📄 Export JSON</button>
-            <button onclick="toggleRealTime()">⚡ Real-time</button>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-body">
+          <div class="metrics" id="metrics"></div>
+        </div>
         </div>
 
-        <!-- Loading State -->
-        <div id="loading" class="loading">
-            <p>Loading dashboard data...</p>
+      <div class="card chart-card">
+        <div class="card-body">
+          <div class="chart-title">Revenue by Channel</div>
+          <canvas id="chartRevenue"></canvas>
+        </div>
+      </div>
         </div>
 
-        <!-- Error State -->
-        <div id="error" class="error" style="display: none;"></div>
+    <div class="grid-2" style="margin-top:12px;">
+      <div class="card chart-card">
+        <div class="card-body">
+          <div class="chart-title">User Growth (30 days)</div>
+          <canvas id="chartUsers"></canvas>
+        </div>
+      </div>
 
-        <!-- Metrics Overview -->
-        <div id="metricsGrid" class="metrics-grid" style="display: none;"></div>
+      <div class="card">
+        <div class="card-body activity">
+          <div class="chart-title" style="margin-bottom:6px;">Recent Activity</div>
+          <div id="activity"></div>
+        </div>
+      </div>
+    </div>
 
-        <!-- Charts -->
-        <div id="chartsGrid" class="charts-grid" style="display: none;"></div>
-
-        <!-- Insights -->
-        <div id="insightsSection" class="insights-section" style="display: none;"></div>
+    <div class="card" style="margin-top:12px;">
+      <div class="card-body">
+        <div class="chart-title" style="margin-bottom:8px;">Shortcuts</div>
+        <div class="shortcuts">
+          <a class="shortcut" href="/admin/gpt-chat-management-clean.html"><i class="fas fa-robot"></i> GPT Chat</a>
+          <a class="shortcut" href="/admin/favorites-management.html"><i class="fas fa-heart"></i> Favorites</a>
+          <a class="shortcut" href="/admin/user-management.html"><i class="fas fa-users"></i> Users</a>
+          <a class="shortcut" href="/admin/coupon-management.html"><i class="fas fa-ticket-alt"></i> Coupons</a>
+          <a class="shortcut" href="/admin/notification-campaigns.html"><i class="fas fa-bell"></i> Campaigns</a>
+          <a class="shortcut" href="/monitoring-dashboard.html"><i class="fas fa-tachometer-alt"></i> Monitoring</a>
+        </div>
+      </div>
+    </div>
     </div>
 
     <script>
-        let realTimeInterval = null;
-        let dashboardData = null;
+    const fmt = new Intl.NumberFormat('en-IN');
+    const metricsEl = document.getElementById('metrics');
+    const activityEl = document.getElementById('activity');
 
-        // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set default date range (last 30 days)
-            const today = new Date();
-            const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-            
-            document.getElementById('dateTo').value = today.toISOString().split('T')[0];
-            document.getElementById('dateFrom').value = thirtyDaysAgo.toISOString().split('T')[0];
-            
-            loadDashboard();
-        });
-
-        async function loadDashboard() {
-            try {
-                showLoading();
-                hideError();
-
-                const dateFrom = document.getElementById('dateFrom').value;
-                const dateTo = document.getElementById('dateTo').value;
-                
-                const params = new URLSearchParams({
-                    from: dateFrom,
-                    to: dateTo
-                });
-
-                const [metricsResponse, insightsResponse] = await Promise.all([
-                    fetch(`/api/dashboard/metrics?${params}`),
-                    fetch(`/api/dashboard/insights?${params}`)
-                ]);
-
-                if (!metricsResponse.ok || !insightsResponse.ok) {
-                    throw new Error('Failed to load dashboard data');
-                }
-
-                const metricsData = await metricsResponse.json();
-                const insightsData = await insightsResponse.json();
-
-                dashboardData = metricsData.data;
-                
-                renderMetrics(dashboardData);
-                renderCharts(dashboardData);
-                renderInsights(insightsData.data);
-                
-                hideLoading();
-                showDashboard();
-
-            } catch (error) {
-                hideLoading();
-                showError('Failed to load dashboard: ' + error.message);
-            }
+    function mockData() {
+      const totalUsers = 124567;
+      const activeToday = 8644;
+      const revenue = 4275600; // INR
+      const conversion = 0.042;
+      const cashback = 214560;
+      const uptime = 99.96;
+      return {
+        metrics: [
+          { label: 'Total Users', value: fmt.format(totalUsers), delta: +3.8 },
+          { label: 'Active Today', value: fmt.format(activeToday), delta: +1.2 },
+          { label: 'Revenue (₹)', value: '₹' + fmt.format(revenue), delta: +4.3 },
+          { label: 'Conversion Rate', value: (conversion * 100).toFixed(1) + '%', delta: +0.3 },
+          { label: 'Total Cashback', value: '₹' + fmt.format(cashback), delta: +2.1 },
+          { label: 'Uptime', value: uptime.toFixed(2) + '%', delta: +0.01 }
+        ],
+        revenueByChannel: [
+          { name: 'Personal Channels', value: 58 },
+          { name: 'Group', value: 26 },
+          { name: 'AI Recs', value: 16 }
+        ],
+        usersDaily: Array.from({ length: 30 }, (_, i) => 500 + Math.round(80 + Math.sin(i/4) * 60 + Math.random()*40)),
+        activity: [
+          { text: 'New coupon approved: Flipkart Electronics', time: '2m' },
+          { text: 'Campaign sent to 12,400 users', time: '12m' },
+          { text: 'Top user redeemed cashback ₹450', time: '25m' },
+          { text: 'Myntra Fashion deals synced', time: '48m' },
+          { text: 'System health OK – CPU 32%', time: '1h' }
+        ]
+      };
         }
 
         function renderMetrics(data) {
-            const metricsGrid = document.getElementById('metricsGrid');
-            metricsGrid.innerHTML = '';
+      metricsEl.innerHTML = '';
+      data.metrics.forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `<div class="card-body">
+            <h3>${m.label}</h3>
+            <div class="metric-value">${m.value}</div>
+            <div class="metric-sub ${m.delta >= 0 ? 'delta-up' : 'delta-down'}">${m.delta >= 0 ? '▲' : '▼'} ${Math.abs(m.delta).toFixed(2)}%</div>
+          </div>`;
+        metricsEl.appendChild(div);
+      });
+    }
 
-            const metrics = [
-                {
-                    label: 'Total Users',
-                    value: data.overview.totalUsers.toLocaleString(),
-                    change: data.overview.growthRate
-                },
-                {
-                    label: 'Active Users',
-                    value: data.overview.activeUsers.toLocaleString(),
-                    change: null
-                },
-                {
-                    label: 'Total Revenue',
-                    value: '₹' + data.overview.totalRevenue.toLocaleString(),
-                    change: data.revenue.revenueGrowth
-                },
-                {
-                    label: 'Conversion Rate',
-                    value: (data.overview.conversionRate * 100).toFixed(1) + '%',
-                    change: null
-                },
-                {
-                    label: 'Avg Order Value',
-                    value: '₹' + data.overview.averageOrderValue.toFixed(2),
-                    change: null
-                },
-                {
-                    label: 'Total Cashback',
-                    value: '₹' + data.overview.totalCashback.toLocaleString(),
-                    change: null
-                }
-            ];
-
-            metrics.forEach(metric => {
-                const card = document.createElement('div');
-                card.className = 'metric-card';
-                
-                let changeHtml = '';
-                if (metric.change !== null) {
-                    const changeClass = metric.change >= 0 ? 'positive' : 'negative';
-                    const changeIcon = metric.change >= 0 ? '📈' : '📉';
-                    changeHtml = `<div class="metric-change ${changeClass}">${changeIcon} ${metric.change.toFixed(1)}%</div>`;
-                }
-                
-                card.innerHTML = `
-                    <div class="metric-value">${metric.value}</div>
-                    <div class="metric-label">${metric.label}</div>
-                    ${changeHtml}
-                `;
-                
-                metricsGrid.appendChild(card);
+    function renderActivity(list) {
+      activityEl.innerHTML = '';
+      list.forEach(a => {
+        const row = document.createElement('div');
+        row.className = 'activity-item';
+        row.innerHTML = `<span>${a.text}</span><span class="muted">${a.time} ago</span>`;
+        activityEl.appendChild(row);
             });
         }
 
         function renderCharts(data) {
-            const chartsGrid = document.getElementById('chartsGrid');
-            chartsGrid.innerHTML = '';
-
-            // Revenue by Channel Chart
-            const revenueChannelCard = createChartCard('Revenue by Channel');
-            chartsGrid.appendChild(revenueChannelCard);
-            
-            const revenueCtx = revenueChannelCard.querySelector('canvas').getContext('2d');
-            new Chart(revenueCtx, {
+      const revCtx = document.getElementById('chartRevenue').getContext('2d');
+      new Chart(revCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: data.revenue.revenueByChannel.map(c => c.channel),
+          labels: data.revenueByChannel.map(x => x.name),
                     datasets: [{
-                        data: data.revenue.revenueByChannel.map(c => c.revenue),
-                        backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#f5576c']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
+            data: data.revenueByChannel.map(x => x.value),
+            backgroundColor: ['#3b82f6', '#6366f1', '#22c55e'],
+            borderWidth: 0
+          }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } }, cutout: '58%' }
+      });
 
-            // Conversion Trends Chart
-            const conversionTrendCard = createChartCard('Conversion Trends');
-            chartsGrid.appendChild(conversionTrendCard);
-            
-            const conversionCtx = conversionTrendCard.querySelector('canvas').getContext('2d');
-            new Chart(conversionCtx, {
+      const usersCtx = document.getElementById('chartUsers').getContext('2d');
+      new Chart(usersCtx, {
                 type: 'line',
                 data: {
-                    labels: data.conversion.conversionTrends.map(t => new Date(t.date).toLocaleDateString()),
+          labels: Array.from({ length: 30 }, (_, i) => i + 1),
                     datasets: [{
-                        label: 'Conversion Rate',
-                        data: data.conversion.conversionTrends.map(t => t.conversionRate * 100),
-                        borderColor: '#667eea',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            data: data.usersDaily,
+            fill: true,
+            tension: 0.35,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.10)',
+            pointRadius: 0,
+            borderWidth: 2
+          }]
+        },
+        options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+      });
+    }
 
-            // Channel Performance Chart
-            const channelPerfCard = createChartCard('Channel Performance');
-            chartsGrid.appendChild(channelPerfCard);
-            
-            const channelCtx = channelPerfCard.querySelector('canvas').getContext('2d');
-            new Chart(channelCtx, {
-                type: 'bar',
-                data: {
-                    labels: data.channels.channelPerformance.map(c => c.channel),
-                    datasets: [{
-                        label: 'ROI',
-                        data: data.channels.channelPerformance.map(c => c.roi),
-                        backgroundColor: 'rgba(102, 126, 234, 0.8)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + 'x';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function renderInsights(data) {
-            const insightsSection = document.getElementById('insightsSection');
-            insightsSection.innerHTML = '<h2 class="chart-title">📊 Business Insights & Recommendations</h2>';
-
-            // Alerts
-            if (data.alerts && data.alerts.length > 0) {
-                data.alerts.forEach(alert => {
-                    const alertDiv = document.createElement('div');
-                    alertDiv.className = `alert ${alert.type}`;
-                    alertDiv.innerHTML = `<strong>${alert.type.toUpperCase()}:</strong> ${alert.message}`;
-                    insightsSection.appendChild(alertDiv);
-                });
-            }
-
-            const insightsGrid = document.createElement('div');
-            insightsGrid.className = 'insights-grid';
-
-            // Insights
-            if (data.insights && data.insights.length > 0) {
-                const insightsDiv = document.createElement('div');
-                insightsDiv.innerHTML = '<h3>🔍 Key Insights</h3>';
-                data.insights.forEach(insight => {
-                    const item = document.createElement('div');
-                    item.className = 'insight-item';
-                    item.textContent = insight;
-                    insightsDiv.appendChild(item);
-                });
-                insightsGrid.appendChild(insightsDiv);
-            }
-
-            // Recommendations
-            if (data.recommendations && data.recommendations.length > 0) {
-                const recommendationsDiv = document.createElement('div');
-                recommendationsDiv.innerHTML = '<h3>💡 Recommendations</h3>';
-                data.recommendations.forEach(rec => {
-                    const item = document.createElement('div');
-                    item.className = 'insight-item';
-                    item.textContent = rec;
-                    recommendationsDiv.appendChild(item);
-                });
-                insightsGrid.appendChild(recommendationsDiv);
-            }
-
-            insightsSection.appendChild(insightsGrid);
-        }
-
-        function createChartCard(title) {
-            const card = document.createElement('div');
-            card.className = 'chart-card';
-            card.innerHTML = `
-                <div class="chart-title">${title}</div>
-                <canvas></canvas>
-            `;
-            return card;
-        }
-
-        async function exportData(format) {
-            try {
-                const dateFrom = document.getElementById('dateFrom').value;
-                const dateTo = document.getElementById('dateTo').value;
-                
-                const params = new URLSearchParams({
-                    format,
-                    from: dateFrom,
-                    to: dateTo
-                });
-
-                const response = await fetch(`/api/dashboard/export?${params}`);
-                
-                if (!response.ok) {
-                    throw new Error('Export failed');
-                }
-
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `dashboard_export_${new Date().toISOString().split('T')[0]}.${format}`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-
-            } catch (error) {
-                showError('Export failed: ' + error.message);
-            }
-        }
-
-        function toggleRealTime() {
-            if (realTimeInterval) {
-                clearInterval(realTimeInterval);
-                realTimeInterval = null;
-                document.querySelector('button[onclick="toggleRealTime()"]').textContent = '⚡ Real-time';
-            } else {
-                realTimeInterval = setInterval(loadRealTimeMetrics, 30000); // 30 seconds
-                document.querySelector('button[onclick="toggleRealTime()"]').textContent = '⏸️ Stop Real-time';
-                loadRealTimeMetrics();
-            }
-        }
-
-        async function loadRealTimeMetrics() {
-            try {
-                const response = await fetch('/api/dashboard/realtime');
-                const data = await response.json();
-                
-                if (data.success) {
-                    updateRealTimeDisplay(data.data);
-                }
-            } catch (error) {
-                console.error('Failed to load real-time metrics:', error);
-            }
-        }
-
-        function updateRealTimeDisplay(data) {
-            // Update real-time metrics in the UI
-            // This would update specific elements with real-time data
-            console.log('Real-time update:', data);
-        }
-
-        function showLoading() {
-            document.getElementById('loading').style.display = 'block';
-        }
-
-        function hideLoading() {
-            document.getElementById('loading').style.display = 'none';
-        }
-
-        function showError(message) {
-            const errorDiv = document.getElementById('error');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-        }
-
-        function hideError() {
-            document.getElementById('error').style.display = 'none';
-        }
-
-        function showDashboard() {
-            document.getElementById('metricsGrid').style.display = 'grid';
-            document.getElementById('chartsGrid').style.display = 'grid';
-            document.getElementById('insightsSection').style.display = 'block';
-        }
+    const data = mockData();
+    renderMetrics(data);
+    renderActivity(data.activity);
+    renderCharts(data);
     </script>
 </body>
 </html>

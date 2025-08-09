@@ -1,359 +1,175 @@
-import { BaseService } from '../base/BaseService';
-import { OpenAIService } from './OpenAIService';
+import { EventEmitter } from 'events';
+import { logger } from '../../config/logger';
 
-interface ChatContext {
+export interface ChatPersonality {
+  id: string;
+  name: string;
+  description: string;
+  systemPrompt: string;
+  emoji: string;
+}
+
+export interface ChatMessage {
+  id: string;
   userId: string;
-  conversationHistory: ChatMessage[];
-  userPreferences: UserPreferences;
-  personality: 'cool' | 'funny' | 'informative';
-}
-
-interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-  metadata?: any;
-}
-
-interface UserPreferences {
-  favoriteCategories: string[];
-  priceRange: { min: number; max: number };
-  preferredStores: string[];
-  language: 'en' | 'hi';
-}
-
-interface ChatResponse {
   message: string;
-  suggestions?: string[];
-  deals?: any[];
-  actions?: ChatAction[];
+  response: string;
+  personality: string;
+  timestamp: Date;
 }
 
-interface ChatAction {
-  type: 'show_deals' | 'add_favorite' | 'calculate_cashback' | 'show_profile';
-  data: any;
-}
-
-export class GPTChatService extends BaseService {
-  private openAIService: OpenAIService;
-  private chatContexts: Map<string, ChatContext> = new Map();
-  
-  private promptTemplates = {
-    cool: `You are Zabardoo, a cool and trendy AI assistant for deal discovery in India. 
-    You help users find the best coupons and deals. Be casual, use modern slang, and keep it short.
-    Always suggest specific deals when relevant. Use emojis sparingly but effectively.`,
-    
-    funny: `You are Zabardoo, a witty and humorous AI assistant for deal discovery in India.
-    Make jokes about expensive prices, celebrate great deals, and keep users entertained.
-    Use Indian humor and references. Always be helpful while being funny.`,
-    
-    informative: `You are Zabardoo, a knowledgeable and professional AI assistant for deal discovery in India.
-    Provide detailed information about deals, cashback rates, and saving strategies.
-    Be thorough and educational in your responses.`
-  };
-
-  private commonPrompts = {
-    'best_gift_girlfriend': 'Find me the best gift deals for my girlfriend',
-    'deals_groceries': 'Show me the best grocery deals available now',
-    'best_cashback': 'Where can I get the best cashback rates right now?',
-    'compare_stores': 'Compare cashback rates between different stores',
-    'seasonal_deals': 'What are the best seasonal deals available?'
-  };
+export class GPTChatService extends EventEmitter {
+  private personalities: Map<string, ChatPersonality> = new Map();
+  private userConversations: Map<string, ChatMessage[]> = new Map();
+  private userPersonalities: Map<string, string> = new Map();
 
   constructor() {
     super();
-    this.openAIService = new OpenAIService();
+    this.initializePersonalities();
+    logger.info('GPTChatService initialized with 3 personalities');
   }
 
-  async initializeChat(userId: string, preferences: UserPreferences): Promise<void> {
-    const context: ChatContext = {
-      userId,
-      conversationHistory: [],
-      userPreferences: preferences,
-      personality: 'cool' // Default personality
-    };
-    
-    this.chatContexts.set(userId, context);
-    
-    // Send welcome message
-    const welcomeMessage = await this.generateWelcomeMessage(context);
-    context.conversationHistory.push({
-      role: 'assistant',
-      content: welcomeMessage,
-      timestamp: new Date()
-    });
-  }
-
-  async processMessage(userId: string, message: string): Promise<ChatResponse> {
-    const context = this.chatContexts.get(userId);
-    if (!context) {
-      throw new Error('Chat context not found. Please initialize chat first.');
-    }
-
-    // Add user message to history
-    context.conversationHistory.push({
-      role: 'user',
-      content: message,
-      timestamp: new Date()
-    });
-
-    // Check for common prompts
-    const commonPrompt = this.detectCommonPrompt(message);
-    if (commonPrompt) {
-      return await this.handleCommonPrompt(context, commonPrompt);
-    }
-
-    // Generate AI response
-    const response = await this.generateAIResponse(context, message);
-    
-    // Add assistant response to history
-    context.conversationHistory.push({
-      role: 'assistant',
-      content: response.message,
-      timestamp: new Date()
-    });
-
-    // Keep conversation history manageable (last 20 messages)
-    if (context.conversationHistory.length > 20) {
-      context.conversationHistory = context.conversationHistory.slice(-20);
-    }
-
-    return response;
-  }
-
-  async setPersonality(userId: string, personality: 'cool' | 'funny' | 'informative'): Promise<void> {
-    const context = this.chatContexts.get(userId);
-    if (context) {
-      context.personality = personality;
-    }
-  }
-
-  private async generateWelcomeMessage(context: ChatContext): Promise<string> {
-    const { personality, userPreferences } = context;
-    
-    const personalityGreetings = {
-      cool: "Hey! 👋 I'm Zabardoo, your deal-hunting buddy. What's up?",
-      funny: "Namaste! 🙏 I'm Zabardoo, here to save your wallet from crying! 😄",
-      informative: "Hello! I'm Zabardoo, your comprehensive deal discovery assistant."
-    };
-
-    return personalityGreetings[personality];
-  }
-
-  private detectCommonPrompt(message: string): string | null {
-    const lowerMessage = message.toLowerCase();
-    
-    for (const [key, prompt] of Object.entries(this.commonPrompts)) {
-      if (lowerMessage.includes(key.replace('_', ' ')) || 
-          lowerMessage.includes(prompt.toLowerCase().substring(0, 20))) {
-        return key;
-      }
-    }
-    
-    return null;
-  }
-
-  private async handleCommonPrompt(context: ChatContext, promptKey: string): Promise<ChatResponse> {
-    const responses = {
-      'best_gift_girlfriend': {
-        message: "Great choice! 💝 Here are some amazing gift deals for your girlfriend:",
-        deals: [
-          { name: "Nykaa Beauty Box", discount: "40% OFF", price: "₹1,199", cashback: "8%" },
-          { name: "Myntra Fashion Jewelry", discount: "50% OFF", price: "₹899", cashback: "5%" },
-          { name: "Amazon Perfume Collection", discount: "35% OFF", price: "₹2,499", cashback: "6%" }
-        ],
-        suggestions: ["Show more beauty deals", "Find jewelry offers", "Romantic dinner deals"]
+  private initializePersonalities(): void {
+    const personalities: ChatPersonality[] = [
+      {
+        id: 'cool',
+        name: 'Cool Zabardoo',
+        description: 'Relaxed, trendy, uses modern slang',
+        emoji: '😎',
+        systemPrompt: `You are Cool Zabardoo, a trendy and relaxed AI assistant for deal discovery in India. 
+        You speak in a cool, modern way using current slang and emojis. You're knowledgeable about the latest trends, 
+        brands, and what's popular among young Indians. Keep responses casual but helpful.`
       },
-      
-      'deals_groceries': {
-        message: "🛒 Fresh grocery deals just for you:",
-        deals: [
-          { name: "BigBasket Essentials", discount: "25% OFF", price: "₹1,500", cashback: "3%" },
-          { name: "Grofers Weekly Pack", discount: "30% OFF", price: "₹2,200", cashback: "4%" },
-          { name: "Amazon Fresh Bundle", discount: "20% OFF", price: "₹1,800", cashback: "5%" }
-        ],
-        suggestions: ["Show organic options", "Find bulk deals", "Compare delivery times"]
+      {
+        id: 'funny',
+        name: 'Funny Zabardoo',
+        description: 'Humorous, witty, makes jokes',
+        emoji: '😂',
+        systemPrompt: `You are Funny Zabardoo, a humorous AI assistant for deal discovery in India. 
+        You love making jokes, puns, and keeping things light and entertaining. You use humor to make 
+        deal hunting fun and engaging. Include funny observations about shopping and saving money.`
       },
-      
-      'best_cashback': {
-        message: "💰 Here are the highest cashback rates right now:",
-        deals: [
-          { name: "Flipkart Electronics", discount: "Up to 70% OFF", cashback: "12%" },
-          { name: "Myntra Fashion", discount: "Up to 60% OFF", cashback: "10%" },
-          { name: "Nykaa Beauty", discount: "Up to 50% OFF", cashback: "8%" }
-        ],
-        suggestions: ["Compare all stores", "Set cashback alerts", "Calculate potential savings"]
+      {
+        id: 'informative',
+        name: 'Expert Zabardoo',
+        description: 'Professional, detailed, educational',
+        emoji: '🤓',
+        systemPrompt: `You are Expert Zabardoo, a professional and knowledgeable AI assistant for deal discovery in India. 
+        You provide detailed, accurate information about products, deals, and shopping strategies. 
+        You're educational and help users make informed decisions with facts and analysis.`
       }
-    };
+    ];
 
-    return responses[promptKey] || {
-      message: "I can help you with that! Let me find the best deals for you.",
-      suggestions: ["Show popular deals", "Find category deals", "Get personalized recommendations"]
-    };
+    personalities.forEach(p => this.personalities.set(p.id, p));
   }
 
-  private async generateAIResponse(context: ChatContext, message: string): Promise<ChatResponse> {
-    const { personality, userPreferences, conversationHistory } = context;
-    
-    // Build conversation context for GPT
-    const conversationContext = conversationHistory
-      .slice(-10) // Last 10 messages for context
-      .map(msg => `${msg.role}: ${msg.content}`)
-      .join('\n');
-
-    const systemPrompt = `${this.promptTemplates[personality]}
-
-User preferences:
-- Favorite categories: ${userPreferences.favoriteCategories.join(', ')}
-- Price range: ₹${userPreferences.priceRange.min} - ₹${userPreferences.priceRange.max}
-- Preferred stores: ${userPreferences.preferredStores.join(', ')}
-- Language: ${userPreferences.language}
-
-Recent conversation:
-${conversationContext}
-
-Current user message: ${message}
-
-Respond as Zabardoo. If the user asks about deals, suggest specific Indian stores and realistic prices in rupees.
-If they ask about cashback, mention realistic percentages (1-12%).
-Keep responses under 200 words and always be helpful.`;
-
+  async processMessage(userId: string, message: string, personalityId?: string): Promise<string> {
     try {
-      const aiResponse = await this.openAIService.generateResponse(systemPrompt);
-      
-      // Parse response for actions
-      const actions = this.extractActions(aiResponse);
-      const deals = this.extractDeals(aiResponse);
-      const suggestions = this.generateSuggestions(message);
-
-      return {
-        message: aiResponse,
-        suggestions,
-        deals,
-        actions
-      };
-    } catch (error) {
-      console.error('GPT API error:', error);
-      
-      // Fallback response
-      return {
-        message: "I'm having trouble connecting right now, but I can still help! What specific deals are you looking for?",
-        suggestions: ["Electronics deals", "Fashion offers", "Food discounts", "Beauty products"]
-      };
-    }
-  }
-
-  private extractActions(response: string): ChatAction[] {
-    const actions: ChatAction[] = [];
-    
-    if (response.toLowerCase().includes('show deals') || response.toLowerCase().includes('find deals')) {
-      actions.push({ type: 'show_deals', data: {} });
-    }
-    
-    if (response.toLowerCase().includes('add to favorites') || response.toLowerCase().includes('save this')) {
-      actions.push({ type: 'add_favorite', data: {} });
-    }
-    
-    if (response.toLowerCase().includes('cashback') || response.toLowerCase().includes('calculate')) {
-      actions.push({ type: 'calculate_cashback', data: {} });
-    }
-    
-    return actions;
-  }
-
-  private extractDeals(response: string): any[] {
-    // Simple deal extraction - in production, this would be more sophisticated
-    const deals = [];
-    
-    if (response.includes('₹')) {
-      // Extract price mentions and create deal objects
-      const priceMatches = response.match(/₹[\d,]+/g);
-      if (priceMatches) {
-        priceMatches.forEach((price, index) => {
-          deals.push({
-            name: `Deal ${index + 1}`,
-            price: price,
-            discount: '20% OFF',
-            cashback: '5%'
-          });
-        });
+      // Get or set user's preferred personality
+      if (personalityId) {
+        this.userPersonalities.set(userId, personalityId);
       }
-    }
-    
-    return deals;
-  }
+      
+      const currentPersonality = this.userPersonalities.get(userId) || 'cool';
+      const personality = this.personalities.get(currentPersonality);
+      
+      if (!personality) {
+        throw new Error('Invalid personality');
+      }
 
-  private generateSuggestions(message: string): string[] {
-    const lowerMessage = message.toLowerCase();
-    
-    if (lowerMessage.includes('electronics') || lowerMessage.includes('phone') || lowerMessage.includes('laptop')) {
-      return ["Show phone deals", "Find laptop offers", "Electronics cashback", "Compare prices"];
-    }
-    
-    if (lowerMessage.includes('fashion') || lowerMessage.includes('clothes') || lowerMessage.includes('shoes')) {
-      return ["Fashion deals", "Shoe offers", "Clothing discounts", "Accessories"];
-    }
-    
-    if (lowerMessage.includes('food') || lowerMessage.includes('restaurant') || lowerMessage.includes('grocery')) {
-      return ["Restaurant deals", "Grocery offers", "Food delivery", "Bulk discounts"];
-    }
-    
-    return ["Popular deals", "Best cashback", "New offers", "My favorites"];
-  }
-
-  async getChatHistory(userId: string): Promise<ChatMessage[]> {
-    const context = this.chatContexts.get(userId);
-    return context ? context.conversationHistory : [];
-  }
-
-  async clearChatHistory(userId: string): Promise<void> {
-    const context = this.chatContexts.get(userId);
-    if (context) {
-      context.conversationHistory = [];
-    }
-  }
-
-  async updateUserPreferences(userId: string, preferences: Partial<UserPreferences>): Promise<void> {
-    const context = this.chatContexts.get(userId);
-    if (context) {
-      context.userPreferences = { ...context.userPreferences, ...preferences };
+      // Get conversation history
+      const history = this.userConversations.get(userId) || [];
+      
+      // Simulate GPT response (in production, call OpenAI API)
+      const response = await this.generateResponse(message, personality, history);
+      
+      // Save conversation
+      const chatMessage: ChatMessage = {
+        id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        userId,
+        message,
+        response,
+        personality: currentPersonality,
+        timestamp: new Date()
+      };
+      
+      history.push(chatMessage);
+      this.userConversations.set(userId, history.slice(-10)); // Keep last 10 messages
+      
+      logger.info(`GPT Chat: User ${userId} with ${personality.name}`);
+      return response;
+      
+    } catch (error) {
+      logger.error('GPTChatService error:', error);
+      return 'Sorry, I encountered an error. Please try again! 😅';
     }
   }
 
-  async getActiveChats(): Promise<string[]> {
-    return Array.from(this.chatContexts.keys());
-  }
-
-  async analyzeUserIntent(message: string): Promise<{
-    intent: string;
-    entities: any[];
-    confidence: number;
-  }> {
-    // Simple intent analysis - in production, use NLP libraries
-    const intents = {
-      'find_deals': ['deal', 'offer', 'discount', 'coupon', 'sale'],
-      'compare_prices': ['compare', 'vs', 'versus', 'better', 'cheaper'],
-      'cashback_info': ['cashback', 'money back', 'refund', 'earn'],
-      'product_search': ['find', 'search', 'looking for', 'need', 'want'],
-      'help': ['help', 'how', 'what', 'explain', 'guide']
+  private async generateResponse(message: string, personality: ChatPersonality, history: ChatMessage[]): Promise<string> {
+    // Mock GPT response based on personality
+    const responses = {
+      cool: [
+        `Yo! That's a solid question! 😎 Let me break it down for you...`,
+        `Dude, I got you covered! 🔥 Here's what's trending...`,
+        `Ayy, that's what I'm talking about! 💯 Check this out...`,
+        `Bro, you're asking the right questions! 🚀 Here's the deal...`
+      ],
+      funny: [
+        `Haha, great question! 😂 Let me crack this deal code for you...`,
+        `LOL, you're speaking my language! 🤣 Here's what I found...`,
+        `That's funnier than my bank balance! 😆 But seriously, here's the scoop...`,
+        `You know what's not a joke? These amazing deals! 😂 Check it out...`
+      ],
+      informative: [
+        `Excellent question! 🤓 Based on my analysis, here's what you need to know...`,
+        `That's a very insightful query. 📊 Let me provide you with detailed information...`,
+        `I appreciate your thorough approach! 📚 Here are the key facts...`,
+        `Great analytical thinking! 🔍 Allow me to explain the details...`
+      ]
     };
 
-    const lowerMessage = message.toLowerCase();
-    let bestIntent = 'general';
-    let maxMatches = 0;
-
-    for (const [intent, keywords] of Object.entries(intents)) {
-      const matches = keywords.filter(keyword => lowerMessage.includes(keyword)).length;
-      if (matches > maxMatches) {
-        maxMatches = matches;
-        bestIntent = intent;
-      }
+    const personalityResponses = responses[personality.id as keyof typeof responses] || responses.cool;
+    const baseResponse = personalityResponses[Math.floor(Math.random() * personalityResponses.length)];
+    
+    // Add context based on message content
+    if (message.toLowerCase().includes('deal') || message.toLowerCase().includes('discount')) {
+      return `${baseResponse}\n\n🎯 I found some amazing deals that match what you're looking for! The best part? You can earn cashback too! Want me to show you the top picks?`;
+    } else if (message.toLowerCase().includes('help') || message.toLowerCase().includes('how')) {
+      return `${baseResponse}\n\n💡 I'm here to help you save money and find the best deals in India! You can ask me about specific products, compare prices, or just chat about shopping. What would you like to know?`;
+    } else {
+      return `${baseResponse}\n\n🛍️ I love talking about deals and savings! Is there a specific product or store you're interested in? I can help you find the best offers and cashback opportunities!`;
     }
+  }
 
+  getPersonalities(): ChatPersonality[] {
+    return Array.from(this.personalities.values());
+  }
+
+  getUserPersonality(userId: string): string {
+    return this.userPersonalities.get(userId) || 'cool';
+  }
+
+  setUserPersonality(userId: string, personalityId: string): boolean {
+    if (this.personalities.has(personalityId)) {
+      this.userPersonalities.set(userId, personalityId);
+      return true;
+    }
+    return false;
+  }
+
+  getUserConversationHistory(userId: string): ChatMessage[] {
+    return this.userConversations.get(userId) || [];
+  }
+
+  clearUserHistory(userId: string): void {
+    this.userConversations.delete(userId);
+  }
+
+  getStats(): any {
     return {
-      intent: bestIntent,
-      entities: [], // Would extract entities like product names, prices, etc.
-      confidence: maxMatches > 0 ? Math.min(maxMatches / 3, 1) : 0.1
+      totalPersonalities: this.personalities.size,
+      activeUsers: this.userConversations.size,
+      totalMessages: Array.from(this.userConversations.values()).reduce((sum, conv) => sum + conv.length, 0)
     };
   }
 }

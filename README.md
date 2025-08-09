@@ -1,3 +1,35 @@
+Zabardoo Bot & Dashboards - Quick Start
+
+1) Local run
+- Install Node 18+
+- Run: `node server.js`
+- Open Admin: http://localhost:8080/admin
+
+2) Environment (.env)
+- TELEGRAM_BOT_TOKEN=
+- FEEDBACK_GROUP_ID=
+- REAL_DATA_MODE=true
+- FLIPKART_AFFILIATE_ID=
+- FLIPKART_AFFILIATE_TOKEN=
+- AMAZON_PAAPI_ACCESS_KEY=
+- AMAZON_PAAPI_SECRET_KEY=
+- AMAZON_PARTNER_TAG=
+- AMAZON_MARKETPLACE=IN
+- SERVER_PUBLIC_URL=https://your-domain
+- ADMIN_TOKEN=optional-secret (protects /admin)
+
+3) Security
+- Helmet, rate-limit, compression, CORS added in server.js
+- /admin can be protected with ADMIN_TOKEN or Basic Auth (ADMIN_USER, ADMIN_PASS)
+
+4) Dashboards
+- Home: /dashboard.html (loaded in /admin)
+- APIs: /api/dashboard/* and /monitoring/* return mock data until real sources are wired
+
+5) Bot
+- Run: `node scripts/enhanced-guide-bot.js`
+- Set REAL_DATA_MODE=true and Flipkart keys to enable live product results
+
 # 🚀 Zabardoo Enhanced Telegram Bot System
 
 **The Most Advanced AI-Powered Deal Discovery Bot for the Indian Market**

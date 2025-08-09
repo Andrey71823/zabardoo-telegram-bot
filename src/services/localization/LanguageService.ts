@@ -1,323 +1,264 @@
-import { BaseService } from '../base/BaseService';
+import { EventEmitter } from 'events';
+import { logger } from '../../config/logger';
 
-interface Language {
+export interface Language {
   code: string;
   name: string;
   nativeName: string;
-  flag: string;
-  isRTL: boolean;
+  emoji: string;
   isActive: boolean;
+  region: string;
 }
 
-interface Translation {
+export interface Translation {
   key: string;
   language: string;
   value: string;
   context?: string;
-  pluralForms?: Record<string, string>;
 }
 
-interface UserLanguagePreference {
-  userId: string;
-  languageCode: string;
-  setAt: Date;
-  autoDetected: boolean;
-  region?: string;
-}
-
-export class LanguageService extends BaseService {
+export class LanguageService extends EventEmitter {
   private languages: Map<string, Language> = new Map();
-  private translations: Map<string, Map<string, Translation>> = new Map();
-  private userPreferences: Map<string, UserLanguagePreference> = new Map();
-  private defaultLanguage = 'en';
+  private translations: Map<string, Map<string, string>> = new Map();
+  private userLanguages: Map<string, string> = new Map();
 
   constructor() {
     super();
     this.initializeLanguages();
-    this.loadTranslations();
+    this.initializeTranslations();
+    logger.info('LanguageService initialized with 9 Indian languages');
   }
 
   private initializeLanguages(): void {
-    const supportedLanguages: Language[] = [
+    const languages: Language[] = [
       {
         code: 'en',
         name: 'English',
         nativeName: 'English',
-        flag: '🇺🇸',
-        isRTL: false,
-        isActive: true
+        emoji: '🇺🇸',
+        isActive: true,
+        region: 'Global'
       },
       {
         code: 'hi',
         name: 'Hindi',
-        nativeName: 'हिन्दी',
-        flag: '🇮🇳',
-        isRTL: false,
-        isActive: true
+        nativeName: 'हिंदी',
+        emoji: '🇮🇳',
+        isActive: true,
+        region: 'North India'
       },
       {
         code: 'bn',
         name: 'Bengali',
         nativeName: 'বাংলা',
-        flag: '🇧🇩',
-        isRTL: false,
-        isActive: true
+        emoji: '🇧🇩',
+        isActive: true,
+        region: 'West Bengal, Bangladesh'
       },
       {
         code: 'te',
         name: 'Telugu',
         nativeName: 'తెలుగు',
-        flag: '🇮🇳',
-        isRTL: false,
-        isActive: true
+        emoji: '🏛️',
+        isActive: true,
+        region: 'Andhra Pradesh, Telangana'
       },
       {
         code: 'ta',
         name: 'Tamil',
         nativeName: 'தமிழ்',
-        flag: '🇮🇳',
-        isRTL: false,
-        isActive: true
-      },
-      {
-        code: 'mr',
-        name: 'Marathi',
-        nativeName: 'मराठी',
-        flag: '🇮🇳',
-        isRTL: false,
-        isActive: true
+        emoji: '🏺',
+        isActive: true,
+        region: 'Tamil Nadu'
       },
       {
         code: 'gu',
         name: 'Gujarati',
         nativeName: 'ગુજરાતી',
-        flag: '🇮🇳',
-        isRTL: false,
-        isActive: true
+        emoji: '🦚',
+        isActive: true,
+        region: 'Gujarat'
       },
       {
         code: 'kn',
         name: 'Kannada',
         nativeName: 'ಕನ್ನಡ',
-        flag: '🇮🇳',
-        isRTL: false,
-        isActive: true
-      }
-    ];
-
-    supportedLanguages.forEach(lang => {
-      this.languages.set(lang.code, lang);
-    });
-  }
-
-  private loadTranslations(): void {
-    // English translations (base)
-    const englishTranslations = new Map<string, Translation>();
-    
-    const enTranslations = [
-      { key: 'welcome_message', value: '🎉 Welcome to Zabardoo Enhanced Bot, {name}! 🌟' },
-      { key: 'ai_powered_assistant', value: '🚀 I\'m your AI-powered deal discovery assistant!' },
-      { key: 'voice_search', value: '🎤 Voice Search - Send me a voice message!' },
-      { key: 'image_recognition', value: '📸 Image Recognition - Send me a product photo!' },
-      { key: 'gamification', value: '🎮 Gamification - Earn XP and unlock achievements!' },
-      { key: 'smart_notifications', value: '🔔 Smart Notifications - Get personalized deal alerts!' },
-      { key: 'cashback_tracking', value: '💰 Cashback Tracking - Track your savings!' },
-      { key: 'find_deals', value: '🔍 Find Deals' },
-      { key: 'my_profile', value: '🎮 My Profile' },
-      { key: 'guide', value: '📖 Guide' },
-      { key: 'cashback', value: '💰 Cashback' },
-      { key: 'settings', value: '⚙️ Settings' },
-      { key: 'help', value: '🆘 Help' },
-      { key: 'language_selector', value: '🌐 Language / भाषा' },
-      { key: 'select_language', value: 'Select your preferred language:' },
-      { key: 'language_changed', value: 'Language changed to English! 🇺🇸' },
-      { key: 'electronics', value: '📱 Electronics' },
-      { key: 'fashion', value: '👗 Fashion' },
-      { key: 'beauty', value: '💄 Beauty' },
-      { key: 'food', value: '🍔 Food' },
-      { key: 'stores', value: '🏪 Stores' },
-      { key: 'hot_deals', value: '🔥 Hot Deals' },
-      { key: 'ai_recommendations', value: '🤖 AI Recommendations' },
-      { key: 'voice_processing', value: '🎤 Processing your voice message...' },
-      { key: 'photo_processing', value: '📸 Analyzing your product photo...' },
-      { key: 'deals_found', value: '🔍 Found these amazing deals:' },
-      { key: 'best_deal', value: '💰 Best Deal:' },
-      { key: 'cashback_earned', value: 'Cashback earned:' },
-      { key: 'xp_awarded', value: '+{amount} XP for {action}!' },
-      { key: 'level_up', value: '🎉 LEVEL UP! Level {oldLevel} → Level {newLevel}' },
-      { key: 'popular_stores', value: '🏪 Popular Indian Stores' },
-      { key: 'ecommerce_giants', value: '🛍️ E-Commerce Giants:' },
-      { key: 'beauty_personal_care', value: '💄 Beauty & Personal Care:' },
-      { key: 'department_stores', value: '🏬 Department Stores:' },
-      { key: 'food_grocery', value: '🍔 Food & Grocery:' },
-      { key: 'pro_tip', value: '💡 Pro Tip:' },
-      { key: 'voice_photo_search', value: '🎤 Send voice message or 📸 photo for personalized store recommendations!' }
-    ];
-
-    enTranslations.forEach(t => {
-      englishTranslations.set(t.key, {
-        key: t.key,
-        language: 'en',
-        value: t.value
-      });
-    });
-
-    this.translations.set('en', englishTranslations);
-
-    // Hindi translations
-    const hindiTranslations = new Map<string, Translation>();
-    
-    const hiTranslations = [
-      { key: 'welcome_message', value: '🎉 Zabardoo Enhanced Bot में आपका स्वागत है, {name}! 🌟' },
-      { key: 'ai_powered_assistant', value: '🚀 मैं आपका AI-powered डील खोजने वाला सहायक हूँ!' },
-      { key: 'voice_search', value: '🎤 वॉयस सर्च - मुझे वॉयस मैसेज भेजें!' },
-      { key: 'image_recognition', value: '📸 इमेज पहचान - मुझे प्रोडक्ट की फोटो भेजें!' },
-      { key: 'gamification', value: '🎮 गेमिफिकेशन - XP कमाएं और अचीवमेंट्स अनलॉक करें!' },
-      { key: 'smart_notifications', value: '🔔 स्मार्ट नोटिफिकेशन - व्यक्तिगत डील अलर्ट पाएं!' },
-      { key: 'cashback_tracking', value: '💰 कैशबैक ट्रैकिंग - अपनी बचत ट्रैक करें!' },
-      { key: 'find_deals', value: '🔍 डील खोजें' },
-      { key: 'my_profile', value: '🎮 मेरी प्रोफाइल' },
-      { key: 'guide', value: '📖 गाइड' },
-      { key: 'cashback', value: '💰 कैशबैक' },
-      { key: 'settings', value: '⚙️ सेटिंग्स' },
-      { key: 'help', value: '🆘 सहायता' },
-      { key: 'language_selector', value: '🌐 भाषा / Language' },
-      { key: 'select_language', value: 'अपनी पसंदीदा भाषा चुनें:' },
-      { key: 'language_changed', value: 'भाषा हिंदी में बदल गई! 🇮🇳' },
-      { key: 'electronics', value: '📱 इलेक्ट्रॉनिक्स' },
-      { key: 'fashion', value: '👗 फैशन' },
-      { key: 'beauty', value: '💄 ब्यूटी' },
-      { key: 'food', value: '🍔 खाना' },
-      { key: 'stores', value: '🏪 स्टोर्स' },
-      { key: 'hot_deals', value: '🔥 हॉट डील्स' },
-      { key: 'ai_recommendations', value: '🤖 AI सिफारिशें' },
-      { key: 'voice_processing', value: '🎤 आपका वॉयस मैसेज प्रोसेस कर रहे हैं...' },
-      { key: 'photo_processing', value: '📸 आपकी प्रोडक्ट फोटो का विश्लेषण कर रहे हैं...' },
-      { key: 'deals_found', value: '🔍 ये शानदार डील्स मिलीं:' },
-      { key: 'best_deal', value: '💰 बेस्ट डील:' },
-      { key: 'cashback_earned', value: 'कैशबैक मिला:' },
-      { key: 'xp_awarded', value: '+{amount} XP {action} के लिए!' },
-      { key: 'level_up', value: '🎉 लेवल अप! लेवल {oldLevel} → लेवल {newLevel}' },
-      { key: 'popular_stores', value: '🏪 लोकप्रिय भारतीय स्टोर्स' },
-      { key: 'ecommerce_giants', value: '🛍️ ई-कॉमर्स दिग्गज:' },
-      { key: 'beauty_personal_care', value: '💄 ब्यूटी और पर्सनल केयर:' },
-      { key: 'department_stores', value: '🏬 डिपार्टमेंट स्टोर्स:' },
-      { key: 'food_grocery', value: '🍔 खाना और किराना:' },
-      { key: 'pro_tip', value: '💡 प्रो टिप:' },
-      { key: 'voice_photo_search', value: '🎤 वॉयस मैसेज भेजें या 📸 फोटो भेजें व्यक्तिगत स्टोर सिफारिशों के लिए!' }
-    ];
-
-    hiTranslations.forEach(t => {
-      hindiTranslations.set(t.key, {
-        key: t.key,
-        language: 'hi',
-        value: t.value
-      });
-    });
-
-    this.translations.set('hi', hindiTranslations);
-  }
-
-  // Public API Methods
-  async getSupportedLanguages(): Promise<Language[]> {
-    return Array.from(this.languages.values()).filter(lang => lang.isActive);
-  }
-
-  async getUserLanguage(userId: string): Promise<string> {
-    const preference = this.userPreferences.get(userId);
-    return preference?.languageCode || this.defaultLanguage;
-  }
-
-  async setUserLanguage(userId: string, languageCode: string, autoDetected: boolean = false): Promise<boolean> {
-    if (!this.languages.has(languageCode)) {
-      return false;
-    }
-
-    const preference: UserLanguagePreference = {
-      userId,
-      languageCode,
-      setAt: new Date(),
-      autoDetected
-    };
-
-    this.userPreferences.set(userId, preference);
-    return true;
-  }
-
-  async translate(key: string, languageCode?: string, params?: Record<string, string>): Promise<string> {
-    const lang = languageCode || this.defaultLanguage;
-    const langTranslations = this.translations.get(lang);
-    
-    if (!langTranslations) {
-      // Fallback to default language
-      const defaultTranslations = this.translations.get(this.defaultLanguage);
-      const translation = defaultTranslations?.get(key);
-      return this.interpolate(translation?.value || key, params);
-    }
-
-    const translation = langTranslations.get(key);
-    if (!translation) {
-      // Fallback to default language
-      const defaultTranslations = this.translations.get(this.defaultLanguage);
-      const defaultTranslation = defaultTranslations?.get(key);
-      return this.interpolate(defaultTranslation?.value || key, params);
-    }
-
-    return this.interpolate(translation.value, params);
-  }
-
-  async translateForUser(userId: string, key: string, params?: Record<string, string>): Promise<string> {
-    const userLang = await this.getUserLanguage(userId);
-    return this.translate(key, userLang, params);
-  }
-
-  async getLanguageKeyboard(userId: string): Promise<any> {
-    const currentLang = await this.getUserLanguage(userId);
-    const languages = await this.getSupportedLanguages();
-
-    const keyboard = {
-      inline_keyboard: []
-    };
-
-    // Create rows of 2 languages each
-    for (let i = 0; i < languages.length; i += 2) {
-      const row = [];
-      
-      for (let j = i; j < Math.min(i + 2, languages.length); j++) {
-        const lang = languages[j];
-        const isSelected = lang.code === currentLang;
-        
-        row.push({
-          text: `${lang.flag} ${lang.nativeName}${isSelected ? ' ✓' : ''}`,
-          callback_data: `lang_${lang.code}`
-        });
-      }
-      
-      keyboard.inline_keyboard.push(row);
-    }
-
-    // Add back button
-    keyboard.inline_keyboard.push([
+        emoji: '🌺',
+        isActive: true,
+        region: 'Karnataka'
+      },
       {
-        text: await this.translateForUser(userId, 'back', {}),
-        callback_data: 'back_to_main'
+        code: 'ml',
+        name: 'Malayalam',
+        nativeName: 'മലയാളം',
+        emoji: '🥥',
+        isActive: true,
+        region: 'Kerala'
+      },
+      {
+        code: 'mr',
+        name: 'Marathi',
+        nativeName: 'मराठी',
+        emoji: '🏔️',
+        isActive: true,
+        region: 'Maharashtra'
       }
-    ]);
+    ];
 
-    return keyboard;
+    languages.forEach(lang => this.languages.set(lang.code, lang));
   }
 
-  async detectLanguageFromText(text: string): Promise<string> {
+  private initializeTranslations(): void {
+    // Common UI translations
+    const commonTranslations = {
+      // Welcome messages
+      'welcome.title': {
+        en: 'Welcome to Zabardoo Enhanced Bot',
+        hi: 'ज़बरदू एन्हांस्ड बॉट में आपका स्वागत है',
+        bn: 'জাবারদু এনহান্সড বটে স্বাগতম',
+        te: 'జబర్దూ ఎన్హాన్స్డ్ బాట్‌కు స్వాగతం',
+        ta: 'ஜபர்தூ மேம்படுத்தப்பட்ட போட்டிற்கு வரவேற்கிறோம்',
+        gu: 'ઝબરદૂ એન્હાન્સ્ડ બોટમાં આપનું સ્વાગત છે',
+        kn: 'ಜಬರ್ದೂ ವರ್ಧಿತ ಬಾಟ್‌ಗೆ ಸ್ವಾಗತ',
+        ml: 'സബർദൂ എൻഹാൻസ്ഡ് ബോട്ടിലേക്ക് സ്വാഗതം',
+        mr: 'झबरदू एन्हान्स्ड बॉटमध्ये आपले स्वागत आहे'
+      },
+      
+      // Button labels
+      'button.find_deals': {
+        en: '🔍 Find Deals',
+        hi: '🔍 डील खोजें',
+        bn: '🔍 ডিল খুঁজুন',
+        te: '🔍 డీల్స్ కనుగొనండి',
+        ta: '🔍 ஒப்பந்தங்களைக் கண்டறியவும்',
+        gu: '🔍 ડીલ્સ શોધો',
+        kn: '🔍 ಡೀಲ್‌ಗಳನ್ನು ಹುಡುಕಿ',
+        ml: '🔍 ഡീലുകൾ കണ്ടെത്തുക',
+        mr: '🔍 डील शोधा'
+      },
+
+      'button.my_profile': {
+        en: '🎮 My Profile',
+        hi: '🎮 मेरी प्रोफाइल',
+        bn: '🎮 আমার প্রোফাইল',
+        te: '🎮 నా ప్రొఫైల్',
+        ta: '🎮 எனது சுயவிவரம்',
+        gu: '🎮 મારી પ્રોફાઇલ',
+        kn: '🎮 ನನ್ನ ಪ್ರೊಫೈಲ್',
+        ml: '🎮 എന്റെ പ്രൊഫൈൽ',
+        mr: '🎮 माझे प्रोफाइल'
+      },
+
+      'button.cashback': {
+        en: '💰 Cashback',
+        hi: '💰 कैशबैक',
+        bn: '💰 ক্যাশব্যাক',
+        te: '💰 క్యాష్‌బ్యాక్',
+        ta: '💰 பணத்தைத் திரும்பப் பெறுதல்',
+        gu: '💰 કેશબેક',
+        kn: '💰 ಕ್ಯಾಶ್‌ಬ್ಯಾಕ್',
+        ml: '💰 ക്യാഷ്ബാക്ക്',
+        mr: '💰 कॅशबॅक'
+      },
+
+      'button.ask_zabardoo': {
+        en: '🧠 Ask Zabardoo',
+        hi: '🧠 ज़बरदू से पूछें',
+        bn: '🧠 জাবারদুকে জিজ্ঞাসা করুন',
+        te: '🧠 జబర్దూని అడగండి',
+        ta: '🧠 ஜபர்தூவிடம் கேளுங்கள்',
+        gu: '🧠 ઝબરદૂને પૂછો',
+        kn: '🧠 ಜಬರ್ದೂನನ್ನು ಕೇಳಿ',
+        ml: '🧠 സബർദൂവിനോട് ചോദിക്കുക',
+        mr: '🧠 झबरदूला विचारा'
+      },
+
+      'button.random_deal': {
+        en: '🎲 Random Deal',
+        hi: '🎲 रैंडम डील',
+        bn: '🎲 র্যান্ডম ডিল',
+        te: '🎲 రాండమ్ డీల్',
+        ta: '🎲 சீரற்ற ஒப்பந்தம்',
+        gu: '🎲 રેન્ડમ ડીલ',
+        kn: '🎲 ರ್ಯಾಂಡಮ್ ಡೀಲ್',
+        ml: '🎲 റാൻഡം ഡീൽ',
+        mr: '🎲 रँडम डील'
+      },
+
+      'button.language': {
+        en: '🌐 Language',
+        hi: '🌐 भाषा',
+        bn: '🌐 ভাষা',
+        te: '🌐 భాష',
+        ta: '🌐 மொழி',
+        gu: '🌐 ભાષા',
+        kn: '🌐 ಭಾಷೆ',
+        ml: '🌐 ഭാഷ',
+        mr: '🌐 भाषा'
+      },
+
+      // Messages
+      'message.ai_assistant': {
+        en: "I'm your personal shopping AI! I can help you find deals, compare prices, and save money.",
+        hi: 'मैं आपका व्यक्तिगत शॉपिंग AI हूं! मैं आपको डील खोजने, कीमतों की तुलना करने और पैसे बचाने में मदद कर सकता हूं।',
+        bn: 'আমি আপনার ব্যক্তিগত শপিং AI! আমি আপনাকে ডিল খুঁজে পেতে, দাম তুলনা করতে এবং অর্থ সাশ্রয় করতে সাহায্য করতে পারি।',
+        te: 'నేను మీ వ్యక్తిగత షాపింగ్ AI! నేను మీకు డీల్స్ కనుగొనడంలో, ధరలను పోల్చడంలో మరియు డబ్బు ఆదా చేయడంలో సహాయపడగలను.',
+        ta: 'நான் உங்கள் தனிப்பட்ட ஷாப்பிங் AI! நான் உங்களுக்கு ஒப்பந்தங்களைக் கண்டறிய, விலைகளை ஒப்பிட்டு, பணத்தை மிச்சப்படுத்த உதவ முடியும்.',
+        gu: 'હું તમારો વ્યક્તિગત શોપિંગ AI છું! હું તમને ડીલ્સ શોધવામાં, કિંમતોની તુલના કરવામાં અને પૈસા બચાવવામાં મદદ કરી શકું છું.',
+        kn: 'ನಾನು ನಿಮ್ಮ ವೈಯಕ್ತಿಕ ಶಾಪಿಂಗ್ AI! ನಾನು ನಿಮಗೆ ಡೀಲ್‌ಗಳನ್ನು ಹುಡುಕಲು, ಬೆಲೆಗಳನ್ನು ಹೋಲಿಸಲು ಮತ್ತು ಹಣವನ್ನು ಉಳಿಸಲು ಸಹಾಯ ಮಾಡಬಹುದು.',
+        ml: 'ഞാൻ നിങ്ങളുടെ വ്യക്തിഗത ഷോപ്പിംഗ് AI ആണ്! ഡീലുകൾ കണ്ടെത്താനും വിലകൾ താരതമ്യം ചെയ്യാനും പണം ലാഭിക്കാനും എനിക്ക് നിങ്ങളെ സഹായിക്കാൻ കഴിയും.',
+        mr: 'मी तुमचा वैयक्तिक शॉपिंग AI आहे! मी तुम्हाला डील शोधण्यात, किंमतींची तुलना करण्यात आणि पैसे वाचवण्यात मदत करू शकतो.'
+      },
+
+      // Festival greetings
+      'festival.diwali': {
+        en: '🪔 Happy Diwali! Special festival deals await you!',
+        hi: '🪔 दिवाली की शुभकामनाएं! विशेष त्योहारी डील आपका इंतजार कर रही हैं!',
+        bn: '🪔 শুভ দীপাবলী! বিশেষ উৎসবের ডিল আপনার জন্য অপেক্ষা করছে!',
+        te: '🪔 దీపావళి శుభాకాంక్షలు! ప్రత్యేక పండుగ డీల్స్ మిమ్మల్ని ఎదురుచూస్తున్నాయి!',
+        ta: '🪔 தீபாவளி வாழ்த்துக்கள்! சிறப்பு பண்டிகை ஒப்பந்தங்கள் உங்களுக்காக காத்திருக்கின்றன!',
+        gu: '🪔 દિવાળીની શુભેચ્છાઓ! ખાસ તહેવારી ડીલ્સ તમારી રાહ જોઈ રહી છે!',
+        kn: '🪔 ದೀಪಾವಳಿ ಶುಭಾಶಯಗಳು! ವಿಶೇಷ ಹಬ್ಬದ ಡೀಲ್‌ಗಳು ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ!',
+        ml: '🪔 ദീപാവലി ആശംസകൾ! പ്രത്യേക ഉത്സവ ഡീലുകൾ നിങ്ങൾക്കായി കാത്തിരിക്കുന്നു!',
+        mr: '🪔 दिवाळीच्या शुभेच्छा! विशेष सणाच्या डील तुमची वाट पाहत आहेत!'
+      }
+    };
+
+    // Initialize translation maps
+    Object.entries(commonTranslations).forEach(([key, translations]) => {
+      Object.entries(translations).forEach(([lang, value]) => {
+        if (!this.translations.has(lang)) {
+          this.translations.set(lang, new Map());
+        }
+        this.translations.get(lang)!.set(key, value);
+      });
+    });
+  }
+
+  setUserLanguage(userId: string, languageCode: string): boolean {
+    if (this.languages.has(languageCode)) {
+      this.userLanguages.set(userId, languageCode);
+      this.emit('languageChanged', { userId, languageCode });
+      logger.info(`Language set to ${languageCode} for user ${userId}`);
+      return true;
+    }
+    return false;
+  }
+
+  getUserLanguage(userId: string): string {
+    return this.userLanguages.get(userId) || 'en';
+  }
+
+  detectLanguage(text: string): string {
     // Simple language detection based on character sets
-    // In production, use a proper language detection library
-    
     const hindiPattern = /[\u0900-\u097F]/;
     const bengaliPattern = /[\u0980-\u09FF]/;
     const teluguPattern = /[\u0C00-\u0C7F]/;
     const tamilPattern = /[\u0B80-\u0BFF]/;
-    const marathiPattern = /[\u0900-\u097F]/; // Similar to Hindi
     const gujaratiPattern = /[\u0A80-\u0AFF]/;
     const kannadaPattern = /[\u0C80-\u0CFF]/;
+    const malayalamPattern = /[\u0D00-\u0D7F]/;
+    const marathiPattern = /[\u0900-\u097F]/; // Same as Hindi, would need more sophisticated detection
 
     if (hindiPattern.test(text)) return 'hi';
     if (bengaliPattern.test(text)) return 'bn';
@@ -325,154 +266,114 @@ export class LanguageService extends BaseService {
     if (tamilPattern.test(text)) return 'ta';
     if (gujaratiPattern.test(text)) return 'gu';
     if (kannadaPattern.test(text)) return 'kn';
+    if (malayalamPattern.test(text)) return 'ml';
+    if (marathiPattern.test(text)) return 'mr';
 
     return 'en'; // Default to English
   }
 
-  async autoDetectAndSetLanguage(userId: string, text: string): Promise<string> {
-    const detectedLang = await this.detectLanguageFromText(text);
-    const currentLang = await this.getUserLanguage(userId);
-
-    if (detectedLang !== currentLang && detectedLang !== 'en') {
-      await this.setUserLanguage(userId, detectedLang, true);
-      return detectedLang;
-    }
-
-    return currentLang;
-  }
-
-  // Utility methods
-  private interpolate(text: string, params?: Record<string, string>): string {
-    if (!params) return text;
-
-    return text.replace(/\{(\w+)\}/g, (match, key) => {
-      return params[key] || match;
-    });
-  }
-
-  async addTranslation(key: string, languageCode: string, value: string, context?: string): Promise<void> {
-    let langTranslations = this.translations.get(languageCode);
+  translate(key: string, userId?: string, fallback?: string): string {
+    const userLang = userId ? this.getUserLanguage(userId) : 'en';
+    const langTranslations = this.translations.get(userLang);
     
-    if (!langTranslations) {
-      langTranslations = new Map();
-      this.translations.set(languageCode, langTranslations);
+    if (langTranslations && langTranslations.has(key)) {
+      return langTranslations.get(key)!;
     }
 
-    langTranslations.set(key, {
-      key,
-      language: languageCode,
-      value,
-      context
-    });
+    // Fallback to English
+    const englishTranslations = this.translations.get('en');
+    if (englishTranslations && englishTranslations.has(key)) {
+      return englishTranslations.get(key)!;
+    }
+
+    return fallback || key;
   }
 
-  async getTranslationStats(): Promise<{
-    totalKeys: number;
-    languageStats: Record<string, { translated: number; missing: number; percentage: number }>;
-  }> {
-    const baseTranslations = this.translations.get(this.defaultLanguage);
-    const totalKeys = baseTranslations?.size || 0;
+  getAvailableLanguages(): Language[] {
+    return Array.from(this.languages.values()).filter(lang => lang.isActive);
+  }
 
-    const languageStats: Record<string, { translated: number; missing: number; percentage: number }> = {};
+  getLanguageInfo(code: string): Language | undefined {
+    return this.languages.get(code);
+  }
 
-    for (const [langCode, langTranslations] of this.translations.entries()) {
-      const translated = langTranslations.size;
-      const missing = totalKeys - translated;
-      const percentage = totalKeys > 0 ? Math.round((translated / totalKeys) * 100) : 0;
+  formatCurrency(amount: number, userId?: string): string {
+    const userLang = userId ? this.getUserLanguage(userId) : 'en';
+    
+    // Indian Rupee formatting
+    const formatted = new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
 
-      languageStats[langCode] = {
-        translated,
-        missing,
-        percentage
-      };
+    return formatted;
+  }
+
+  formatDate(date: Date, userId?: string): string {
+    const userLang = userId ? this.getUserLanguage(userId) : 'en';
+    
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    };
+
+    return new Intl.DateTimeFormat(userLang === 'en' ? 'en-IN' : userLang, options).format(date);
+  }
+
+  getFestivalGreeting(userId?: string): string | null {
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+
+    // Check for major Indian festivals (simplified)
+    if ((month === 10 || month === 11) && day >= 20 && day <= 25) {
+      // Diwali period (approximate)
+      return this.translate('festival.diwali', userId);
     }
+
+    return null;
+  }
+
+  getRegionalPreferences(userId?: string): any {
+    const userLang = userId ? this.getUserLanguage(userId) : 'en';
+    const language = this.languages.get(userLang);
+    
+    if (!language) return null;
+
+    // Return regional preferences based on language
+    const regionalData = {
+      hi: { region: 'North India', popularStores: ['Flipkart', 'Amazon', 'Myntra'], currency: 'INR' },
+      bn: { region: 'West Bengal', popularStores: ['Flipkart', 'Amazon', 'Nykaa'], currency: 'INR' },
+      te: { region: 'South India', popularStores: ['Amazon', 'Flipkart', 'BigBasket'], currency: 'INR' },
+      ta: { region: 'Tamil Nadu', popularStores: ['Amazon', 'Flipkart', 'Saravana Stores'], currency: 'INR' },
+      gu: { region: 'Gujarat', popularStores: ['Reliance Digital', 'Flipkart', 'Amazon'], currency: 'INR' },
+      kn: { region: 'Karnataka', popularStores: ['Amazon', 'Flipkart', 'BigBasket'], currency: 'INR' },
+      ml: { region: 'Kerala', popularStores: ['Amazon', 'Flipkart', 'Lulu Mall'], currency: 'INR' },
+      mr: { region: 'Maharashtra', popularStores: ['Flipkart', 'Amazon', 'BigBazaar'], currency: 'INR' }
+    };
+
+    return regionalData[userLang as keyof typeof regionalData] || regionalData.hi;
+  }
+
+  getStats(): any {
+    const totalLanguages = this.languages.size;
+    const activeLanguages = Array.from(this.languages.values()).filter(lang => lang.isActive).length;
+    const totalUsers = this.userLanguages.size;
+    
+    const languageDistribution = new Map<string, number>();
+    Array.from(this.userLanguages.values()).forEach(lang => {
+      languageDistribution.set(lang, (languageDistribution.get(lang) || 0) + 1);
+    });
 
     return {
-      totalKeys,
-      languageStats
+      totalLanguages,
+      activeLanguages,
+      totalUsers,
+      languageDistribution: Object.fromEntries(languageDistribution),
+      totalTranslations: Array.from(this.translations.values()).reduce((sum, langMap) => sum + langMap.size, 0)
     };
-  }
-
-  async exportTranslations(languageCode?: string): Promise<Record<string, any>> {
-    if (languageCode) {
-      const langTranslations = this.translations.get(languageCode);
-      if (!langTranslations) return {};
-
-      const result: Record<string, string> = {};
-      for (const [key, translation] of langTranslations.entries()) {
-        result[key] = translation.value;
-      }
-      return result;
-    }
-
-    // Export all languages
-    const result: Record<string, Record<string, string>> = {};
-    
-    for (const [langCode, langTranslations] of this.translations.entries()) {
-      result[langCode] = {};
-      for (const [key, translation] of langTranslations.entries()) {
-        result[langCode][key] = translation.value;
-      }
-    }
-
-    return result;
-  }
-
-  async importTranslations(data: Record<string, Record<string, string>>): Promise<void> {
-    for (const [langCode, translations] of Object.entries(data)) {
-      for (const [key, value] of Object.entries(translations)) {
-        await this.addTranslation(key, langCode, value);
-      }
-    }
-  }
-
-  // Regional and cultural adaptations
-  async getRegionalContent(userId: string, contentType: 'greetings' | 'festivals' | 'currency' | 'dateFormat'): Promise<any> {
-    const userLang = await this.getUserLanguage(userId);
-    
-    const regionalContent = {
-      greetings: {
-        en: ['Hello', 'Hi', 'Good morning', 'Good evening'],
-        hi: ['नमस्ते', 'नमस्कार', 'सुप्रभात', 'शुभ संध्या'],
-        bn: ['নমস্কার', 'হ্যালো', 'সুপ্রভাত', 'শুভ সন্ধ্যা'],
-        te: ['నమస్కారం', 'హలో', 'శుభోదయం', 'శుభ సాయంత్రం'],
-        ta: ['வணக்கம்', 'ஹலோ', 'காலை வணக்கம்', 'மாலை வணக்கம்'],
-        mr: ['नमस्कार', 'हॅलो', 'सुप्रभात', 'शुभ संध्या'],
-        gu: ['નમસ્તે', 'હેલો', 'સુપ્રભાત', 'શુભ સાંજ'],
-        kn: ['ನಮಸ್ಕಾರ', 'ಹಲೋ', 'ಶುಭೋದಯ', 'ಶುಭ ಸಂಜೆ']
-      },
-      festivals: {
-        en: ['Diwali', 'Holi', 'Eid', 'Christmas', 'Dussehra'],
-        hi: ['दिवाली', 'होली', 'ईद', 'क्रिसमस', 'दशहरा'],
-        bn: ['দীপাবলি', 'হোলি', 'ঈদ', 'ক্রিসমাস', 'দশহরা'],
-        te: ['దీపావళి', 'హోలీ', 'ఈద్', 'క్రిస్మస్', 'దశహరా'],
-        ta: ['தீபாவளி', 'ஹோலி', 'ஈத்', 'கிறிஸ்மஸ்', 'தசரா'],
-        mr: ['दिवाळी', 'होळी', 'ईद', 'ख्रिसमस', 'दसरा'],
-        gu: ['દિવાળી', 'હોળી', 'ઈદ', 'ક્રિસમસ', 'દશેરા'],
-        kn: ['ದೀಪಾವಳಿ', 'ಹೋಳಿ', 'ಈದ್', 'ಕ್ರಿಸ್ಮಸ್', 'ದಸರಾ']
-      },
-      currency: {
-        en: '₹',
-        hi: '₹',
-        bn: '₹',
-        te: '₹',
-        ta: '₹',
-        mr: '₹',
-        gu: '₹',
-        kn: '₹'
-      },
-      dateFormat: {
-        en: 'DD/MM/YYYY',
-        hi: 'DD/MM/YYYY',
-        bn: 'DD/MM/YYYY',
-        te: 'DD/MM/YYYY',
-        ta: 'DD/MM/YYYY',
-        mr: 'DD/MM/YYYY',
-        gu: 'DD/MM/YYYY',
-        kn: 'DD/MM/YYYY'
-      }
-    };
-
-    return regionalContent[contentType]?.[userLang] || regionalContent[contentType]?.['en'];
   }
 }

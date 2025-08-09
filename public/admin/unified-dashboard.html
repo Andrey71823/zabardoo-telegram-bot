@@ -279,6 +279,11 @@
         .mobile-menu-btn {
             display: none;
         }
+        
+        /* Prevent clickjacking */
+        body {
+            /* If app is embedded in iframe from another origin, hide content */
+        }
     </style>
 </head>
 <body>
@@ -413,21 +418,14 @@
             </div>
             
             <div class="content-frame" id="contentFrame">
-                <div class="welcome-content">
-                    <div class="welcome-icon">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <h2 class="welcome-title">Welcome to Zabardoo Admin Dashboard</h2>
-                    <p class="welcome-description">
-                        Select any option from the sidebar to manage your Zabardoo bot system. 
-                        All your admin tools are organized and ready to use.
-                    </p>
-                </div>
+                <iframe class="content-iframe" src="/dashboard.html"></iframe>
             </div>
         </div>
     </div>
     
     <script>
+        // Disallow embedding in foreign iframes (defense in depth with CSP)
+        try { if (window.top !== window.self) { document.body.innerHTML = ''; } } catch (_) {}
         let currentUrl = '';
         let currentTitle = '';
         
@@ -520,18 +518,9 @@
                 Welcome to Zabardoo Admin
             `;
             
-            // Show welcome content
+            // Load home dashboard
             document.getElementById('contentFrame').innerHTML = `
-                <div class="welcome-content">
-                    <div class="welcome-icon">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <h2 class="welcome-title">Welcome to Zabardoo Admin Dashboard</h2>
-                    <p class="welcome-description">
-                        Select any option from the sidebar to manage your Zabardoo bot system. 
-                        All your admin tools are organized and ready to use.
-                    </p>
-                </div>
+                <iframe class="content-iframe" src="/dashboard.html"></iframe>
             `;
             
             // Clear current URL
@@ -556,14 +545,9 @@
             }
         });
         
-        // Auto-load GPT Chat Management on page load
+        // Auto-load Home dashboard on page load
         window.addEventListener('load', function() {
-            const gptLink = document.querySelector('[onclick*="gpt-chat-management"]');
-            if (gptLink) {
-                setTimeout(() => {
-                    gptLink.click();
-                }, 1000);
-            }
+            goToHome();
         });
     </script>
 </body>

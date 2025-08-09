@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' https://telegram.org https://cdn.jsdelivr.net; connect-src 'self' https:; frame-ancestors 'self'">
     <title>Zabardoo - Deal Discovery</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -21,15 +22,12 @@
             overflow-x: hidden;
         }
         
-        .webapp-container {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
+        .webapp-container { min-height: 100vh; background:#f8fafc; }
         
         .header {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            padding: 15px 20px;
+            padding: 16px 24px; /* match content padding for perfect left alignment */
             position: sticky;
             top: 0;
             z-index: 100;
@@ -90,14 +88,16 @@
             justify-content: center;
         }
         
-        .filters-bar {
-            background: white;
-            padding: 15px 20px;
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-        }
+        /* Minimal layout with left filters and right grid */
+        .layout { display:grid; grid-template-columns: 280px 1fr; gap:24px; }
+        .filters-panel { background:#fff; border:1px solid #eef2f7; border-radius:12px; box-shadow:0 6px 16px rgba(0,0,0,0.05); padding:16px; height: fit-content; position: sticky; top: 80px; }
+        .filter-section { border-bottom:1px solid #f1f5f9; padding-bottom:12px; margin-bottom:12px; }
+        .filter-section:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+        .filter-title { font-weight:700; color:#111827; margin-bottom:8px; font-size:14px; }
+        .filter-list { display:flex; flex-direction:column; gap:8px; }
+        .filter-chip { background:#f8fafc; border:1px solid #eef2f7; border-radius:999px; padding:8px 12px; font-size:13px; color:#475569; cursor:pointer; transition:.2s; width:max-content; }
+        .filter-chip:hover { background:#eff6ff; border-color:#dbeafe; color:#2563eb; }
+        .filter-chip.active { background:#eff6ff; border-color:#dbeafe; color:#2563eb; font-weight:600; }
         
         .filter-chip {
             background: #f5f5f5;
@@ -115,25 +115,19 @@
             color: white;
         }
         
-        .content {
-            padding: 20px;
-        }
+        .content { padding:16px 16px 100px; max-width: 100%; margin:0 auto; }
+        /* Align left column with logo: same horizontal start as header padding */
+        .content .layout { padding-left: 0; }
         
-        .deals-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
+        .deals-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px; margin: 12px 0 20px; justify-content: start; align-items: stretch; }
+        @media (min-width: 1400px) { .deals-grid { grid-template-columns: repeat(4, minmax(260px, 1fr)); } }
+        .toolbar { display:flex; align-items:center; justify-content: space-between; gap:12px; margin-bottom:12px; }
+        .brand-chips { display:flex; gap:8px; flex-wrap:wrap; }
+        .sort-select { border:1px solid #eef2f7; border-radius:8px; padding:8px 12px; background:#fff; color:#374151; font-weight:600; }
+        .reset-btn { margin-top:12px; padding:8px 12px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; color:#374151; font-weight:600; cursor:pointer; width:100%; text-align:center; }
+        .reset-btn:hover { background:#f8fafc; }
         
-        .deal-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
+        .deal-card { background:#fff; border-radius:12px; padding:16px; box-shadow:0 6px 16px rgba(0,0,0,0.05); transition: all 0.2s ease; border:1px solid #eef2f7; width:100%; }
         
         .deal-card:hover {
             transform: translateY(-5px);
@@ -172,18 +166,7 @@
             transform: scale(1.2);
         }
         
-        .deal-image {
-            width: 100%;
-            height: 150px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3em;
-            color: #667eea;
-        }
+        .deal-image { width:100%; height:150px; background:#f8fafc; border:1px solid #eef2f7; border-radius:10px; margin-bottom:12px; display:flex; align-items:center; justify-content:center; font-size:36px; color:#3b82f6; }
         
         .deal-meta {
             display: flex;
@@ -192,23 +175,9 @@
             margin-bottom: 15px;
         }
         
-        .store-name {
-            background: #e3f2fd;
-            color: #1976d2;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
+        .store-name { background:#eef6ff; color:#2563eb; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; border:1px solid #dbeafe; }
         
-        .category-tag {
-            background: #f3e5f5;
-            color: #7b1fa2;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
+        .category-tag { background:#f8fafc; color:#6b7280; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; border:1px solid #eef2f7; }
         
         .price-section {
             margin-bottom: 15px;
@@ -237,15 +206,7 @@
             margin-left: 10px;
         }
         
-        .cashback-info {
-            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.85em;
-            text-align: center;
-            margin-bottom: 15px;
-        }
+        .cashback-info { background:#ecfdf5; color:#065f46; border:1px solid #d1fae5; padding:8px 12px; border-radius:8px; font-size:12px; text-align:center; margin-bottom:12px; }
         
         .deal-actions {
             display: flex;
@@ -361,6 +322,7 @@
             padding: 10px 0;
             z-index: 100;
         }
+        @media (min-width: 769px){ .bottom-nav{ display:none; } }
         
         .nav-item {
             flex: 1;
@@ -389,9 +351,11 @@
         /* Responsive */
         @media (max-width: 768px) {
             .deals-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr; /* mobile: full width single column */
+                justify-content: stretch;
             }
-            
+            .layout { grid-template-columns: 1fr; }
+            .filters-panel { position: static; }
             .header-content {
                 flex-direction: column;
                 gap: 15px;
@@ -419,24 +383,54 @@
             </div>
         </div>
 
-        <!-- Filters -->
-        <div class="filters-bar">
-            <div class="filter-chip active" onclick="setFilter('all')">🔥 All Deals</div>
-            <div class="filter-chip" onclick="setFilter('electronics')">📱 Electronics</div>
-            <div class="filter-chip" onclick="setFilter('fashion')">👗 Fashion</div>
-            <div class="filter-chip" onclick="setFilter('beauty')">💄 Beauty</div>
-            <div class="filter-chip" onclick="setFilter('food')">🍔 Food</div>
-            <div class="filter-chip" onclick="setFilter('favorites')">⭐ Favorites</div>
-        </div>
-
         <!-- Content -->
         <div class="content">
-            <div id="dealsContainer">
-                <!-- Loading state -->
-                <div class="loading" id="loadingState">
-                    <div class="loading-spinner"></div>
-                    <p>Loading amazing deals...</p>
-                </div>
+            <div class="layout">
+                <!-- Left filters -->
+                <aside class="filters-panel">
+                    <div class="filter-section">
+                        <div class="filter-title">Categories</div>
+                        <div class="filter-list">
+                            <div class="filter-chip active" onclick="setCategory('all')">All Deals</div>
+                            <div class="filter-chip" onclick="setCategory('electronics')">Electronics</div>
+                            <div class="filter-chip" onclick="setCategory('fashion')">Fashion</div>
+                            <div class="filter-chip" onclick="setCategory('beauty')">Beauty</div>
+                            <div class="filter-chip" onclick="setCategory('food')">Food</div>
+                            <div class="filter-chip" onclick="setCategory('favorites')">Favorites</div>
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <div class="filter-title">Price</div>
+                        <div class="filter-list">
+                            <div class="filter-chip" onclick="setPriceRange(0, 1000)">Under ₹1k</div>
+                            <div class="filter-chip" onclick="setPriceRange(1000, 5000)">₹1k–₹5k</div>
+                            <div class="filter-chip" onclick="setPriceRange(5000, 20000)">₹5k–₹20k</div>
+                            <div class="filter-chip" onclick="setPriceRange(20000, null)">Over ₹20k</div>
+                        </div>
+                        <button class="reset-btn" onclick="resetFilters()">Reset Filters</button>
+                    </div>
+                </aside>
+
+                <!-- Right grid -->
+                <section style="min-width:0;">
+                    <div class="toolbar">
+                        <div class="brand-chips" id="brandChips">
+                            <!-- brand chips populated dynamically per category -->
+                        </div>
+                        <select class="sort-select" onchange="setSort(this.value)">
+                            <option value="newest">Newest</option>
+                            <option value="price_asc">Price: Low to High</option>
+                            <option value="price_desc">Price: High to Low</option>
+                        </select>
+                    </div>
+                    <div id="dealsContainer">
+                    <!-- Loading state -->
+                    <div class="loading" id="loadingState">
+                        <div class="loading-spinner"></div>
+                        <p>Loading amazing deals...</p>
+                    </div>
+                    </div>
+                </section>
             </div>
         </div>
 
@@ -474,11 +468,14 @@
         tg.ready();
 
         // Global state
-        let currentFilter = 'all';
+        let currentFilter = 'all'; // category
         let currentTab = 'deals';
         let favorites = new Set();
         let cart = [];
         let deals = [];
+        let priceRange = { min: null, max: null };
+        let currentBrand = null;
+        let currentSort = 'newest';
 
         // Sample deals data
         const sampleDeals = [
@@ -554,6 +551,13 @@
                 icon: '🍔',
                 image: '🍔'
             }
+            ,
+            { id: 7, title: 'Nike Blazer Mid 77', store: 'Nike', category: 'fashion', originalPrice: 11000, currentPrice: 8500, discount: '23% OFF', cashback: '4%', icon: '👟', image: '👟' },
+            { id: 8, title: 'Boat Airdopes 141 Pro', store: 'Amazon India', category: 'electronics', originalPrice: 2999, currentPrice: 1299, discount: '57% OFF', cashback: '6%', icon: '🎧', image: '🎧' },
+            { id: 9, title: 'Nykaa Matte Lipstick', store: 'Nykaa', category: 'beauty', originalPrice: 799, currentPrice: 499, discount: '38% OFF', cashback: '5%', icon: '💄', image: '💄' },
+            { id: 10, title: 'Decathlon Running Shoes', store: 'Decathlon', category: 'fashion', originalPrice: 4599, currentPrice: 2999, discount: '35% OFF', cashback: '3%', icon: '👟', image: '👟' },
+            { id: 11, title: 'ASUS Vivobook 15', store: 'Flipkart', category: 'electronics', originalPrice: 45000, currentPrice: 37999, discount: '16% OFF', cashback: '2%', icon: '💻', image: '💻' },
+            { id: 12, title: 'Swiggy Super Combo', store: 'Swiggy', category: 'food', originalPrice: 799, currentPrice: 399, discount: '50% OFF', cashback: '8%', icon: '🍔', image: '🍔' }
         ];
 
         // Initialize app
@@ -576,13 +580,20 @@
 
         // Get filtered deals
         function getFilteredDeals() {
-            if (currentFilter === 'all') {
-                return deals;
-            } else if (currentFilter === 'favorites') {
-                return deals.filter(deal => favorites.has(deal.id));
-            } else {
-                return deals.filter(deal => deal.category === currentFilter);
+            let list = deals;
+            // category
+            if (currentFilter !== 'all') {
+                list = currentFilter === 'favorites' ? list.filter(d => favorites.has(d.id)) : list.filter(d => d.category === currentFilter);
             }
+            // brand
+            if (currentBrand) list = list.filter(d => (d.title + ' ' + d.store).toLowerCase().includes(currentBrand));
+            // price
+            if (priceRange.min !== null) list = list.filter(d => d.currentPrice >= priceRange.min);
+            if (priceRange.max !== null) list = list.filter(d => d.currentPrice <= priceRange.max);
+            // sort
+            if (currentSort === 'price_asc') list = list.slice().sort((a,b)=>a.currentPrice-b.currentPrice);
+            if (currentSort === 'price_desc') list = list.slice().sort((a,b)=>b.currentPrice-a.currentPrice);
+            return list;
         }
 
         // Render deals
@@ -646,25 +657,73 @@
         }
 
         // Filter functions
-        function setFilter(filter) {
+        function setCategory(filter) {
             currentFilter = filter;
-            
-            // Update active filter chip
-            document.querySelectorAll('.filter-chip').forEach(chip => {
-                chip.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Re-render deals
+            // Update active state only inside left panel
+            const panel = event.target.closest('.filters-panel');
+            if (panel) {
+                panel.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+                event.target.classList.add('active');
+            }
+            // Update brand chips per category
+            updateBrandChipsForCategory(filter);
             renderDeals(getFilteredDeals());
-            
-            // Send data to Telegram
-            tg.sendData(JSON.stringify({
-                action: 'filter_changed',
-                filter: filter,
-                timestamp: new Date().toISOString()
-            }));
+            tg.sendData(JSON.stringify({ action: 'category_changed', filter, timestamp: new Date().toISOString() }));
         }
+
+        function setFilter(filter){ // keep backward compat for toolbar 'All Products'
+            setCategory(filter);
+        }
+
+        function setPriceRange(min, max) {
+            priceRange = { min: min === null ? null : Number(min), max: max === null ? null : Number(max) };
+            renderDeals(getFilteredDeals());
+        }
+
+        function setBrand(brand) {
+            currentBrand = brand;
+            renderDeals(getFilteredDeals());
+        }
+
+        function setSort(value) {
+            currentSort = value;
+            renderDeals(getFilteredDeals());
+        }
+
+        function resetFilters() {
+            // reset category to 'all' and brand to null, clear price range and sort to newest
+            currentFilter = 'all';
+            currentBrand = null;
+            priceRange = { min: null, max: null };
+            currentSort = 'newest';
+
+            // reset UI states
+            document.querySelectorAll('.filters-panel .filter-chip').forEach(chip => chip.classList.remove('active'));
+            const allDealsChip = Array.from(document.querySelectorAll('.filters-panel .filter-chip')).find(c => c.textContent.trim().toLowerCase().includes('all deals'));
+            if (allDealsChip) allDealsChip.classList.add('active');
+            const sortEl = document.querySelector('.sort-select');
+            if (sortEl) sortEl.value = 'newest';
+            updateBrandChipsForCategory('all');
+            renderDeals(getFilteredDeals());
+        }
+
+        function updateBrandChipsForCategory(category) {
+            const chips = document.getElementById('brandChips');
+            if (!chips) return;
+            let brands = [];
+            switch(category) {
+                case 'electronics': brands = ['Samsung','Apple','Xiaomi','Boat','ASUS']; break;
+                case 'fashion': brands = ['Nike','Adidas','Puma','Reebok','Zara']; break;
+                case 'beauty': brands = ['Nykaa','Lakme','Maybelline']; break;
+                case 'food': brands = ['Swiggy','Zomato','Dominos']; break;
+                case 'favorites': brands = ['All']; break;
+                default: brands = ['All Products'];
+            }
+            chips.innerHTML = brands.map((b,i)=>`<div class="filter-chip" onclick="${(b==='All'||b==='All Products')?'currentBrand=null; renderDeals(getFilteredDeals())':`setBrand('${b.toLowerCase()}')`}">${b}</div>`).join('');
+        }
+
+        // Initialize default brand chips
+        document.addEventListener('DOMContentLoaded', ()=>updateBrandChipsForCategory('all'));
 
         // Tab functions
         function setTab(tab) {

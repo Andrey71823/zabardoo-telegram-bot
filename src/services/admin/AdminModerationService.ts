@@ -1,776 +1,484 @@
-import { BaseService } from '../base/BaseService';
+import { EventEmitter } from 'events';
+import { logger } from '../../config/logger';
 
-interface ModerationRule {
+export interface ModerationRule {
   id: string;
   name: string;
-  type: 'spam' | 'profanity' | 'url' | 'keyword' | 'rate_limit' | 'custom';
-  pattern?: string | RegExp;
-  keywords?: string[];
-  action: 'warn' | 'mute' | 'ban' | 'delete' | 'flag';
+  type: 'spam' | 'profanity' | 'scam' | 'inappropriate' | 'custom';
+  pattern: string | RegExp;
+  action: 'warn' | 'mute' | 'ban' | 'delete';
   severity: 'low' | 'medium' | 'high' | 'critical';
   isActive: boolean;
-  autoApply: boolean;
-  description: string;
   createdAt: Date;
-  updatedAt: Date;
 }
 
-interface ModerationAction {
+export interface ModerationAction {
   id: string;
   userId: string;
   moderatorId: string;
-  action: 'warn' | 'mute' | 'ban' | 'unban' | 'delete_message' | 'flag_user';
+  action: 'warn' | 'mute' | 'ban' | 'unban' | 'delete_message';
   reason: string;
-  duration?: number; // minutes
-  evidence?: {
-    messageId?: string;
-    messageContent?: string;
-    ruleViolated?: string;
-    screenshots?: string[];
-  };
+  duration?: number; // in minutes
+  messageId?: string;
   timestamp: Date;
-  isActive: boolean;
-  appealable: boolean;
+  isAutomatic: boolean;
 }
 
-interface UserViolation {
-  id: string;
+export interface UserTrustScore {
   userId: string;
-  ruleId: string;
-  violationType: string;
+  score: number; // 0-100
+  violations: number;
+  warnings: number;
+  lastViolation: Date;
+  trustLevel: 'untrusted' | 'low' | 'medium' | 'high' | 'verified';
+  joinDate: Date;
+}
+
+export interface ContentAnalysis {
+  messageId: string;
+  userId: string;
   content: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  autoDetected: boolean;
-  moderatorReviewed: boolean;
+  isSpam: boolean;
+  isProfane: boolean;
+  isScam: boolean;
+  toxicityScore: number; // 0-1
+  confidence: number; // 0-1
+  flaggedRules: string[];
   timestamp: Date;
-  resolved: boolean;
-  resolution?: string;
 }
 
-interface UserModerationStatus {
-  userId: string;
-  status: 'active' | 'warned' | 'muted' | 'banned' | 'flagged';
-  warningCount: number;
-  muteCount: number;
-  banCount: number;
-  totalViolations: number;
-  riskScore: number; // 0-100
-  lastViolation?: Date;
-  activePenalties: ModerationAction[];
-  trustLevel: 'new' | 'trusted' | 'verified' | 'suspicious' | 'blacklisted';
-}
-
-interface ModerationStats {
-  totalActions: number;
-  actionsByType: Record<string, number>;
-  violationsByRule: Record<string, number>;
-  autoDetectionRate: number;
-  appealRate: number;
-  falsePositiveRate: number;
-  averageResponseTime: number;
-  activeUsers: number;
-  bannedUsers: number;
-  flaggedUsers: number;
-}
-
-interface AdminUser {
-  id: string;
-  userId: string;
-  role: 'super_admin' | 'admin' | 'moderator' | 'support';
-  permissions: string[];
-  isActive: boolean;
-  lastActive: Date;
-  actionsPerformed: number;
-  createdAt: Date;
-}
-
-export class AdminModerationService extends BaseService {
+export class AdminModerationService extends EventEmitter {
   private moderationRules: Map<string, ModerationRule> = new Map();
+  private userTrustScores: Map<string, UserTrustScore> = new Map();
   private moderationActions: Map<string, ModerationAction> = new Map();
-  private userViolations: Map<string, UserViolation[]> = new Map();
-  private userStatuses: Map<string, UserModerationStatus> = new Map();
-  private adminUsers: Map<string, AdminUser> = new Map();
-  private bannedWords: Set<string> = new Set();
-  private whitelistedUsers: Set<string> = new Set();
+  private bannedUsers: Set<string> = new Set();
+  private mutedUsers: Map<string, Date> = new Map(); // userId -> unmute time
 
   constructor() {
     super();
     this.initializeDefaultRules();
-    this.initializeBannedWords();
+    this.startCleanupTimer();
+    logger.info('AdminModerationService initialized with automatic moderation');
   }
 
   private initializeDefaultRules(): void {
-    const defaultRules: ModerationRule[] = [
+    const defaultRules: Omit<ModerationRule, 'id' | 'createdAt'>[] = [
+      // Spam detection
       {
-        id: 'spam_detection',
-        name: 'Spam Detection',
+        name: 'Repeated Messages',
         type: 'spam',
-        pattern: /(.)\1{4,}|(.{1,10})\2{3,}/gi, // Repeated characters or patterns
+        pattern: /(.{10,})\1{2,}/gi, // Repeated text patterns
         action: 'warn',
         severity: 'medium',
-        isActive: true,
-        autoApply: true,
-        description: 'Detects spam messages with repeated characters or patterns',
-        createdAt: new Date(),
-        updatedAt: new Date()
+        isActive: true
       },
       {
-        id: 'profanity_filter',
-        name: 'Profanity Filter',
-        type: 'profanity',
-        keywords: ['fuck', 'shit', 'bitch', 'asshole', 'damn', 'bastard', 'chutiya', 'madarchod', 'bhenchod'],
+        name: 'Excessive Caps',
+        type: 'spam',
+        pattern: /[A-Z]{10,}/g, // 10+ consecutive caps
+        action: 'warn',
+        severity: 'low',
+        isActive: true
+      },
+      {
+        name: 'Multiple Links',
+        type: 'spam',
+        pattern: /(https?:\/\/[^\s]+.*){3,}/gi, // 3+ links in message
         action: 'delete',
         severity: 'high',
-        isActive: true,
-        autoApply: true,
-        description: 'Filters profanity and offensive language',
-        createdAt: new Date(),
-        updatedAt: new Date()
+        isActive: true
       },
+
+      // Profanity detection (English + Hindi)
       {
-        id: 'url_blocker',
-        name: 'Unauthorized URL Blocker',
-        type: 'url',
-        pattern: /https?:\/\/(?!(?:zabardoo\.com|telegram\.me|t\.me))[^\s]+/gi,
-        action: 'delete',
+        name: 'English Profanity',
+        type: 'profanity',
+        pattern: /\b(fuck|shit|damn|bitch|asshole|bastard|crap)\b/gi,
+        action: 'warn',
         severity: 'medium',
-        isActive: true,
-        autoApply: true,
-        description: 'Blocks unauthorized external URLs',
-        createdAt: new Date(),
-        updatedAt: new Date()
+        isActive: true
       },
       {
-        id: 'rate_limit',
-        name: 'Message Rate Limiting',
-        type: 'rate_limit',
-        action: 'mute',
-        severity: 'low',
-        isActive: true,
-        autoApply: true,
-        description: 'Prevents message flooding (max 10 messages per minute)',
-        createdAt: new Date(),
-        updatedAt: new Date()
+        name: 'Hindi Profanity',
+        type: 'profanity',
+        pattern: /\b(बकवास|गधा|बेवकूफ|मूर्ख|पागल)\b/gi,
+        action: 'warn',
+        severity: 'medium',
+        isActive: true
       },
+
+      // Scam detection
       {
-        id: 'scam_keywords',
-        name: 'Scam Keywords Detection',
-        type: 'keyword',
-        keywords: ['free money', 'get rich quick', 'guaranteed profit', 'investment opportunity', 'click here to win'],
-        action: 'flag',
+        name: 'Fake Offers',
+        type: 'scam',
+        pattern: /\b(100% free|guaranteed money|instant cash|click here to win|limited time offer)\b/gi,
+        action: 'ban',
         severity: 'critical',
-        isActive: true,
-        autoApply: false, // Requires manual review
-        description: 'Detects potential scam messages',
-        createdAt: new Date(),
-        updatedAt: new Date()
+        isActive: true
+      },
+      {
+        name: 'Phishing Attempts',
+        type: 'scam',
+        pattern: /\b(verify your account|click to claim|urgent action required|suspended account)\b/gi,
+        action: 'ban',
+        severity: 'critical',
+        isActive: true
+      },
+
+      // Inappropriate content
+      {
+        name: 'Personal Information',
+        type: 'inappropriate',
+        pattern: /\b(\d{4}\s?\d{4}\s?\d{4}\s?\d{4}|\d{10}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})\b/g,
+        action: 'delete',
+        severity: 'high',
+        isActive: true
       }
     ];
 
     defaultRules.forEach(rule => {
-      this.moderationRules.set(rule.id, rule);
+      const fullRule: ModerationRule = {
+        ...rule,
+        id: `rule_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        createdAt: new Date()
+      };
+      this.moderationRules.set(fullRule.id, fullRule);
     });
   }
 
-  private initializeBannedWords(): void {
-    const bannedWords = [
-      // English profanity
-      'fuck', 'shit', 'bitch', 'asshole', 'damn', 'bastard', 'cunt', 'whore',
-      // Hindi/Urdu profanity
-      'chutiya', 'madarchod', 'bhenchod', 'randi', 'harami', 'kamina', 'saala',
-      // Scam-related terms
-      'free money', 'get rich quick', 'guaranteed profit', 'investment scam',
-      // Spam indicators
-      'click here', 'limited time', 'act now', 'urgent'
-    ];
+  async analyzeContent(userId: string, messageId: string, content: string): Promise<ContentAnalysis> {
+    const analysis: ContentAnalysis = {
+      messageId,
+      userId,
+      content,
+      isSpam: false,
+      isProfane: false,
+      isScam: false,
+      toxicityScore: 0,
+      confidence: 0,
+      flaggedRules: [],
+      timestamp: new Date()
+    };
 
-    bannedWords.forEach(word => this.bannedWords.add(word.toLowerCase()));
-  }
-
-  // Content moderation methods
-  async moderateMessage(userId: string, messageContent: string, messageId: string, chatId: string): Promise<{
-    allowed: boolean;
-    action?: string;
-    reason?: string;
-    ruleViolated?: string;
-  }> {
-    // Check if user is whitelisted
-    if (this.whitelistedUsers.has(userId)) {
-      return { allowed: true };
-    }
-
-    // Check if user is banned
-    const userStatus = this.getUserModerationStatus(userId);
-    if (userStatus.isBanned) {
-      return {
-        allowed: false,
-        action: 'delete',
-        reason: 'User is banned',
-        ruleViolated: 'user_banned'
-      };
-    }
-
-    // Check if user is muted
-    if (userStatus.isMuted) {
-      return {
-        allowed: false,
-        action: 'delete',
-        reason: 'User is muted',
-        ruleViolated: 'user_muted'
-      };
-    }
-
-    // Check rate limiting
-    const rateLimitResult = await this.checkRateLimit(userId);
-    if (!rateLimitResult.allowed) {
-      await this.applyModerationAction({
-        userId,
-        action: 'mute',
-        reason: 'Rate limit exceeded',
-        duration: 5, // 5 minutes
-        ruleId: 'rate_limit'
-      });
-      return {
-        allowed: false,
-        action: 'mute',
-        reason: 'Too many messages sent',
-        ruleViolated: 'rate_limit'
-      };
-    }
-
-    // Check against moderation rules
+    // Check against all active rules
     for (const rule of this.moderationRules.values()) {
       if (!rule.isActive) continue;
 
-      const violation = this.checkRule(messageContent, rule);
-      if (violation.violated) {
-        // Record violation
-        await this.recordViolation({
-          userId,
-          ruleId: rule.id,
-          content: messageContent,
-          severity: rule.severity,
-          autoDetected: true
-        });
-
-        // Apply action if auto-apply is enabled
-        if (rule.autoApply) {
-          await this.applyModerationAction({
-            userId,
-            action: rule.action,
-            reason: `Violated rule: ${rule.name}`,
-            ruleId: rule.id,
-            evidence: {
-              messageId,
-              messageContent,
-              ruleViolated: rule.id
-            }
-          });
-
-          return {
-            allowed: false,
-            action: rule.action,
-            reason: violation.reason,
-            ruleViolated: rule.id
-          };
-        } else {
-          // Flag for manual review
-          await this.flagForReview(userId, messageContent, rule.id, messageId);
-          return {
-            allowed: true, // Allow but flag
-            action: 'flag',
-            reason: `Flagged for review: ${rule.name}`,
-            ruleViolated: rule.id
-          };
+      const pattern = typeof rule.pattern === 'string' ? new RegExp(rule.pattern, 'gi') : rule.pattern;
+      
+      if (pattern.test(content)) {
+        analysis.flaggedRules.push(rule.id);
+        
+        switch (rule.type) {
+          case 'spam':
+            analysis.isSpam = true;
+            break;
+          case 'profanity':
+            analysis.isProfane = true;
+            break;
+          case 'scam':
+            analysis.isScam = true;
+            break;
         }
+
+        // Calculate toxicity score based on severity
+        const severityScore = {
+          low: 0.2,
+          medium: 0.5,
+          high: 0.8,
+          critical: 1.0
+        };
+        
+        analysis.toxicityScore = Math.max(analysis.toxicityScore, severityScore[rule.severity]);
       }
     }
 
-    return { allowed: true };
-  }
+    // Calculate confidence based on number of rules triggered
+    analysis.confidence = Math.min(1.0, analysis.flaggedRules.length * 0.3);
 
-  private checkRule(content: string, rule: ModerationRule): { violated: boolean; reason?: string } {
-    const lowerContent = content.toLowerCase();
+    // Update user trust score
+    await this.updateUserTrustScore(userId, analysis);
 
-    switch (rule.type) {
-      case 'spam':
-        if (rule.pattern && rule.pattern instanceof RegExp) {
-          if (rule.pattern.test(content)) {
-            return { violated: true, reason: 'Spam pattern detected' };
-          }
-        }
-        break;
-
-      case 'profanity':
-        if (rule.keywords) {
-          for (const keyword of rule.keywords) {
-            if (lowerContent.includes(keyword.toLowerCase())) {
-              return { violated: true, reason: `Profanity detected: ${keyword}` };
-            }
-          }
-        }
-        break;
-
-      case 'url':
-        if (rule.pattern && rule.pattern instanceof RegExp) {
-          if (rule.pattern.test(content)) {
-            return { violated: true, reason: 'Unauthorized URL detected' };
-          }
-        }
-        break;
-
-      case 'keyword':
-        if (rule.keywords) {
-          for (const keyword of rule.keywords) {
-            if (lowerContent.includes(keyword.toLowerCase())) {
-              return { violated: true, reason: `Suspicious keyword detected: ${keyword}` };
-            }
-          }
-        }
-        break;
-
-      case 'custom':
-        if (rule.pattern) {
-          const pattern = typeof rule.pattern === 'string' ? new RegExp(rule.pattern, 'gi') : rule.pattern;
-          if (pattern.test(content)) {
-            return { violated: true, reason: 'Custom rule violation' };
-          }
-        }
-        break;
+    // Auto-moderate if necessary
+    if (analysis.flaggedRules.length > 0) {
+      await this.autoModerate(userId, messageId, analysis);
     }
 
-    return { violated: false };
+    return analysis;
   }
 
-  private async checkRateLimit(userId: string): Promise<{ allowed: boolean; resetTime?: Date }> {
-    const now = new Date();
-    const oneMinuteAgo = new Date(now.getTime() - 60000);
+  private async updateUserTrustScore(userId: string, analysis: ContentAnalysis): Promise<void> {
+    let userTrust = this.userTrustScores.get(userId);
     
-    // Get user's recent messages (this would typically come from a database)
-    const recentMessages = this.getUserRecentMessages(userId, oneMinuteAgo);
-    
-    if (recentMessages.length >= 10) { // Max 10 messages per minute
-      const resetTime = new Date(recentMessages[0].timestamp.getTime() + 60000);
-      return { allowed: false, resetTime };
+    if (!userTrust) {
+      userTrust = {
+        userId,
+        score: 100, // Start with perfect score
+        violations: 0,
+        warnings: 0,
+        lastViolation: new Date(),
+        trustLevel: 'medium',
+        joinDate: new Date()
+      };
+      this.userTrustScores.set(userId, userTrust);
     }
 
-    return { allowed: true };
+    // Decrease trust score based on violations
+    if (analysis.flaggedRules.length > 0) {
+      const penalty = analysis.toxicityScore * 20; // Max 20 points penalty
+      userTrust.score = Math.max(0, userTrust.score - penalty);
+      userTrust.violations++;
+      userTrust.lastViolation = new Date();
+    } else {
+      // Slowly increase trust score for good behavior
+      userTrust.score = Math.min(100, userTrust.score + 0.1);
+    }
+
+    // Update trust level
+    if (userTrust.score >= 90) {
+      userTrust.trustLevel = 'high';
+    } else if (userTrust.score >= 70) {
+      userTrust.trustLevel = 'medium';
+    } else if (userTrust.score >= 40) {
+      userTrust.trustLevel = 'low';
+    } else {
+      userTrust.trustLevel = 'untrusted';
+    }
   }
 
-  private getUserRecentMessages(userId: string, since: Date): Array<{ timestamp: Date }> {
-    // This would typically query a database
-    // For now, return empty array as placeholder
-    return [];
-  }
+  private async autoModerate(userId: string, messageId: string, analysis: ContentAnalysis): Promise<void> {
+    const userTrust = this.userTrustScores.get(userId);
+    const highestSeverityRule = analysis.flaggedRules
+      .map(ruleId => this.moderationRules.get(ruleId)!)
+      .sort((a, b) => {
+        const severityOrder = { low: 1, medium: 2, high: 3, critical: 4 };
+        return severityOrder[b.severity] - severityOrder[a.severity];
+      })[0];
 
-  // User management methods
-  private getUserModerationStatus(userId: string): UserModerationStatus & { isBanned: boolean; isMuted: boolean } {
-    const status = this.userStatuses.get(userId) || {
+    if (!highestSeverityRule) return;
+
+    let action = highestSeverityRule.action;
+    let duration: number | undefined;
+
+    // Adjust action based on user trust score
+    if (userTrust && userTrust.trustLevel === 'high' && action === 'ban') {
+      action = 'warn'; // Give trusted users benefit of doubt
+    } else if (userTrust && userTrust.trustLevel === 'untrusted' && action === 'warn') {
+      action = 'mute'; // Be stricter with untrusted users
+      duration = 60; // 1 hour mute
+    }
+
+    // Execute moderation action
+    await this.executeModerationAction({
       userId,
-      status: 'active',
-      warningCount: 0,
-      muteCount: 0,
-      banCount: 0,
-      totalViolations: 0,
-      riskScore: 0,
-      activePenalties: [],
-      trustLevel: 'new'
-    };
-
-    const now = new Date();
-    const activeBan = status.activePenalties.find(p => p.action === 'ban' && p.isActive);
-    const activeMute = status.activePenalties.find(p => p.action === 'mute' && p.isActive);
-
-    // Check if ban/mute has expired
-    const isBanned = activeBan ? (activeBan.duration ? 
-      (now.getTime() - activeBan.timestamp.getTime()) < (activeBan.duration * 60000) : true) : false;
-    
-    const isMuted = activeMute ? (activeMute.duration ? 
-      (now.getTime() - activeMute.timestamp.getTime()) < (activeMute.duration * 60000) : true) : false;
-
-    return { ...status, isBanned, isMuted };
+      action: action as ModerationAction['action'],
+      reason: `Automatic moderation: ${highestSeverityRule.name}`,
+      duration,
+      messageId,
+      isAutomatic: true,
+      moderatorId: 'system'
+    });
   }
 
-  async applyModerationAction(params: {
+  async executeModerationAction(params: {
     userId: string;
-    action: string;
+    action: ModerationAction['action'];
     reason: string;
     duration?: number;
-    ruleId?: string;
-    moderatorId?: string;
-    evidence?: any;
-  }): Promise<ModerationAction> {
-    const action: ModerationAction = {
-      id: this.generateActionId(),
+    messageId?: string;
+    isAutomatic: boolean;
+    moderatorId: string;
+  }): Promise<string> {
+    const actionId = `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    const moderationAction: ModerationAction = {
+      id: actionId,
       userId: params.userId,
-      moderatorId: params.moderatorId || 'system',
-      action: params.action as any,
+      moderatorId: params.moderatorId,
+      action: params.action,
       reason: params.reason,
       duration: params.duration,
+      messageId: params.messageId,
       timestamp: new Date(),
-      isActive: true,
-      appealable: params.action !== 'delete_message',
-      evidence: params.evidence
+      isAutomatic: params.isAutomatic
     };
 
-    this.moderationActions.set(action.id, action);
+    this.moderationActions.set(actionId, moderationAction);
 
-    // Update user status
-    const userStatus = this.getUserModerationStatus(params.userId);
-    userStatus.activePenalties.push(action);
-
+    // Execute the action
     switch (params.action) {
       case 'warn':
-        userStatus.warningCount++;
-        userStatus.status = 'warned';
+        await this.warnUser(params.userId, params.reason);
         break;
       case 'mute':
-        userStatus.muteCount++;
-        userStatus.status = 'muted';
+        await this.muteUser(params.userId, params.duration || 60);
         break;
       case 'ban':
-        userStatus.banCount++;
-        userStatus.status = 'banned';
+        await this.banUser(params.userId, params.reason);
         break;
-      case 'flag_user':
-        userStatus.status = 'flagged';
+      case 'unban':
+        await this.unbanUser(params.userId);
+        break;
+      case 'delete_message':
+        await this.deleteMessage(params.messageId!);
         break;
     }
 
-    // Update risk score
-    userStatus.riskScore = this.calculateRiskScore(userStatus);
-    userStatus.trustLevel = this.calculateTrustLevel(userStatus);
-
-    this.userStatuses.set(params.userId, userStatus);
-
-    return action;
-  }
-
-  private async recordViolation(params: {
-    userId: string;
-    ruleId: string;
-    content: string;
-    severity: string;
-    autoDetected: boolean;
-  }): Promise<UserViolation> {
-    const violation: UserViolation = {
-      id: this.generateViolationId(),
-      userId: params.userId,
-      ruleId: params.ruleId,
-      violationType: this.moderationRules.get(params.ruleId)?.type || 'unknown',
-      content: params.content,
-      severity: params.severity as any,
-      autoDetected: params.autoDetected,
-      moderatorReviewed: false,
-      timestamp: new Date(),
-      resolved: false
-    };
-
-    const userViolations = this.userViolations.get(params.userId) || [];
-    userViolations.push(violation);
-    this.userViolations.set(params.userId, userViolations);
-
-    // Update user status
-    const userStatus = this.getUserModerationStatus(params.userId);
-    userStatus.totalViolations++;
-    userStatus.lastViolation = new Date();
-    this.userStatuses.set(params.userId, userStatus);
-
-    return violation;
-  }
-
-  private async flagForReview(userId: string, content: string, ruleId: string, messageId: string): Promise<void> {
-    // This would typically create a review queue entry
-    console.log(`Flagged for review: User ${userId}, Rule ${ruleId}, Message ${messageId}`);
-  }
-
-  private calculateRiskScore(status: UserModerationStatus): number {
-    let score = 0;
-    
-    // Base score from violations
-    score += status.totalViolations * 10;
-    score += status.warningCount * 5;
-    score += status.muteCount * 15;
-    score += status.banCount * 30;
-
-    // Recent activity penalty
-    if (status.lastViolation) {
-      const daysSinceLastViolation = (Date.now() - status.lastViolation.getTime()) / (1000 * 60 * 60 * 24);
-      if (daysSinceLastViolation < 7) {
-        score += 20;
+    // Update user trust score
+    const userTrust = this.userTrustScores.get(params.userId);
+    if (userTrust) {
+      if (params.action === 'warn') {
+        userTrust.warnings++;
       }
     }
 
-    return Math.min(score, 100);
+    this.emit('moderationAction', moderationAction);
+    logger.info(`Moderation action: ${params.action} on user ${params.userId} by ${params.moderatorId}`);
+
+    return actionId;
   }
 
-  private calculateTrustLevel(status: UserModerationStatus): 'new' | 'trusted' | 'verified' | 'suspicious' | 'blacklisted' {
-    if (status.riskScore >= 80) return 'blacklisted';
-    if (status.riskScore >= 60) return 'suspicious';
-    if (status.totalViolations === 0 && status.warningCount === 0) return 'trusted';
-    if (status.banCount > 0) return 'suspicious';
-    return 'new';
+  private async warnUser(userId: string, reason: string): Promise<void> {
+    this.emit('userWarned', { userId, reason });
   }
 
-  // Admin management methods
-  async createAdmin(params: {
-    userId: string;
-    role: 'super_admin' | 'admin' | 'moderator' | 'support';
-    permissions: string[];
-  }): Promise<AdminUser> {
-    const admin: AdminUser = {
-      id: this.generateAdminId(),
-      userId: params.userId,
-      role: params.role,
-      permissions: params.permissions,
-      isActive: true,
-      lastActive: new Date(),
-      actionsPerformed: 0,
-      createdAt: new Date()
-    };
-
-    this.adminUsers.set(admin.id, admin);
-    return admin;
+  private async muteUser(userId: string, durationMinutes: number): Promise<void> {
+    const unmuteTime = new Date(Date.now() + durationMinutes * 60 * 1000);
+    this.mutedUsers.set(userId, unmuteTime);
+    this.emit('userMuted', { userId, duration: durationMinutes, unmuteTime });
   }
 
-  async getAdminPermissions(userId: string): Promise<string[]> {
-    const admin = Array.from(this.adminUsers.values()).find(a => a.userId === userId);
-    return admin?.permissions || [];
+  private async banUser(userId: string, reason: string): Promise<void> {
+    this.bannedUsers.add(userId);
+    this.emit('userBanned', { userId, reason });
   }
 
-  async hasPermission(userId: string, permission: string): Promise<boolean> {
-    const permissions = await this.getAdminPermissions(userId);
-    return permissions.includes(permission) || permissions.includes('*');
+  private async unbanUser(userId: string): Promise<void> {
+    this.bannedUsers.delete(userId);
+    this.emit('userUnbanned', { userId });
   }
 
-  // Rule management methods
-  async createModerationRule(rule: Omit<ModerationRule, 'id' | 'createdAt' | 'updatedAt'>): Promise<ModerationRule> {
-    const newRule: ModerationRule = {
-      id: this.generateRuleId(),
-      ...rule,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    this.moderationRules.set(newRule.id, newRule);
-    return newRule;
+  private async deleteMessage(messageId: string): Promise<void> {
+    this.emit('messageDeleted', { messageId });
   }
 
-  async updateModerationRule(ruleId: string, updates: Partial<ModerationRule>): Promise<ModerationRule | null> {
-    const rule = this.moderationRules.get(ruleId);
-    if (!rule) return null;
-
-    const updatedRule = {
-      ...rule,
-      ...updates,
-      updatedAt: new Date()
-    };
-
-    this.moderationRules.set(ruleId, updatedRule);
-    return updatedRule;
+  isUserBanned(userId: string): boolean {
+    return this.bannedUsers.has(userId);
   }
 
-  async deleteModerationRule(ruleId: string): Promise<boolean> {
-    return this.moderationRules.delete(ruleId);
-  }
-
-  async getModerationRules(): Promise<ModerationRule[]> {
-    return Array.from(this.moderationRules.values());
-  }
-
-  // Analytics and reporting methods
-  async getModerationStats(period: 'day' | 'week' | 'month' = 'day'): Promise<ModerationStats> {
-    const now = new Date();
-    const periodStart = new Date();
+  isUserMuted(userId: string): boolean {
+    const unmuteTime = this.mutedUsers.get(userId);
+    if (!unmuteTime) return false;
     
-    switch (period) {
-      case 'day':
-        periodStart.setDate(now.getDate() - 1);
-        break;
-      case 'week':
-        periodStart.setDate(now.getDate() - 7);
-        break;
-      case 'month':
-        periodStart.setMonth(now.getMonth() - 1);
-        break;
+    if (new Date() >= unmuteTime) {
+      this.mutedUsers.delete(userId);
+      return false;
     }
-
-    const actions = Array.from(this.moderationActions.values())
-      .filter(action => action.timestamp >= periodStart);
-
-    const violations = Array.from(this.userViolations.values())
-      .flat()
-      .filter(violation => violation.timestamp >= periodStart);
-
-    const actionsByType = actions.reduce((acc, action) => {
-      acc[action.action] = (acc[action.action] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    const violationsByRule = violations.reduce((acc, violation) => {
-      acc[violation.ruleId] = (acc[violation.ruleId] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    const autoDetected = violations.filter(v => v.autoDetected).length;
-    const autoDetectionRate = violations.length > 0 ? (autoDetected / violations.length) * 100 : 0;
-
-    const userStatuses = Array.from(this.userStatuses.values());
-    const bannedUsers = userStatuses.filter(s => s.status === 'banned').length;
-    const flaggedUsers = userStatuses.filter(s => s.status === 'flagged').length;
-
-    return {
-      totalActions: actions.length,
-      actionsByType,
-      violationsByRule,
-      autoDetectionRate,
-      appealRate: 0, // Would calculate from appeals data
-      falsePositiveRate: 0, // Would calculate from review data
-      averageResponseTime: 0, // Would calculate from response times
-      activeUsers: userStatuses.filter(s => s.status === 'active').length,
-      bannedUsers,
-      flaggedUsers
-    };
+    
+    return true;
   }
 
-  async getUserViolationHistory(userId: string): Promise<UserViolation[]> {
-    return this.userViolations.get(userId) || [];
+  getUserTrustScore(userId: string): UserTrustScore | null {
+    return this.userTrustScores.get(userId) || null;
   }
 
-  async getUserModerationHistory(userId: string): Promise<ModerationAction[]> {
+  getUserModerationHistory(userId: string): ModerationAction[] {
     return Array.from(this.moderationActions.values())
       .filter(action => action.userId === userId)
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
-  // Utility methods
-  async addToWhitelist(userId: string): Promise<void> {
-    this.whitelistedUsers.add(userId);
-  }
-
-  async removeFromWhitelist(userId: string): Promise<void> {
-    this.whitelistedUsers.delete(userId);
-  }
-
-  async isWhitelisted(userId: string): Promise<boolean> {
-    return this.whitelistedUsers.has(userId);
-  }
-
-  async unbanUser(userId: string, moderatorId: string): Promise<void> {
-    const userStatus = this.getUserModerationStatus(userId);
+  addModerationRule(rule: Omit<ModerationRule, 'id' | 'createdAt'>): string {
+    const ruleId = `rule_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const fullRule: ModerationRule = {
+      ...rule,
+      id: ruleId,
+      createdAt: new Date()
+    };
     
-    // Deactivate active ban
-    userStatus.activePenalties.forEach(penalty => {
-      if (penalty.action === 'ban' && penalty.isActive) {
-        penalty.isActive = false;
-      }
-    });
-
-    userStatus.status = 'active';
-    this.userStatuses.set(userId, userStatus);
-
-    // Record unban action
-    await this.applyModerationAction({
-      userId,
-      action: 'unban',
-      reason: 'Manual unban by moderator',
-      moderatorId
-    });
-  }
-
-  async unmuteUser(userId: string, moderatorId: string): Promise<void> {
-    const userStatus = this.getUserModerationStatus(userId);
+    this.moderationRules.set(ruleId, fullRule);
+    this.emit('ruleAdded', fullRule);
+    logger.info(`Added moderation rule: ${rule.name}`);
     
-    // Deactivate active mute
-    userStatus.activePenalties.forEach(penalty => {
-      if (penalty.action === 'mute' && penalty.isActive) {
-        penalty.isActive = false;
-      }
-    });
-
-    userStatus.status = 'active';
-    this.userStatuses.set(userId, userStatus);
+    return ruleId;
   }
 
-  // ID generators
-  private generateActionId(): string {
-    return 'action_' + Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-
-  private generateViolationId(): string {
-    return 'violation_' + Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-
-  private generateRuleId(): string {
-    return 'rule_' + Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-
-  private generateAdminId(): string {
-    return 'admin_' + Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-
-  // Cleanup methods
-  async cleanupExpiredActions(): Promise<void> {
-    const now = new Date();
+  updateModerationRule(ruleId: string, updates: Partial<ModerationRule>): boolean {
+    const rule = this.moderationRules.get(ruleId);
+    if (!rule) return false;
     
-    for (const [actionId, action] of this.moderationActions.entries()) {
-      if (action.duration && action.isActive) {
-        const expiryTime = new Date(action.timestamp.getTime() + (action.duration * 60000));
-        if (now > expiryTime) {
-          action.isActive = false;
-          
-          // Update user status
-          const userStatus = this.getUserModerationStatus(action.userId);
-          if (action.action === 'mute') {
-            userStatus.status = 'active';
-          } else if (action.action === 'ban') {
-            userStatus.status = 'active';
-          }
-          this.userStatuses.set(action.userId, userStatus);
-        }
-      }
+    Object.assign(rule, updates);
+    this.emit('ruleUpdated', rule);
+    logger.info(`Updated moderation rule: ${ruleId}`);
+    
+    return true;
+  }
+
+  deleteModerationRule(ruleId: string): boolean {
+    const deleted = this.moderationRules.delete(ruleId);
+    if (deleted) {
+      this.emit('ruleDeleted', { ruleId });
+      logger.info(`Deleted moderation rule: ${ruleId}`);
     }
+    return deleted;
   }
 
-  // Export/Import methods for backup
-  async exportModerationData(): Promise<{
-    rules: ModerationRule[];
-    actions: ModerationAction[];
-    violations: Record<string, UserViolation[]>;
-    userStatuses: Record<string, UserModerationStatus>;
-  }> {
+  getModerationRules(): ModerationRule[] {
+    return Array.from(this.moderationRules.values());
+  }
+
+  getActiveModerationRules(): ModerationRule[] {
+    return Array.from(this.moderationRules.values()).filter(rule => rule.isActive);
+  }
+
+  getModerationStats(): any {
+    const totalUsers = this.userTrustScores.size;
+    const totalActions = this.moderationActions.size;
+    const totalBanned = this.bannedUsers.size;
+    const totalMuted = this.mutedUsers.size;
+    const totalRules = this.moderationRules.size;
+    const activeRules = Array.from(this.moderationRules.values()).filter(rule => rule.isActive).length;
+
+    const actionTypes = new Map<string, number>();
+    const trustLevels = new Map<string, number>();
+
+    Array.from(this.moderationActions.values()).forEach(action => {
+      actionTypes.set(action.action, (actionTypes.get(action.action) || 0) + 1);
+    });
+
+    Array.from(this.userTrustScores.values()).forEach(user => {
+      trustLevels.set(user.trustLevel, (trustLevels.get(user.trustLevel) || 0) + 1);
+    });
+
     return {
-      rules: Array.from(this.moderationRules.values()),
-      actions: Array.from(this.moderationActions.values()),
-      violations: Object.fromEntries(this.userViolations.entries()),
-      userStatuses: Object.fromEntries(this.userStatuses.entries())
+      totalUsers,
+      totalActions,
+      totalBanned,
+      totalMuted,
+      totalRules,
+      activeRules,
+      actionTypeDistribution: Object.fromEntries(actionTypes),
+      trustLevelDistribution: Object.fromEntries(trustLevels),
+      averageTrustScore: totalUsers > 0 ? 
+        Array.from(this.userTrustScores.values()).reduce((sum, user) => sum + user.score, 0) / totalUsers : 0
     };
   }
 
-  async importModerationData(data: {
-    rules?: ModerationRule[];
-    actions?: ModerationAction[];
-    violations?: Record<string, UserViolation[]>;
-    userStatuses?: Record<string, UserModerationStatus>;
-  }): Promise<void> {
-    if (data.rules) {
-      data.rules.forEach(rule => this.moderationRules.set(rule.id, rule));
-    }
-    
-    if (data.actions) {
-      data.actions.forEach(action => this.moderationActions.set(action.id, action));
-    }
-    
-    if (data.violations) {
-      Object.entries(data.violations).forEach(([userId, violations]) => {
-        this.userViolations.set(userId, violations);
-      });
-    }
-    
-    if (data.userStatuses) {
-      Object.entries(data.userStatuses).forEach(([userId, status]) => {
-        this.userStatuses.set(userId, status);
-      });
-    }
+  private startCleanupTimer(): void {
+    // Clean up expired mutes every 5 minutes
+    setInterval(() => {
+      const now = new Date();
+      for (const [userId, unmuteTime] of this.mutedUsers.entries()) {
+        if (now >= unmuteTime) {
+          this.mutedUsers.delete(userId);
+          this.emit('userUnmuted', { userId });
+        }
+      }
+    }, 5 * 60 * 1000); // 5 minutes
+  }
+
+  destroy(): void {
+    this.removeAllListeners();
+    logger.info('AdminModerationService destroyed');
   }
 }

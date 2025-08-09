@@ -12,18 +12,9 @@
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-        }
+        body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; background:#f8fafc; color:#1e293b; }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+        .header { background:#fff; color:#111827; padding:16px 24px; border-bottom:1px solid #eef2f7; }
 
         .header h1 {
             font-size: 1.8rem;
@@ -35,41 +26,15 @@
             font-size: 0.9rem;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
+        .container { max-width: 1400px; margin:0 auto; padding:24px; }
 
-        .tabs {
-            display: flex;
-            background: white;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
+        .tabs { display:flex; background:#fff; border:1px solid #eef2f7; border-radius:12px; margin-bottom:24px; box-shadow:0 6px 16px rgba(0,0,0,0.05); overflow:hidden; }
 
-        .tab {
-            flex: 1;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            border: none;
-            background: white;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
+        .tab { flex:1; padding:14px; text-align:center; cursor:pointer; border:none; background:#fff; font-size:0.92rem; font-weight:600; color:#64748b; transition: all .2s; }
 
-        .tab:hover {
-            background: #f8f9fa;
-        }
+        .tab:hover { background:#f8fafc; }
 
-        .tab.active {
-            background: #667eea;
-            color: white;
-        }
+        .tab.active { background:#eff6ff; color:#3b82f6; }
 
         .tab-content {
             display: none;
@@ -79,36 +44,18 @@
             display: block;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px; margin-bottom:24px; }
 
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
+        .stat-card { background:#fff; padding:18px; border-radius:12px; border:1px solid #eef2f7; box-shadow:0 6px 16px rgba(0,0,0,0.05); text-align:center; }
 
-        .stat-card h3 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: #667eea;
-        }
+        .stat-card h3 { font-size:2rem; margin-bottom:.5rem; color:#3b82f6; }
 
         .stat-card p {
             color: #666;
             font-size: 0.9rem;
         }
 
-        .compliance-score {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-        }
+        .compliance-score { background:#eff6ff; color:#1d4ed8; border:1px solid #dbeafe; }
 
         .compliance-score.warning {
             background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
@@ -118,13 +65,7 @@
             background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
         }
 
-        .card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+        .card { background:#fff; border-radius:12px; padding:18px; margin-bottom:18px; border:1px solid #eef2f7; box-shadow:0 6px 16px rgba(0,0,0,0.05); }
 
         .card h2 {
             margin-bottom: 1rem;
@@ -242,17 +183,18 @@
             color: #c62828;
         }
 
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin: 1rem 0;
-        }
+        .chart-container { position:relative; height:260px; margin:12px 0; }
+        /* Consent chart (Nexus style) */
+        .consent-chart-wrap { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+        .consent-chart { position:relative; width:180px; height:180px; }
+        .consent-legend { display:flex; flex-direction:column; gap:8px; min-width:200px; }
+        .consent-legend-item { display:flex; align-items:center; font-size:13px; color:#475569; }
+        .consent-dot { width:12px; height:12px; border-radius:50%; margin-right:8px; }
+        .consent-label { margin-right:6px; }
+        .consent-value { font-weight:700; color:#111827; }
+        @media (max-width: 560px) { .consent-chart-wrap { justify-content:center; } .consent-legend { flex-direction:row; flex-wrap:wrap; gap:10px 16px; min-width:auto; } }
 
-        .alert {
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-        }
+        .alert { padding:1rem; border-radius:8px; margin-bottom:1rem; border:1px solid #eef2f7; }
 
         .alert-success {
             background: #e8f5e8;
@@ -272,41 +214,13 @@
             border: 1px solid #ffcdd2;
         }
 
-        .consent-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem;
-            border: 1px solid #eee;
-            border-radius: 5px;
-            margin-bottom: 0.5rem;
-        }
+        .consent-toggle { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border:1px solid #eef2f7; border-radius:10px; margin-bottom:8px; background:#fff; }
 
-        .toggle-switch {
-            position: relative;
-            width: 50px;
-            height: 25px;
-            background: #ccc;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
+        .toggle-switch { position:relative; width:50px; height:25px; background:#e5e7eb; border-radius:25px; cursor:pointer; transition: background .2s; }
 
-        .toggle-switch.active {
-            background: #4CAF50;
-        }
+        .toggle-switch.active { background:#10b981; }
 
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 21px;
-            height: 21px;
-            background: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
-        }
+        .toggle-switch::after { content:''; position:absolute; top:2px; left:2px; width:21px; height:21px; background:#fff; border-radius:50%; transition: transform .2s; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
 
         .toggle-switch.active::after {
             transform: translateX(25px);
@@ -333,11 +247,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
+        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 
         @media (max-width: 768px) {
             .container {
@@ -447,8 +357,11 @@
 
             <div class="card">
                 <h2>📈 Consent Analytics</h2>
-                <div class="chart-container">
-                    <canvas id="consentChart"></canvas>
+                <div class="consent-chart-wrap">
+                    <div class="consent-chart">
+                        <canvas id="consentChart"></canvas>
+                    </div>
+                    <div id="consentLegend" class="consent-legend"></div>
                 </div>
             </div>
         </div>
@@ -746,26 +659,42 @@
         // Load consent data
         function loadConsentData() {
             const ctx = document.getElementById('consentChart').getContext('2d');
-            new Chart(ctx, {
+            const labels = ['Data Collection', 'Marketing', 'Analytics', 'Cookies', 'Third Party'];
+            const values = [1247, 892, 1156, 1089, 234];
+            const colors = ['#f59e0b', '#3b82f6', '#8b5cf6', '#10b981', '#ef4444'];
+
+            const chart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Data Collection', 'Marketing', 'Analytics', 'Cookies', 'Third Party'],
+                    labels,
                     datasets: [{
-                        data: [1247, 892, 1156, 1089, 234],
-                        backgroundColor: [
-                            '#4CAF50',
-                            '#2196F3',
-                            '#FF9800',
-                            '#9C27B0',
-                            '#F44336'
-                        ]
+                        data: values,
+                        backgroundColor: colors,
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        hoverBorderColor: '#ffffff',
+                        hoverBorderWidth: 3
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: { legend: { display:false } }
                 }
             });
+
+            // Render custom legend (right side)
+            const legend = document.getElementById('consentLegend');
+            const total = values.reduce((a,b) => a+b, 0);
+            legend.innerHTML = labels.map((label, i) => {
+                const pct = Math.round(values[i] / total * 100);
+                return `<div class="consent-legend-item">`+
+                       `<span class="consent-dot" style="background:${colors[i]}"></span>`+
+                       `<span class="consent-label">${label}</span>`+
+                       `<span class="consent-value">${pct}%</span>`+
+                       `</div>`;
+            }).join('');
         }
 
         // Search user function

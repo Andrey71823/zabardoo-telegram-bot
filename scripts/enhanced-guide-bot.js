@@ -12,6 +12,17 @@ class EnhancedGuideTelegramBot {
     this.isRunning = false;
     this.users = new Map();
     this.lastMessageIds = new Map();
+    this.realDataMode = process.env.REAL_DATA_MODE === 'true';
+    this.safeMode = process.env.BOT_SAFE_MODE !== 'false';
+    // Group/channel to receive user feedback (complaints/suggestions)
+    // Set FEEDBACK_GROUP_ID in env; fallback to provided group id if any
+    const defaultFeedbackId = '-4952183510';
+    const envFeedbackId = process.env.FEEDBACK_GROUP_ID || defaultFeedbackId;
+    this.feedbackGroupId = Number(envFeedbackId) || parseInt(defaultFeedbackId, 10);
+    // Reply sessions
+    this.adminReplySessions = new Map(); // adminId -> { userId }
+    this.userReplySessions = new Map();  // userId -> true
+    this.groupReplySessions = new Map(); // groupChatId -> { userId, adminId }
   }
 
   async makeRequest(method, params = {}) {
@@ -55,7 +66,7 @@ class EnhancedGuideTelegramBot {
   async sendMessage(chatId, text, replyMarkup = null) {
     const params = {
       chat_id: chatId,
-      text: text,
+      text: this.sanitize(text),
       parse_mode: 'HTML'
     };
     
@@ -66,11 +77,127 @@ class EnhancedGuideTelegramBot {
     return this.makeRequest('sendMessage', params);
   }
 
+  async sendPhoto(chatId, fileIdOrUrl, caption = '', replyMarkup = null) {
+    const params = {
+      chat_id: chatId,
+      photo: fileIdOrUrl,
+      caption: this.sanitize(caption),
+      parse_mode: 'HTML'
+    };
+    if (replyMarkup) {
+      params.reply_markup = JSON.stringify(replyMarkup);
+    }
+    return this.makeRequest('sendPhoto', params);
+  }
+
+  async sendDocument(chatId, fileIdOrUrl, caption = '', replyMarkup = null) {
+    const params = {
+      chat_id: chatId,
+      document: fileIdOrUrl,
+      caption: this.sanitize(caption),
+      parse_mode: 'HTML'
+    };
+    if (replyMarkup) {
+      params.reply_markup = JSON.stringify(replyMarkup);
+    }
+    return this.makeRequest('sendDocument', params);
+  }
+
+  async sendVoice(chatId, fileIdOrUrl, caption = '', replyMarkup = null) {
+    const params = {
+      chat_id: chatId,
+      voice: fileIdOrUrl,
+      caption: this.sanitize(caption),
+      parse_mode: 'HTML'
+    };
+    if (replyMarkup) {
+      params.reply_markup = JSON.stringify(replyMarkup);
+    }
+    return this.makeRequest('sendVoice', params);
+  }
+
+  // ===== Real data search (Flipkart API; extensible for others) =====
+  async searchRealProducts(query, limit = 5) {
+    if (!this.realDataMode) return [];
+    const results = [];
+
+    try {
+      const flipkart = await this.searchFlipkartAPI(query, Math.min(limit, 10));
+      results.push(...flipkart);
+    } catch (e) {
+      console.log('⚠️ Flipkart search failed:', e.message);
+    }
+
+    // TODO: Add Amazon/Myntra/Nykaa integrations when API credentials are provided
+    return results.slice(0, limit);
+  }
+
+  async httpsGetJson(fullUrl, headers = {}) {
+    return new Promise((resolve, reject) => {
+      const url = new URL(fullUrl);
+      const options = {
+        hostname: url.hostname,
+        path: url.pathname + url.search,
+        method: 'GET',
+        headers
+      };
+
+      const req = https.request(options, (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => {
+          try {
+            const json = JSON.parse(data);
+            resolve(json);
+          } catch (err) {
+            reject(err);
+          }
+        });
+      });
+      req.on('error', reject);
+      req.end();
+    });
+  }
+
+  async searchFlipkartAPI(query, resultCount = 10) {
+    const affiliateId = process.env.FLIPKART_AFFILIATE_ID;
+    const affiliateToken = process.env.FLIPKART_AFFILIATE_TOKEN;
+    if (!affiliateId || !affiliateToken) return [];
+
+    const url = `https://affiliate-api.flipkart.net/affiliate/1.0/search.json?query=${encodeURIComponent(query)}&resultCount=${resultCount}`;
+    const headers = {
+      'Fk-Affiliate-Id': affiliateId,
+      'Fk-Affiliate-Token': affiliateToken
+    };
+    const data = await this.httpsGetJson(url, headers);
+
+    const list = (data && data.productInfoList) || [];
+    return list.map((item) => {
+      const p = item.productBaseInfoV1 || item.productBaseInfo || {};
+      const maxPrice = (p.maximumRetailPrice && p.maximumRetailPrice.amount) || p.maximumRetailPrice || 0;
+      const spPrice = (p.flipkartSpecialPrice && p.flipkartSpecialPrice.amount) || p.flipkartSpecialPrice || p.discountedPrice || 0;
+      const discount = Math.max(0, maxPrice - spPrice);
+      const discountPct = maxPrice ? Math.round((discount / maxPrice) * 100) : 0;
+      const img = p.imageUrls ? (p.imageUrls['200x200'] || p.imageUrls['400x400'] || Object.values(p.imageUrls)[0]) : '';
+
+      return {
+        store: 'Flipkart',
+        title: p.title || p.productTitle || 'Product',
+        url: p.productUrl,
+        price: spPrice,
+        originalPrice: maxPrice,
+        discountPct,
+        image: img,
+        inStock: p.inStock !== false
+      };
+    });
+  }
+
   async editMessage(chatId, messageId, text, replyMarkup = null) {
     const params = {
       chat_id: chatId,
       message_id: messageId,
-      text: text,
+      text: this.sanitize(text),
       parse_mode: 'HTML'
     };
     
@@ -85,16 +212,33 @@ class EnhancedGuideTelegramBot {
     }
   }
 
+  sanitize(input) {
+    if (!input || !this.safeMode) return input || '';
+    // Basic sanitizer: strip dangerous tags/attributes for HTML mode
+    const blocked = ['script', 'iframe', 'object', 'embed', 'link', 'style'];
+    let output = String(input);
+    blocked.forEach(tag => {
+      const re = new RegExp(`<\/?${tag}[^>]*>`, 'gi');
+      output = output.replace(re, '');
+    });
+    // Remove on* handlers
+    output = output.replace(/on[a-z]+\s*=\s*"[^"]*"/gi, '');
+    output = output.replace(/on[a-z]+\s*=\s*'[^']*'/gi, '');
+    // Remove javascript: urls
+    output = output.replace(/javascript:/gi, '');
+    return output;
+  }
+
   async setMyCommands() {
     const commands = [
       { command: 'start', description: '🚀 Start bot and show main menu' },
+      { command: 'feedback', description: '💌 Send feedback (suggestion, bug, feature, general)' },
       { command: 'help', description: '🆘 Show help and support information' },
       { command: 'guide', description: '📖 Complete guide for all buttons and functions' },
       { command: 'profile', description: '👤 My profile, level and achievements' },
       { command: 'settings', description: '⚙️ Notification settings' },
       { command: 'cashback', description: '💰 My cashback and balance' },
       { command: 'deals', description: '🔍 Find best deals and discounts' },
-      { command: 'feedback', description: '💌 Send feedback or suggestion to admin' },
       { command: 'menu', description: '📋 Show command menu' }
     ];
 
@@ -110,21 +254,54 @@ class EnhancedGuideTelegramBot {
     return {
       inline_keyboard: [
         [
-          { text: '🔍 Find Deals', callback_data: 'find_deals' },
-          { text: '🎮 My Profile', callback_data: 'profile' },
+          { text: '🤖 AI Recommendations', callback_data: 'ai_recommendations' },
+          { text: '🔥 Hot Deals', callback_data: 'hot_deals' },
           { text: '📖 Guide', callback_data: 'complete_guide' }
         ],
         [
-          { text: '💰 Cashback', callback_data: 'cashback' },
-          { text: '🎲 Random Deal', callback_data: 'random_deal' },
-          { text: '🧠 Ask Zabardoo', callback_data: 'ask_zabardoo' }
+          { text: '📱 Electronics', callback_data: 'electronics' },
+          { text: '👗 Fashion', callback_data: 'fashion' },
+          { text: '💄 Beauty', callback_data: 'beauty' }
         ],
         [
-          { text: '⚙️ Settings', callback_data: 'settings' },
-          { text: '🌐 Language', callback_data: 'language_selector' },
+          { text: '🍔 Food', callback_data: 'food' },
+          { text: '🏪 Stores', callback_data: 'stores' },
+          { text: '⚙️ Settings', callback_data: 'settings' }
+        ],
+        [
+          { text: '🔍 Find Deals', callback_data: 'find_deals' },
+          { text: '🎮 My Profile', callback_data: 'profile' }
+        ],
+        [
+          { text: '💰 Cashback', callback_data: 'cashback' },
           { text: '🆘 Help', callback_data: 'help' }
         ]
       ]
+    };
+  }
+
+  // ДОБАВЛЕНО: Нижнее меню (reply keyboard) с теми же кнопками
+  getBottomKeyboard() {
+    return {
+      keyboard: [
+        [
+          { text: '🔍 Find Deals' },
+          { text: '🎮 My Profile' },
+          { text: '📖 Guide' }
+        ],
+        [
+          { text: '💰 Cashback' },
+          { text: '🎲 Random Deal' },
+          { text: '🧠 Ask Zabardoo' }
+        ],
+        [
+          { text: '⚙️ Settings' },
+          { text: '🌐 Language' },
+          { text: '🆘 Help' }
+        ]
+      ],
+      resize_keyboard: true,
+      one_time_keyboard: false
     };
   }
 
@@ -193,6 +370,30 @@ class EnhancedGuideTelegramBot {
     console.log(`💬 Message from ${userName}: ${text}`);
     
     this.initializeUser(message.from);
+
+    // Admin reply session: if admin is replying from group or personal chat
+    // 1) If admin has a personal reply session
+    if ((message.chat.type === 'supergroup' || message.chat.type === 'group' || message.chat.id === this.feedbackGroupId) && this.adminReplySessions.has(message.from.id)) {
+      const session = this.adminReplySessions.get(message.from.id);
+      if (session && session.userId) {
+        await this.forwardAdminReplyToUser(message, session.userId);
+        return;
+      }
+    }
+    // 2) If group itself has an active reply session (any admin in this chat)
+    if ((message.chat.type === 'supergroup' || message.chat.type === 'group' || message.chat.id === this.feedbackGroupId) && this.groupReplySessions.has(message.chat.id)) {
+      const gSession = this.groupReplySessions.get(message.chat.id);
+      if (gSession && gSession.userId) {
+        await this.forwardAdminReplyToUser(message, gSession.userId);
+        return;
+      }
+    }
+
+    // User reply session: forward any text/photo/voice to admin group
+    if (this.userReplySessions.has(message.from.id)) {
+      await this.forwardUserReplyToAdmin(message);
+      return;
+    }
     
     if (text === '/start') {
       await this.handleStart(message);
@@ -218,6 +419,76 @@ class EnhancedGuideTelegramBot {
       await this.handlePhoto(message);
     } else {
       await this.handleTextMessage(message);
+    }
+  }
+
+  async forwardAdminReplyToUser(message, targetUserId) {
+    try {
+      const userChatId = String(targetUserId);
+      // Who triggered reply
+      const adminName = message.from.first_name || 'Admin';
+      const header = `👨‍💼 <b>${adminName} (Администрация)</b>\n`;
+      if (message.text) {
+        await this.sendMessage(userChatId, `${header}\n${message.text}`, {
+          inline_keyboard: [[{ text: '↩️ Ответить администратору', callback_data: 'reply_admin_start' }]]
+        });
+      }
+      if (message.photo && message.photo.length > 0) {
+        const best = message.photo[message.photo.length - 1];
+        const caption = message.caption || `${adminName}: 📷 фото`;
+        await this.sendPhoto(userChatId, best.file_id, `${caption}`, {
+          inline_keyboard: [[{ text: '↩️ Ответить администратору', callback_data: 'reply_admin_start' }]]
+        });
+      }
+      if (message.document) {
+        const caption = message.caption || `${adminName}: 📎 документ`;
+        await this.sendDocument(userChatId, message.document.file_id, caption, {
+          inline_keyboard: [[{ text: '↩️ Ответить администратору', callback_data: 'reply_admin_start' }]]
+        });
+      }
+      if (message.voice) {
+        const caption = message.caption || `${adminName}: 🎤 голосовое сообщение`;
+        await this.sendVoice(userChatId, message.voice.file_id, caption, {
+          inline_keyboard: [[{ text: '↩️ Ответить администратору', callback_data: 'reply_admin_start' }]]
+        });
+      }
+      // Notify admin
+      await this.sendMessage(this.feedbackGroupId, `✅ Сообщение отправлено пользователю ${targetUserId}.`);
+    } catch (e) {
+      await this.sendMessage(this.feedbackGroupId, `⚠️ Не удалось отправить сообщение пользователю: ${e.message}`);
+    }
+  }
+
+  async forwardUserReplyToAdmin(message) {
+    try {
+      const header = `📨 <b>Ответ пользователя</b>\n\n👤 <b>User:</b> ${message.from.first_name} (@${message.from.username || 'no_username'})\n🆔 <b>ID:</b> ${message.from.id}\n📅 <b>Date:</b> ${new Date().toLocaleString()}\n`;
+      if (message.text) {
+        await this.sendMessage(this.feedbackGroupId, `${header}\n💬 <b>Message:</b>\n${message.text}`, {
+          inline_keyboard: [[{ text: '↩️ Ответить пользователю', callback_data: `answer_user_${message.from.id}` }]]
+        });
+      }
+      if (message.photo && message.photo.length > 0) {
+        const best = message.photo[message.photo.length - 1];
+        const caption = message.caption || '';
+        await this.sendPhoto(this.feedbackGroupId, best.file_id, `${header}\n${caption}`, {
+          inline_keyboard: [[{ text: '↩️ Ответить пользователю', callback_data: `answer_user_${message.from.id}` }]]
+        });
+      }
+      if (message.document) {
+        const caption = message.caption || '';
+        await this.sendDocument(this.feedbackGroupId, message.document.file_id, `${header}\n${caption}`, {
+          inline_keyboard: [[{ text: '↩️ Ответить пользователю', callback_data: `answer_user_${message.from.id}` }]]
+        });
+      }
+      if (message.voice) {
+        const caption = message.caption || '';
+        await this.sendVoice(this.feedbackGroupId, message.voice.file_id, `${header}\n${caption}`, {
+          inline_keyboard: [[{ text: '↩️ Ответить пользователю', callback_data: `answer_user_${message.from.id}` }]]
+        });
+      }
+      // Keep session until admin ends
+    } catch (e) {
+      console.log('⚠️ Failed to forward user reply:', e.message);
     }
   }
 
@@ -248,6 +519,8 @@ Ready to save some serious money? Let's go! 🚀
 
     const sentMessage = await this.sendMessage(chatId, welcomeMessage, this.getMainKeyboard());
     this.lastMessageIds.set(chatId, sentMessage.message_id);
+    // Show persistent bottom menu under the blue Menu button
+    await this.sendMessage(chatId, '👇 Quick access menu enabled below.', this.getBottomKeyboard());
   }
 
   async handleCompleteGuide(message) {
@@ -572,7 +845,7 @@ Please wait a moment!`);
     setTimeout(async () => {
       const voiceAnalysis = this.analyzeVoiceContent(voiceDuration, message.voice.file_id);
       
-      const response = `🎤 <b>Voice Search Results for ${userName}!</b>
+      let response = `🎤 <b>Voice Search Results for ${userName}!</b>
 
 🎯 <b>I heard you say:</b> "${voiceAnalysis.transcript}"
 
@@ -583,6 +856,20 @@ ${voiceAnalysis.deals.map(deal => `${deal.icon} ${deal.name} - ${deal.discount} 
 🎁 +15 XP for voice search!
 
 💡 <b>Voice search is more accurate!</b> Try describing what you want in detail.`;
+
+      if (this.realDataMode) {
+        const real = await this.searchRealProducts(voiceAnalysis.transcript, 5);
+        if (Array.isArray(real) && real.length > 0) {
+          const lines = real.map(r => `• <a href="${r.url}">${r.title}</a> — ₹${r.price.toLocaleString('en-IN')}${r.discountPct ? ` (${r.discountPct}% OFF)` : ''} [${r.store}]`);
+          response = `🎤 <b>Live voice results for ${userName}</b>
+
+🎯 <b>Query:</b> "${voiceAnalysis.transcript}"
+
+${lines.join('\n')}
+
+💡 Real-time data from partner stores.`;
+        }
+      }
 
       await this.editMessage(chatId, processingMessage.message_id, response, this.getCategoryKeyboard());
       this.awardXP(message.from.id, 15, 'voice_search');
@@ -695,6 +982,27 @@ ${productResults.deals.map(deal => `${deal.icon} ${deal.store} - ${deal.price} (
 
 💡 <b>Photo search finds exact matches!</b> Upload clear product images for best results.`;
 
+      // If real-data mode is ON, try to fetch real deals for detected product
+      if (this.realDataMode && productResults && productResults.product) {
+        const real = await this.searchRealProducts(productResults.product, 5);
+        if (Array.isArray(real) && real.length > 0) {
+          const lines = real.slice(0, 5).map(r => `• <a href="${r.url}">${r.title}</a> — ₹${r.price.toLocaleString('en-IN')} (${r.discountPct}% OFF) [${r.store}]`);
+          const realMsg = `📸 <b>Photo Analysis Results for ${userName}!</b>
+
+🎯 <b>Product Identified:</b> ${productResults.product}
+
+🔍 <b>Real Store Matches:</b>
+${lines.join('\n')}
+
+${real.length === 0 ? '⚠️ No exact match found. Showing similar items.' : ''}
+
+💡 Prices and availability are fetched live from stores.`;
+          await this.editMessage(chatId, processingMessage.message_id, realMsg, this.getCategoryKeyboard());
+          this.awardXP(message.from.id, 20, 'photo_search');
+          return;
+        }
+      }
+
       await this.editMessage(chatId, processingMessage.message_id, response, this.getCategoryKeyboard());
       this.awardXP(message.from.id, 20, 'photo_search');
     }, 4000);
@@ -777,9 +1085,341 @@ ${productResults.deals.map(deal => `${deal.icon} ${deal.store} - ${deal.price} (
     const processingMessage = await this.sendMessage(chatId, `🤖 Processing your message, ${userName}...`);
     
     setTimeout(async () => {
-      const response = `🎯 Great message, ${userName}!
+      // Align bottom buttons with inline buttons (HTML + same logic)
+      let response;
+      let replyMarkup = this.getMainKeyboard();
 
-🔍 I found some relevant deals for: "${text}"
+      switch (text) {
+        case '🆘 Help':
+          response = `🆘 <b>Zabardoo Bot Quick Help</b>
+
+<b>🎯 Main Functions:</b>
+• Find deals and get cashback
+• Earn XP and unlock achievements
+• Get personalized recommendations
+• Track your savings
+
+<b>⚡ Quick Commands:</b>
+/start - Main menu
+/guide - Complete button guide
+/profile - Your stats
+/cashback - Your balance
+/deals - Find deals
+/settings - Notifications
+
+<b>🎤 Voice & Photo:</b>
+• Send voice message to search
+• Send product photo for deals
+• Get instant recommendations
+
+<b>🛡️ Anti-Spam Protection:</b>
+• You control all notifications
+• Quiet hours: 22:00-08:00
+• Easy unsubscribe options
+
+<b>💰 Cashback:</b>
+• Automatic tracking
+• Multiple withdrawal methods
+• Real-time balance updates
+
+Need more help? Use /guide for detailed explanations!`;
+          break;
+
+        case '📖 Guide':
+          response = `📖 <b>COMPLETE GUIDE - What Each Button Does</b>
+
+🔍 <b>FIND DEALS</b>
+   ✅ What it does: Shows the best deals available
+   ✅ How it works: Updates every minute with fresh offers
+   ✅ What you get: Up to 80% discounts + cashback
+   ✅ Where it leads: Direct links to stores
+
+🎮 <b>MY PROFILE</b>
+   ✅ What it shows: Your level and experience points
+   ✅ Achievements: How many rewards you've earned
+   ✅ Statistics: How many days you've been active
+   ✅ Savings: Total money you've saved
+
+💰 <b>CASHBACK</b>
+   ✅ Balance: How much money you can withdraw
+   ✅ Pending: How much more is coming
+   ✅ History: All your purchase transactions
+   ✅ Withdrawal: Via UPI, PayTM, bank transfer
+
+📖 <b>GUIDE (This Guide)</b>
+   ✅ Explains ALL buttons in simple words
+   ✅ Shows what each function does
+   ✅ Gives tips on how to save more money
+   ✅ Helps you never get confused
+
+⚙️ <b>SETTINGS</b>
+   🔔 <b>Toggle Price Drops</b> - Turn on/off price drop notifications
+   ⚡ <b>Toggle Flash Sales</b> - Turn on/off flash sale alerts  
+   ⏰ <b>Set Quiet Hours</b> - Set time when NOT to disturb you (like at night)
+   🛑 <b>Pause All (2h)</b> - Turn OFF ALL notifications for 2 hours
+
+🆘 <b>HELP</b>
+   ✅ Quick help for main functions
+   ✅ List of all bot commands
+   ✅ How to contact support
+
+🤖 <b>AI RECOMMENDATIONS</b>
+   ✅ Personal offers ONLY for you
+   ✅ Based on your purchases and interests
+   ✅ Smart suggestions on what to buy cheaper
+
+🔥 <b>HOT DEALS</b>
+   ✅ Most popular deals RIGHT NOW
+   ✅ Limited time offers
+   ✅ Best discounts ending soon
+
+📱 <b>ELECTRONICS</b> - Phones, laptops, headphones
+👗 <b>FASHION</b> - Clothes, shoes, accessories  
+💄 <b>BEAUTY</b> - Cosmetics, perfume, skincare
+🍔 <b>FOOD</b> - Restaurants, food delivery
+🏪 <b>STORES</b> - All stores and their discounts
+
+💡 <b>SECRET TIPS:</b>
+🎤 Send voice message - finds better deals!
+📸 Take product photo - shows where it's cheaper!
+🏆 Visit daily - get more rewards!
+🔔 Enable notifications - don't miss deals!
+👥 Invite friends - get bonus cashback!
+
+🎯 <b>GOLDEN RULE:</b> The more you use the bot, the more money you save! 💰`;
+          break;
+
+        case '💰 Cashback': {
+          const cashbackUser = this.getUser(message.from.id);
+          response = `💰 <b>Your Cashback Summary</b>
+
+💳 Available Balance: ₹${cashbackUser.cashbackBalance}
+⏳ Pending: ₹${cashbackUser.pendingCashback}
+📊 Total Earned: ₹${cashbackUser.totalCashback}
+
+🏦 <b>Recent Transactions:</b>
+💸 Flipkart - ₹150 (Ready)
+💸 Amazon - ₹89 (Pending)
+💸 Myntra - ₹245 (Ready)
+
+🎯 Minimum withdrawal: ₹100
+💳 Withdraw via UPI/PayTM instantly!
+
+💡 Tip: Earn more by sharing deals with friends!`;
+          break;
+        }
+
+        case '🎮 My Profile': {
+          const profileUser = this.getUser(message.from.id);
+          response = `👤 <b>Your Zabardoo Profile</b>
+
+🌟 ${profileUser.firstName} ${profileUser.lastName || ''}
+💎 Level ${profileUser.level} 🛍️
+⚡ ${profileUser.xp} XP
+🏆 ${profileUser.achievements.length}/50 Achievements
+🔥 ${profileUser.streak} day streak
+💰 Total Savings: ₹${profileUser.totalSavings}
+
+🎯 Progress to Level ${profileUser.level + 1}:
+${'█'.repeat(Math.floor(profileUser.xp % 100 / 10))}${'░'.repeat(10 - Math.floor(profileUser.xp % 100 / 10))} ${profileUser.xp % 100}/100 XP
+
+🏆 Recent Achievements:
+${profileUser.achievements.slice(-3).map(a => `🏅 ${a}`).join('\\n') || '🎯 Complete your first quest to earn achievements!'}
+
+🎮 Keep exploring to unlock more rewards!`;
+          break;
+        }
+
+        case '🔍 Find Deals':
+          response = `🔍 <b>Top Deals for ${userName}!</b>
+
+🎯 <b>Hot Deals Right Now:</b>
+📱 Samsung Galaxy S24 - 28% OFF (₹52,000)
+👟 Nike Air Max - 35% OFF (₹5,200)  
+💻 MacBook Air M3 - 15% OFF (₹85,000)
+👗 Zara Dress Collection - 40% OFF
+🎧 Sony WH-1000XM5 - 25% OFF (₹22,500)
+
+💰 All with cashback up to 8%!
+🎁 +5 XP for browsing deals!
+
+🎤📸 <b>SMART SEARCH:</b> Send voice message or photo for personalized results!
+
+Choose a category below for more specific deals:`;
+          replyMarkup = this.getCategoryKeyboard();
+          this.awardXP(message.from.id, 5, 'browse_deals');
+          break;
+
+        case '🧠 Ask Zabardoo':
+        case '💬 Ask Zabardoo':
+          response = `🧠 <b>Ask Zabardoo AI Assistant</b>
+
+💬 <b>I'm your personal shopping AI!</b>
+
+🎯 <b>What I can help you with:</b>
+• 🔍 Find specific products and deals
+• 💰 Compare prices across stores
+• 🎨 Generate shopping memes and content
+• 📱 Product recommendations based on your needs
+• 🛒 Smart shopping tips and tricks
+• 💡 Budget-friendly alternatives
+
+🎤 <b>How to use:</b>
+• Send me a text message with your question
+• Use voice messages for natural conversation
+• Send product photos for instant recognition
+• Ask in English or Hindi - I understand both!
+
+🎁 +8 XP for discovering AI assistant!
+
+💡 <b>Example questions:</b>
+"Find me a good smartphone under ₹20,000"
+"Compare iPhone vs Samsung Galaxy"
+"Create a funny meme about online shopping"
+
+🚀 <b>Just send me a message to start chatting!</b>`;
+          this.awardXP(message.from.id, 8, 'ask_zabardoo');
+          break;
+
+        case '🎲 Random Deal': {
+          const randomDeals = [
+            { name: 'iPhone 15 Pro', discount: '22%', price: '₹89,900', store: 'Amazon India', cashback: '6%' },
+            { name: 'Samsung 65" QLED TV', discount: '35%', price: '₹65,000', store: 'Flipkart', cashback: '8%' },
+            { name: 'Nike Air Jordan', discount: '40%', price: '₹8,500', store: 'Myntra', cashback: '5%' },
+            { name: 'MacBook Pro M3', discount: '18%', price: '₹1,45,000', store: 'Croma', cashback: '4%' },
+            { name: 'Sony PlayStation 5', discount: '12%', price: '₹44,990', store: 'Amazon India', cashback: '7%' },
+            { name: 'Dyson V15 Vacuum', discount: '25%', price: '₹42,000', store: 'Flipkart', cashback: '6%' }
+          ];
+          const randomDeal = randomDeals[Math.floor(Math.random() * randomDeals.length)];
+          response = `🎲 <b>Random Deal Alert!</b>
+
+🎯 <b>${randomDeal.name}</b>
+💥 ${randomDeal.discount} OFF - Only ${randomDeal.price}!
+🏪 Available at ${randomDeal.store}
+💰 Plus ${randomDeal.cashback} cashback!
+
+⚡ <b>Limited Time Offer!</b>
+🔥 Grab it before it's gone!
+
+🎁 +10 XP for discovering random deals!
+
+💡 <b>Pro Tip:</b> Random deals often have the highest discounts!`;
+          this.awardXP(message.from.id, 10, 'random_deal');
+          break;
+        }
+
+        case '⚙️ Settings':
+          response = `⚙️ <b>Notification Settings</b>
+
+🛡️ <b>Anti-Spam Protection Active!</b>
+
+Current Settings:
+🔔 Price Drops: ✅ Enabled
+⚡ Flash Sales: ✅ Enabled  
+🎯 Personal Deals: ✅ Enabled
+🏆 Achievements: ✅ Enabled
+💰 Cashback Updates: ✅ Enabled
+
+⏰ Quiet Hours: 22:00 - 08:00
+📊 Frequency: Smart (AI-optimized)
+
+🎛️ You have full control over all notifications!`;
+          replyMarkup = {
+            inline_keyboard: [
+              [
+                { text: '🔔 Toggle Price Drops', callback_data: 'toggle_price' },
+                { text: '⚡ Toggle Flash Sales', callback_data: 'toggle_flash' }
+              ],
+              [
+                { text: '⏰ Set Quiet Hours', callback_data: 'quiet_hours' },
+                { text: '🛑 Pause All (2h)', callback_data: 'pause_2h' }
+              ],
+              [
+                { text: '🔍 Find Deals', callback_data: 'find_deals' },
+                { text: '🎮 My Profile', callback_data: 'profile' }
+              ],
+              [
+                { text: '💰 Cashback', callback_data: 'cashback' },
+                { text: '📖 Complete Guide', callback_data: 'complete_guide' }
+              ]
+            ]
+          };
+          break;
+
+        case '🌐 Language':
+          response = `🌐 <b>Choose Your Language</b>
+
+Select your preferred language for the bot interface:
+
+🇮🇳 <b>Available Languages:</b>
+• English (Current)
+• हिंदी (Hindi)
+• বাংলা (Bengali)
+• தமிழ் (Tamil)
+• తెలుగు (Telugu)
+• ગુજરાતી (Gujarati)
+• ಕನ್ನಡ (Kannada)
+• മലയാളം (Malayalam)
+• मराठी (Marathi)
+
+🎁 +5 XP for exploring language options!
+
+💡 <b>Note:</b> Language change will be applied to all future messages and deal descriptions.`;
+          replyMarkup = {
+            inline_keyboard: [
+              [
+                { text: '🇺🇸 English', callback_data: 'lang_en' },
+                { text: '🇮🇳 हिंदी', callback_data: 'lang_hi' }
+              ],
+              [
+                { text: '🇮🇳 বাংলা', callback_data: 'lang_bn' },
+                { text: '🇮🇳 தமிழ்', callback_data: 'lang_ta' }
+              ],
+              [
+                { text: '🇮🇳 తెలుగు', callback_data: 'lang_te' },
+                { text: '🇮🇳 ગુજરાતી', callback_data: 'lang_gu' }
+              ],
+              [
+                { text: '🇮🇳 ಕನ್ನಡ', callback_data: 'lang_kn' },
+                { text: '🇮🇳 മലയാളം', callback_data: 'lang_ml' }
+              ],
+              [
+                { text: '🇮🇳 मराठी', callback_data: 'lang_mr' },
+                { text: '🔙 Back to Menu', callback_data: 'back_to_menu' }
+              ]
+            ]
+          };
+          this.awardXP(message.from.id, 5, 'language_selector');
+          break;
+
+        default: {
+          // Text search (real-time if enabled)
+          const query = (typeof text === 'string' && text.trim()) ? text.trim() : '';
+          if (this.realDataMode && query) {
+            const real = await this.searchRealProducts(query, 5);
+            if (Array.isArray(real) && real.length > 0) {
+              const items = real.map(r => `• <a href="${r.url}">${r.title}</a> — ₹${r.price.toLocaleString('en-IN')}${r.discountPct ? ` (${r.discountPct}% OFF)` : ''} [${r.store}]`).join('\n');
+              response = `🔍 <b>Live results for:</b> "${query}"
+
+${items}
+
+💡 Prices and availability are fetched live from stores.`;
+              this.awardXP(message.from.id, 10, 'text_search');
+              break;
+            } else {
+              response = `⚠️ <b>No exact matches found</b> for "${query}".
+
+Try a different name, or send a clear photo/voice for better accuracy.`;
+              this.awardXP(message.from.id, 4, 'no_results');
+              break;
+            }
+          }
+
+          // Fallback demo content
+          const safeText = query || 'your request';
+          response = `🎯 Great message, ${userName}!
+
+🔍 I found some relevant deals for: "${safeText}"
 
 📱 Top Results:
 • Samsung Galaxy S24 - 28% OFF (₹52,000)
@@ -790,10 +1430,13 @@ ${productResults.deals.map(deal => `${deal.icon} ${deal.store} - ${deal.price} (
 🎁 +10 XP for searching!
 
 💡 Pro tip: Try voice search or send me a product photo for better results!`;
+          this.awardXP(message.from.id, 10, 'text_search');
+          break;
+        }
+      }
 
-      await this.editMessage(chatId, processingMessage.message_id, response, this.getMainKeyboard());
+      await this.editMessage(chatId, processingMessage.message_id, response, replyMarkup);
       this.lastMessageIds.set(chatId, processingMessage.message_id);
-      this.awardXP(message.from.id, 10, 'text_search');
     }, 2000);
   }
 
@@ -824,13 +1467,34 @@ ${text}
 • XP: ${user.xp}
 • Total Savings: ₹${user.totalSavings}`;
 
-    // Log to console (in real app, this would be sent to admin chat/email)
-    console.log('📨 FEEDBACK RECEIVED:');
-    console.log('='.repeat(50));
-    console.log(`Type: ${feedbackType}`);
-    console.log(`User: ${userName} (${userId})`);
-    console.log(`Message: ${text}`);
-    console.log('='.repeat(50));
+    // Forward to feedback group/channel if configured
+    try {
+      if (this.feedbackGroupId) {
+        const tagMap = {
+          suggestion: 'Пожелание',
+          bug: 'Жалоба/Баг',
+          feature: 'Запрос фичи',
+          general: 'Общий отзыв'
+        };
+        const tag = tagMap[feedbackType] || 'Отзыв';
+        const groupMessage = `🗣️ <b>${tag}</b>
+
+👤 <b>User:</b> ${userName} (@${message.from.username || 'no_username'})
+🆔 <b>ID:</b> ${userId}
+📅 <b>Date:</b> ${new Date().toLocaleString()}
+
+💬 <b>Message:</b>
+${text}`;
+        const forwarded = await this.sendMessage(this.feedbackGroupId, groupMessage, {
+          inline_keyboard: [
+            [ { text: '↩️ Ответить пользователю', callback_data: `answer_user_${userId}` } ]
+          ]
+        });
+        // map admin reply session message -> user id if needed later
+      }
+    } catch (e) {
+      console.log('⚠️ Failed to forward feedback to group:', e.message);
+    }
     
     // Send confirmation to user
     const confirmationMessage = `✅ <b>Feedback Sent Successfully!</b>
@@ -850,7 +1514,13 @@ Thank you ${userName}! Your ${feedbackType} has been sent to our admin team.
 
 💡 Feel free to send more feedback anytime using /feedback command!`;
 
-    await this.sendMessage(chatId, confirmationMessage, this.getMainKeyboard());
+    // For user: show Reply to admin button
+    await this.sendMessage(chatId, confirmationMessage, {
+      inline_keyboard: [
+        [ { text: '↩️ Ответить администратору', callback_data: 'reply_admin_start' } ],
+        ...this.getMainKeyboard().inline_keyboard
+      ]
+    });
     this.awardXP(userId, 10, 'feedback_sent');
   }
 
@@ -870,7 +1540,52 @@ Thank you ${userName}! Your ${feedbackType} has been sent to our admin team.
     let responseText = '';
     let keyboard = this.getMainKeyboard();
 
+    // Dynamic handler: Admin presses "answer" in group to reply to a specific user
+    if (typeof data === 'string' && data.startsWith('answer_user_')) {
+      try {
+        const targetUserId = parseInt(data.replace('answer_user_', ''), 10);
+        if (!isNaN(targetUserId)) {
+          this.adminReplySessions.set(callbackQuery.from.id, { userId: targetUserId });
+          // Prompt with ForceReply so the bot surely receives the reply even with privacy mode ON
+          // Save mapping also per group chat, so any admin message in this chat routes to the same user
+          this.groupReplySessions.set(chatId, { userId: targetUserId, adminId: callbackQuery.from.id });
+
+          await this.sendMessage(chatId,
+            '✍️ Напишите ответ пользователю (можно отправить текст или фото). Сообщение будет доставлено приватно.',
+            { force_reply: true, selective: true }
+          );
+          // Send a separate control message with an inline button to end dialog
+          await this.sendMessage(chatId, '✅ Управление диалогом', {
+            inline_keyboard: [[{ text: '✅ Завершить диалог', callback_data: 'admin_reply_end' }]]
+          });
+          // Do not edit the original complaint message
+          return;
+        } else {
+          responseText = '⚠️ Невозможно определить пользователя для ответа.';
+        }
+      } catch (e) {
+        responseText = '⚠️ Ошибка при запуске ответа.';
+      }
+      await this.sendMessage(chatId, responseText);
+      return;
+    }
+
     switch (data) {
+      case 'admin_reply_end':
+        this.adminReplySessions.delete(callbackQuery.from.id);
+        responseText = '✅ Диалог завершен. Ответы больше не будут отправляться пользователю.';
+        break;
+
+      case 'reply_admin_start':
+        this.userReplySessions.set(callbackQuery.from.id, true);
+        responseText = '✍️ Напишите ответ администрации (можно отправить текст или фото).';
+        keyboard = { inline_keyboard: [[{ text: '✅ Завершить диалог', callback_data: 'user_reply_end' }]] };
+        break;
+
+      case 'user_reply_end':
+        this.userReplySessions.delete(callbackQuery.from.id);
+        responseText = '✅ Диалог с администрацией завершен.';
+        break;
       case 'find_deals':
         responseText = `🔍 <b>Top Deals for ${userName}!</b>
 

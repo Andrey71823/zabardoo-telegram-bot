@@ -1,598 +1,378 @@
-import { BaseService } from '../base/BaseService';
+import { EventEmitter } from 'events';
+import { logger } from '../../config/logger';
 
-interface ReferralUser {
+export interface ReferralTier {
   id: string;
-  userId: string;
+  name: string;
+  minReferrals: number;
+  commissionRate: number; // Percentage
+  bonusReward: number; // Fixed bonus in INR
+  benefits: string[];
+  emoji: string;
+}
+
+export interface ReferralUser {
+  id: string;
+  telegramId: number;
   referralCode: string;
-  referralLink: string;
+  referredBy?: string;
   totalReferrals: number;
   activeReferrals: number;
   totalEarnings: number;
   pendingEarnings: number;
-  withdrawableEarnings: number;
-  tier: 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond';
+  currentTier: string;
   joinedAt: Date;
-  lastActivityAt: Date;
-  isActive: boolean;
-  bonusMultiplier: number;
-  specialPerks: string[];
+  lastActivity: Date;
 }
 
-interface Referral {
+export interface ReferralTransaction {
   id: string;
   referrerId: string;
-  referredUserId: string;
-  referralCode: string;
-  status: 'pending' | 'active' | 'completed' | 'cancelled';
-  signupDate: Date;
-  firstPurchaseDate?: Date;
-  totalPurchases: number;
-  totalSpent: number;
-  commissionEarned: number;
-  commissionPaid: number;
-  lastActivityDate: Date;
-  metadata: {
-    signupSource: string;
-    deviceType: string;
-    location?: string;
-    firstCategory?: string;
-  };
-}
-
-interface ReferralReward {
-  id: string;
-  userId: string;
-  referralId: string;
-  type: 'signup_bonus' | 'purchase_commission' | 'milestone_bonus' | 'tier_bonus' | 'special_event';
+  refereeId: string;
+  type: 'signup' | 'purchase' | 'tier_bonus';
   amount: number;
-  currency: 'INR' | 'points';
-  description: string;
-  earnedAt: Date;
+  status: 'pending' | 'approved' | 'paid';
+  createdAt: Date;
   paidAt?: Date;
-  status: 'pending' | 'approved' | 'paid' | 'cancelled';
-  metadata: any;
+  metadata?: any;
 }
 
-interface ReferralCampaign {
-  id: string;
-  name: string;
-  description: string;
-  startDate: Date;
-  endDate: Date;
-  isActive: boolean;
-  rules: {
-    signupBonus: number;
-    purchaseCommissionRate: number;
-    minimumPurchaseAmount: number;
-    maxRewardsPerUser: number;
-    tierMultipliers: Record<string, number>;
-  };
-  targets: {
-    totalReferrals: number;
-    totalRevenue: number;
-    conversionRate: number;
-  };
-  currentStats: {
-    totalReferrals: number;
-    totalRevenue: number;
-    conversionRate: number;
-  };
-}
+export class ReferralService extends EventEmitter {
+  private tiers: Map<string, ReferralTier> = new Map();
+  private users: Map<string, ReferralUser> = new Map();
+  private transactions: Map<string, ReferralTransaction> = new Map();
 
-interface ReferralStats {
-  totalUsers: number;
-  totalReferrals: number;
-  totalEarnings: number;
-  totalPaid: number;
-  conversionRate: number;
-  averageOrderValue: number;
-  topReferrers: Array<{
-    userId: string;
-    name: string;
-    referrals: number;
-    earnings: number;
-  }>;
-  tierDistribution: Record<string, number>;
-  monthlyGrowth: number;
-}
+  constructor() {
+    super();
+    this.initializeTiers();
+    logger.info('ReferralService initialized with 4 tiers');
+  }
 
-export class ReferralService extends BaseService {
-  private referralUsers: Map<string, ReferralUser> = new Map();
-  private referrals: Map<string, Referral> = new Map();
-  private rewards: Map<string, ReferralReward[]> = new Map();
-  private campaigns: Map<string, ReferralCampaign> = new Map();
+  private initializeTiers(): void {
+    const tiers: ReferralTier[] = [
+      {
+        id: 'bronze',
+        name: 'Bronze Saver',
+        minReferrals: 0,
+        commissionRate: 5,
+        bonusReward: 100,
+        emoji: '🥉',
+        benefits: [
+          '5% commission on referral purchases',
+          '₹100 signup bonus',
+          'Basic deal alerts'
+        ]
+      },
+      {
+        id: 'silver',
+        name: 'Silver Hunter',
+        minReferrals: 5,
+        commissionRate: 8,
+        bonusReward: 500,
+        emoji: '🥈',
+        benefits: [
+          '8% commission on referral purchases',
+          '₹500 tier upgrade bonus',
+          'Priority deal notifications',
+          'Exclusive silver deals'
+        ]
+      },
+      {
+        id: 'gold',
+        name: 'Gold Master',
+        minReferrals: 15,
+        commissionRate: 12,
+        bonusReward: 1500,
+        emoji: '🥇',
+        benefits: [
+          '12% commission on referral purchases',
+          '₹1500 tier upgrade bonus',
+          'VIP customer support',
+          'Early access to flash sales',
+          'Monthly bonus rewards'
+        ]
+      },
+      {
+        id: 'diamond',
+        name: 'Diamond Elite',
+        minReferrals: 50,
+        commissionRate: 20,
+        bonusReward: 5000,
+        emoji: '💎',
+        benefits: [
+          '20% commission on referral purchases',
+          '₹5000 tier upgrade bonus',
+          'Personal deal curator',
+          'Exclusive diamond-only deals',
+          'Direct line to management',
+          'Annual appreciation gifts'
+        ]
+      }
+    ];
 
-  // User Management
-  async createReferralUser(userId: string, userData: {
-    name: string;
-    email: string;
-    phone?: string;
-  }): Promise<ReferralUser> {
-    const referralCode = this.generateReferralCode(userData.name);
-    const referralLink = this.generateReferralLink(referralCode);
+    tiers.forEach(tier => this.tiers.set(tier.id, tier));
+  }
 
-    const referralUser: ReferralUser = {
-      id: this.generateId(),
-      userId,
+  async createReferralUser(telegramId: number, referredBy?: string): Promise<ReferralUser> {
+    const userId = `user_${telegramId}`;
+    
+    // Check if user already exists
+    if (this.users.has(userId)) {
+      return this.users.get(userId)!;
+    }
+
+    const referralCode = this.generateReferralCode(telegramId);
+    
+    const user: ReferralUser = {
+      id: userId,
+      telegramId,
       referralCode,
-      referralLink,
+      referredBy,
       totalReferrals: 0,
       activeReferrals: 0,
       totalEarnings: 0,
       pendingEarnings: 0,
-      withdrawableEarnings: 0,
-      tier: 'Bronze',
+      currentTier: 'bronze',
       joinedAt: new Date(),
-      lastActivityAt: new Date(),
-      isActive: true,
-      bonusMultiplier: 1.0,
-      specialPerks: []
+      lastActivity: new Date()
     };
 
-    this.referralUsers.set(userId, referralUser);
-    return referralUser;
-  }
+    this.users.set(userId, user);
 
-  async getReferralUser(userId: string): Promise<ReferralUser | null> {
-    return this.referralUsers.get(userId) || null;
-  }
-
-  async updateReferralUser(userId: string, updates: Partial<ReferralUser>): Promise<ReferralUser | null> {
-    const user = this.referralUsers.get(userId);
-    if (user) {
-      const updatedUser = { ...user, ...updates };
-      this.referralUsers.set(userId, updatedUser);
-      return updatedUser;
-    }
-    return null;
-  }
-
-  // Referral Management
-  async createReferral(referralCode: string, newUserId: string, metadata: {
-    signupSource: string;
-    deviceType: string;
-    location?: string;
-  }): Promise<Referral | null> {
-    // Find referrer by code
-    const referrer = Array.from(this.referralUsers.values())
-      .find(user => user.referralCode === referralCode);
-
-    if (!referrer) {
-      return null;
+    // Process referral if user was referred
+    if (referredBy) {
+      await this.processReferralSignup(referredBy, userId);
     }
 
-    const referral: Referral = {
-      id: this.generateId(),
-      referrerId: referrer.userId,
-      referredUserId: newUserId,
-      referralCode,
-      status: 'pending',
-      signupDate: new Date(),
-      totalPurchases: 0,
-      totalSpent: 0,
-      commissionEarned: 0,
-      commissionPaid: 0,
-      lastActivityDate: new Date(),
-      metadata
-    };
-
-    this.referrals.set(referral.id, referral);
-
-    // Update referrer stats
-    referrer.totalReferrals++;
-    referrer.activeReferrals++;
-    referrer.lastActivityAt = new Date();
-    this.referralUsers.set(referrer.userId, referrer);
-
-    // Award signup bonus
-    await this.awardSignupBonus(referrer.userId, referral.id);
-
-    return referral;
+    logger.info(`Created referral user: ${userId} with code: ${referralCode}`);
+    return user;
   }
 
-  async processReferralPurchase(referredUserId: string, purchaseAmount: number, metadata: any): Promise<void> {
-    // Find referral by referred user
-    const referral = Array.from(this.referrals.values())
-      .find(ref => ref.referredUserId === referredUserId && ref.status === 'active');
-
-    if (!referral) {
-      return;
-    }
-
-    // Update referral stats
-    referral.totalPurchases++;
-    referral.totalSpent += purchaseAmount;
-    referral.lastActivityDate = new Date();
-
-    // Mark as active on first purchase
-    if (referral.totalPurchases === 1) {
-      referral.status = 'active';
-      referral.firstPurchaseDate = new Date();
-    }
-
-    this.referrals.set(referral.id, referral);
-
-    // Calculate and award commission
-    await this.awardPurchaseCommission(referral.referrerId, referral.id, purchaseAmount, metadata);
-
-    // Check for milestone bonuses
-    await this.checkMilestoneBonuses(referral.referrerId);
-
-    // Update tier if needed
-    await this.updateUserTier(referral.referrerId);
+  private generateReferralCode(telegramId: number): string {
+    const base = telegramId.toString();
+    const hash = base.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return `ZAB${hash.toString(36).toUpperCase().substr(0, 6)}`;
   }
 
-  // Reward Management
-  private async awardSignupBonus(referrerId: string, referralId: string): Promise<void> {
-    const campaign = this.getActiveCampaign();
-    const bonusAmount = campaign?.rules.signupBonus || 50; // Default ₹50
-
-    const reward: ReferralReward = {
-      id: this.generateId(),
-      userId: referrerId,
-      referralId,
-      type: 'signup_bonus',
-      amount: bonusAmount,
-      currency: 'INR',
-      description: `Signup bonus for successful referral`,
-      earnedAt: new Date(),
-      status: 'pending',
-      metadata: { campaign: campaign?.id }
-    };
-
-    await this.addReward(referrerId, reward);
-  }
-
-  private async awardPurchaseCommission(referrerId: string, referralId: string, purchaseAmount: number, metadata: any): Promise<void> {
-    const campaign = this.getActiveCampaign();
-    const commissionRate = campaign?.rules.purchaseCommissionRate || 0.05; // Default 5%
-    const referrer = this.referralUsers.get(referrerId);
-    
-    if (!referrer) return;
-
-    const baseCommission = purchaseAmount * commissionRate;
-    const finalCommission = baseCommission * referrer.bonusMultiplier;
-
-    const reward: ReferralReward = {
-      id: this.generateId(),
-      userId: referrerId,
-      referralId,
-      type: 'purchase_commission',
-      amount: finalCommission,
-      currency: 'INR',
-      description: `${(commissionRate * 100).toFixed(1)}% commission on ₹${purchaseAmount} purchase`,
-      earnedAt: new Date(),
-      status: 'pending',
-      metadata: { 
-        purchaseAmount, 
-        commissionRate, 
-        bonusMultiplier: referrer.bonusMultiplier,
-        ...metadata 
-      }
-    };
-
-    await this.addReward(referrerId, reward);
-
-    // Update referral commission
-    const referral = this.referrals.get(referralId);
-    if (referral) {
-      referral.commissionEarned += finalCommission;
-      this.referrals.set(referralId, referral);
-    }
-  }
-
-  private async addReward(userId: string, reward: ReferralReward): Promise<void> {
-    const userRewards = this.rewards.get(userId) || [];
-    userRewards.push(reward);
-    this.rewards.set(userId, userRewards);
-
-    // Update user earnings
-    const user = this.referralUsers.get(userId);
-    if (user) {
-      user.pendingEarnings += reward.amount;
-      user.totalEarnings += reward.amount;
-      this.referralUsers.set(userId, user);
-    }
-  }
-
-  // Tier Management
-  private async updateUserTier(userId: string): Promise<void> {
-    const user = this.referralUsers.get(userId);
-    if (!user) return;
-
-    const newTier = this.calculateTier(user.totalReferrals, user.totalEarnings);
-    
-    if (newTier !== user.tier) {
-      const oldTier = user.tier;
-      user.tier = newTier;
-      user.bonusMultiplier = this.getTierMultiplier(newTier);
-      user.specialPerks = this.getTierPerks(newTier);
+  async processReferralSignup(referrerCode: string, newUserId: string): Promise<boolean> {
+    try {
+      // Find referrer by code
+      const referrer = Array.from(this.users.values()).find(user => user.referralCode === referrerCode);
       
-      this.referralUsers.set(userId, user);
+      if (!referrer) {
+        logger.warn(`Referrer not found for code: ${referrerCode}`);
+        return false;
+      }
 
-      // Award tier upgrade bonus
-      await this.awardTierBonus(userId, oldTier, newTier);
-    }
-  }
+      // Update referrer stats
+      referrer.totalReferrals += 1;
+      referrer.activeReferrals += 1;
+      referrer.lastActivity = new Date();
 
-  private calculateTier(totalReferrals: number, totalEarnings: number): ReferralUser['tier'] {
-    if (totalReferrals >= 100 || totalEarnings >= 50000) return 'Diamond';
-    if (totalReferrals >= 50 || totalEarnings >= 25000) return 'Platinum';
-    if (totalReferrals >= 25 || totalEarnings >= 10000) return 'Gold';
-    if (totalReferrals >= 10 || totalEarnings >= 5000) return 'Silver';
-    return 'Bronze';
-  }
-
-  private getTierMultiplier(tier: ReferralUser['tier']): number {
-    const multipliers = {
-      'Bronze': 1.0,
-      'Silver': 1.2,
-      'Gold': 1.5,
-      'Platinum': 2.0,
-      'Diamond': 2.5
-    };
-    return multipliers[tier];
-  }
-
-  private getTierPerks(tier: ReferralUser['tier']): string[] {
-    const perks = {
-      'Bronze': ['Basic referral tracking'],
-      'Silver': ['Basic referral tracking', 'Monthly bonus rewards', 'Priority support'],
-      'Gold': ['Basic referral tracking', 'Monthly bonus rewards', 'Priority support', 'Exclusive deals access'],
-      'Platinum': ['Basic referral tracking', 'Monthly bonus rewards', 'Priority support', 'Exclusive deals access', 'Personal account manager'],
-      'Diamond': ['Basic referral tracking', 'Monthly bonus rewards', 'Priority support', 'Exclusive deals access', 'Personal account manager', 'VIP events access', 'Custom referral codes']
-    };
-    return perks[tier];
-  }
-
-  private async awardTierBonus(userId: string, oldTier: string, newTier: string): Promise<void> {
-    const bonusAmounts = {
-      'Silver': 500,
-      'Gold': 1000,
-      'Platinum': 2500,
-      'Diamond': 5000
-    };
-
-    const bonusAmount = bonusAmounts[newTier as keyof typeof bonusAmounts] || 0;
-
-    if (bonusAmount > 0) {
-      const reward: ReferralReward = {
-        id: this.generateId(),
-        userId,
-        referralId: '',
-        type: 'tier_bonus',
-        amount: bonusAmount,
-        currency: 'INR',
-        description: `Tier upgrade bonus: ${oldTier} → ${newTier}`,
-        earnedAt: new Date(),
+      // Create signup transaction
+      const transaction: ReferralTransaction = {
+        id: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        referrerId: referrer.id,
+        refereeId: newUserId,
+        type: 'signup',
+        amount: 50, // ₹50 for each signup
         status: 'approved',
-        metadata: { oldTier, newTier }
+        createdAt: new Date(),
+        metadata: { referralCode: referrerCode }
       };
 
-      await this.addReward(userId, reward);
+      this.transactions.set(transaction.id, transaction);
+      referrer.totalEarnings += transaction.amount;
+      referrer.pendingEarnings += transaction.amount;
+
+      // Check for tier upgrade
+      await this.checkTierUpgrade(referrer.id);
+
+      this.emit('referralSignup', { referrer, newUserId, transaction });
+      logger.info(`Processed referral signup: ${referrerCode} -> ${newUserId}`);
+      
+      return true;
+    } catch (error) {
+      logger.error('Error processing referral signup:', error);
+      return false;
     }
   }
 
-  // Milestone Management
-  private async checkMilestoneBonuses(userId: string): Promise<void> {
-    const user = this.referralUsers.get(userId);
+  async processReferralPurchase(userId: string, purchaseAmount: number): Promise<void> {
+    try {
+      const user = this.users.get(userId);
+      if (!user || !user.referredBy) return;
+
+      // Find referrer
+      const referrer = Array.from(this.users.values()).find(u => u.referralCode === user.referredBy);
+      if (!referrer) return;
+
+      const tier = this.tiers.get(referrer.currentTier);
+      if (!tier) return;
+
+      // Calculate commission
+      const commission = Math.round(purchaseAmount * (tier.commissionRate / 100));
+
+      // Create purchase transaction
+      const transaction: ReferralTransaction = {
+        id: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        referrerId: referrer.id,
+        refereeId: userId,
+        type: 'purchase',
+        amount: commission,
+        status: 'pending',
+        createdAt: new Date(),
+        metadata: { purchaseAmount, commissionRate: tier.commissionRate }
+      };
+
+      this.transactions.set(transaction.id, transaction);
+      referrer.pendingEarnings += commission;
+      referrer.lastActivity = new Date();
+
+      this.emit('referralPurchase', { referrer, user, transaction });
+      logger.info(`Processed referral purchase: ${commission} INR for ${referrer.id}`);
+    } catch (error) {
+      logger.error('Error processing referral purchase:', error);
+    }
+  }
+
+  private async checkTierUpgrade(userId: string): Promise<void> {
+    const user = this.users.get(userId);
     if (!user) return;
 
-    const milestones = [
-      { referrals: 5, bonus: 250, description: 'First 5 referrals milestone' },
-      { referrals: 10, bonus: 500, description: 'First 10 referrals milestone' },
-      { referrals: 25, bonus: 1250, description: 'First 25 referrals milestone' },
-      { referrals: 50, bonus: 2500, description: 'First 50 referrals milestone' },
-      { referrals: 100, bonus: 5000, description: 'First 100 referrals milestone' }
-    ];
+    const currentTier = this.tiers.get(user.currentTier);
+    if (!currentTier) return;
 
-    for (const milestone of milestones) {
-      if (user.totalReferrals === milestone.referrals) {
-        const reward: ReferralReward = {
-          id: this.generateId(),
-          userId,
-          referralId: '',
-          type: 'milestone_bonus',
-          amount: milestone.bonus,
-          currency: 'INR',
-          description: milestone.description,
-          earnedAt: new Date(),
-          status: 'approved',
-          metadata: { milestone: milestone.referrals }
-        };
+    // Find next tier
+    const allTiers = Array.from(this.tiers.values()).sort((a, b) => a.minReferrals - b.minReferrals);
+    const nextTier = allTiers.find(tier => 
+      tier.minReferrals > currentTier.minReferrals && 
+      user.totalReferrals >= tier.minReferrals
+    );
 
-        await this.addReward(userId, reward);
-        break;
-      }
+    if (nextTier) {
+      const oldTier = user.currentTier;
+      user.currentTier = nextTier.id;
+
+      // Create tier bonus transaction
+      const transaction: ReferralTransaction = {
+        id: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        referrerId: userId,
+        refereeId: userId,
+        type: 'tier_bonus',
+        amount: nextTier.bonusReward,
+        status: 'approved',
+        createdAt: new Date(),
+        metadata: { oldTier, newTier: nextTier.id }
+      };
+
+      this.transactions.set(transaction.id, transaction);
+      user.totalEarnings += transaction.amount;
+      user.pendingEarnings += transaction.amount;
+
+      this.emit('tierUpgrade', { user, oldTier, newTier: nextTier, transaction });
+      logger.info(`Tier upgrade: ${userId} from ${oldTier} to ${nextTier.id}`);
     }
   }
 
-  // Analytics and Reporting
-  async getReferralStats(): Promise<ReferralStats> {
-    const allUsers = Array.from(this.referralUsers.values());
-    const allReferrals = Array.from(this.referrals.values());
-    const allRewards = Array.from(this.rewards.values()).flat();
+  getReferralUser(userId: string): ReferralUser | undefined {
+    return this.users.get(userId);
+  }
 
-    const totalUsers = allUsers.length;
-    const totalReferrals = allReferrals.length;
-    const totalEarnings = allRewards.reduce((sum, reward) => sum + reward.amount, 0);
-    const totalPaid = allRewards.filter(r => r.status === 'paid').reduce((sum, reward) => sum + reward.amount, 0);
-    
-    const activeReferrals = allReferrals.filter(r => r.status === 'active').length;
-    const conversionRate = totalReferrals > 0 ? (activeReferrals / totalReferrals) * 100 : 0;
-    
-    const totalSpent = allReferrals.reduce((sum, ref) => sum + ref.totalSpent, 0);
-    const averageOrderValue = activeReferrals > 0 ? totalSpent / activeReferrals : 0;
+  getUserByReferralCode(code: string): ReferralUser | undefined {
+    return Array.from(this.users.values()).find(user => user.referralCode === code);
+  }
 
-    const topReferrers = allUsers
-      .sort((a, b) => b.totalReferrals - a.totalReferrals)
-      .slice(0, 10)
-      .map(user => ({
-        userId: user.userId,
-        name: `User ${user.userId.slice(-4)}`, // In real app, get actual name
-        referrals: user.totalReferrals,
-        earnings: user.totalEarnings
+  getUserReferrals(userId: string): ReferralUser[] {
+    const user = this.users.get(userId);
+    if (!user) return [];
+
+    return Array.from(this.users.values()).filter(u => u.referredBy === user.referralCode);
+  }
+
+  getUserTransactions(userId: string): ReferralTransaction[] {
+    return Array.from(this.transactions.values())
+      .filter(txn => txn.referrerId === userId)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+
+  async processPayment(userId: string, amount: number, paymentMethod: 'upi' | 'paytm' | 'bank'): Promise<boolean> {
+    try {
+      const user = this.users.get(userId);
+      if (!user || user.pendingEarnings < amount) {
+        return false;
+      }
+
+      // Update user earnings
+      user.pendingEarnings -= amount;
+      
+      // Mark relevant transactions as paid
+      const pendingTransactions = Array.from(this.transactions.values())
+        .filter(txn => txn.referrerId === userId && txn.status === 'pending')
+        .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+
+      let remainingAmount = amount;
+      for (const txn of pendingTransactions) {
+        if (remainingAmount <= 0) break;
+        
+        if (txn.amount <= remainingAmount) {
+          txn.status = 'paid';
+          txn.paidAt = new Date();
+          remainingAmount -= txn.amount;
+        }
+      }
+
+      this.emit('paymentProcessed', { user, amount, paymentMethod });
+      logger.info(`Payment processed: ₹${amount} for ${userId} via ${paymentMethod}`);
+      
+      return true;
+    } catch (error) {
+      logger.error('Error processing payment:', error);
+      return false;
+    }
+  }
+
+  getLeaderboard(limit: number = 10): any[] {
+    return Array.from(this.users.values())
+      .sort((a, b) => b.totalEarnings - a.totalEarnings)
+      .slice(0, limit)
+      .map((user, index) => ({
+        rank: index + 1,
+        userId: user.id,
+        telegramId: user.telegramId,
+        totalReferrals: user.totalReferrals,
+        totalEarnings: user.totalEarnings,
+        currentTier: user.currentTier,
+        tierEmoji: this.tiers.get(user.currentTier)?.emoji || '🥉'
       }));
+  }
 
-    const tierDistribution = allUsers.reduce((acc, user) => {
-      acc[user.tier] = (acc[user.tier] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+  getTierInfo(tierId: string): ReferralTier | undefined {
+    return this.tiers.get(tierId);
+  }
 
-    // Calculate monthly growth (simplified)
-    const thisMonth = new Date();
-    thisMonth.setDate(1);
-    const thisMonthReferrals = allReferrals.filter(r => r.signupDate >= thisMonth).length;
-    const monthlyGrowth = totalReferrals > 0 ? (thisMonthReferrals / totalReferrals) * 100 : 0;
+  getAllTiers(): ReferralTier[] {
+    return Array.from(this.tiers.values()).sort((a, b) => a.minReferrals - b.minReferrals);
+  }
+
+  getStats(): any {
+    const totalUsers = this.users.size;
+    const totalTransactions = this.transactions.size;
+    const totalEarnings = Array.from(this.users.values()).reduce((sum, user) => sum + user.totalEarnings, 0);
+    const totalReferrals = Array.from(this.users.values()).reduce((sum, user) => sum + user.totalReferrals, 0);
+
+    const tierDistribution = new Map<string, number>();
+    Array.from(this.users.values()).forEach(user => {
+      tierDistribution.set(user.currentTier, (tierDistribution.get(user.currentTier) || 0) + 1);
+    });
 
     return {
       totalUsers,
-      totalReferrals,
+      totalTransactions,
       totalEarnings,
-      totalPaid,
-      conversionRate,
-      averageOrderValue,
-      topReferrers,
-      tierDistribution,
-      monthlyGrowth
+      totalReferrals,
+      averageEarningsPerUser: totalUsers > 0 ? Math.round(totalEarnings / totalUsers) : 0,
+      tierDistribution: Object.fromEntries(tierDistribution)
     };
-  }
-
-  async getUserReferrals(userId: string): Promise<Referral[]> {
-    return Array.from(this.referrals.values())
-      .filter(referral => referral.referrerId === userId)
-      .sort((a, b) => b.signupDate.getTime() - a.signupDate.getTime());
-  }
-
-  async getUserRewards(userId: string): Promise<ReferralReward[]> {
-    return this.rewards.get(userId) || [];
-  }
-
-  // Payment Management
-  async processWithdrawal(userId: string, amount: number, paymentMethod: {
-    type: 'upi' | 'bank' | 'paytm';
-    details: any;
-  }): Promise<{ success: boolean; transactionId?: string; error?: string }> {
-    const user = this.referralUsers.get(userId);
-    if (!user) {
-      return { success: false, error: 'User not found' };
-    }
-
-    if (amount > user.withdrawableEarnings) {
-      return { success: false, error: 'Insufficient withdrawable balance' };
-    }
-
-    if (amount < 100) {
-      return { success: false, error: 'Minimum withdrawal amount is ₹100' };
-    }
-
-    // Process withdrawal (integrate with payment gateway)
-    const transactionId = this.generateTransactionId();
-    
-    // Update user balance
-    user.withdrawableEarnings -= amount;
-    user.pendingEarnings -= amount;
-    this.referralUsers.set(userId, user);
-
-    // Mark rewards as paid
-    const userRewards = this.rewards.get(userId) || [];
-    let remainingAmount = amount;
-    
-    for (const reward of userRewards) {
-      if (reward.status === 'approved' && remainingAmount > 0) {
-        if (reward.amount <= remainingAmount) {
-          reward.status = 'paid';
-          reward.paidAt = new Date();
-          remainingAmount -= reward.amount;
-        }
-      }
-    }
-
-    this.rewards.set(userId, userRewards);
-
-    return { success: true, transactionId };
-  }
-
-  // Campaign Management
-  async createCampaign(campaign: Omit<ReferralCampaign, 'id' | 'currentStats'>): Promise<ReferralCampaign> {
-    const newCampaign: ReferralCampaign = {
-      id: this.generateId(),
-      currentStats: {
-        totalReferrals: 0,
-        totalRevenue: 0,
-        conversionRate: 0
-      },
-      ...campaign
-    };
-
-    this.campaigns.set(newCampaign.id, newCampaign);
-    return newCampaign;
-  }
-
-  private getActiveCampaign(): ReferralCampaign | null {
-    const now = new Date();
-    return Array.from(this.campaigns.values())
-      .find(campaign => 
-        campaign.isActive && 
-        campaign.startDate <= now && 
-        campaign.endDate >= now
-      ) || null;
-  }
-
-  // Utility Methods
-  private generateReferralCode(name: string): string {
-    const cleanName = name.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 4);
-    const randomSuffix = Math.random().toString(36).substr(2, 4).toUpperCase();
-    return `${cleanName}${randomSuffix}`;
-  }
-
-  private generateReferralLink(code: string): string {
-    return `https://zabardoo.com/ref/${code}`;
-  }
-
-  private generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-
-  private generateTransactionId(): string {
-    return 'TXN' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2, 4).toUpperCase();
-  }
-
-  // Validation Methods
-  async validateReferralCode(code: string): Promise<boolean> {
-    return Array.from(this.referralUsers.values())
-      .some(user => user.referralCode === code && user.isActive);
-  }
-
-  async canUserRefer(userId: string): Promise<{ canRefer: boolean; reason?: string }> {
-    const user = this.referralUsers.get(userId);
-    
-    if (!user) {
-      return { canRefer: false, reason: 'User not found in referral system' };
-    }
-
-    if (!user.isActive) {
-      return { canRefer: false, reason: 'Referral account is inactive' };
-    }
-
-    const campaign = this.getActiveCampaign();
-    if (campaign && user.totalReferrals >= campaign.rules.maxRewardsPerUser) {
-      return { canRefer: false, reason: 'Maximum referrals limit reached for current campaign' };
-    }
-
-    return { canRefer: true };
-  }
-
-  // Export/Import for data management
-  async exportUserData(userId: string): Promise<{
-    user: ReferralUser | null;
-    referrals: Referral[];
-    rewards: ReferralReward[];
-  }> {
-    const user = this.referralUsers.get(userId);
-    const referrals = await this.getUserReferrals(userId);
-    const rewards = await this.getUserRewards(userId);
-
-    return { user, referrals, rewards };
   }
 }
