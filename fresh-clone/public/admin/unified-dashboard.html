@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zabardoo Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: #ffffff;
+            border-right: 1px solid #f1f5f9;
+            padding: 32px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .sidebar-header {
+            padding: 0 24px 32px;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 32px;
+        }
+        
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .sidebar-title:hover {
+            background: #f8fafc;
+            color: #3b82f6;
+        }
+        
+        .sidebar-nav {
+            padding: 0 12px;
+        }
+        
+        .nav-item {
+            margin-bottom: 4px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            color: #64748b;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .nav-link:hover {
+            background: #f8fafc;
+            color: #3b82f6;
+        }
+        
+        .nav-link.active {
+            background: #eff6ff;
+            color: #3b82f6;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 32px;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .content-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .content-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            color: #475569;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn:hover {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: #ffffff;
+            border-color: #3b82f6;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+        
+        .content-frame {
+            background: #ffffff;
+            border: 1px solid #f1f5f9;
+            border-radius: 4px;
+            height: calc(100vh - 200px);
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .content-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .loading-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 400px;
+            color: #64748b;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #f1f5f9;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .welcome-content {
+            text-align: center;
+            padding: 80px 40px;
+            color: #64748b;
+        }
+        
+        .welcome-icon {
+            font-size: 64px;
+            color: #3b82f6;
+            margin-bottom: 24px;
+        }
+        
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+        
+        .welcome-description {
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 500px;
+            margin: 0 auto;
+            color: #64748b;
+        }
+        
+        .status-indicator {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10b981;
+            margin-left: auto;
+        }
+        
+        .nav-section {
+            margin-bottom: 32px;
+        }
+        
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 0 16px 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1000;
+                background: #3b82f6;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 12px;
+                cursor: pointer;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title" onclick="goToHome()">
+                    <i class="fas fa-robot"></i>
+                    Zabardoo Admin
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Navigation</div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="goToHome()">
+                            <i class="fas fa-home nav-icon"></i>
+                            Home
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Core Features</div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadContent('/admin/gpt-chat-management-clean.html', 'GPT Chat Management', this)">
+                            <i class="fas fa-robot nav-icon"></i>
+                            GPT Chat Management
+                            <div class="status-indicator"></div>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadContent('/admin/favorites-management.html', 'Favorites Management', this)">
+                            <i class="fas fa-heart nav-icon"></i>
+                            Favorites Management
+                            <div class="status-indicator"></div>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadContent('/telegram-webapp/index.html', 'Telegram WebApp', this)">
+                            <i class="fab fa-telegram nav-icon"></i>
+                            Telegram WebApp
+                            <div class="status-indicator"></div>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Analytics & Business</div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadContent('/business-dashboard.html', 'Business Dashboard', this)">
+                            <i class="fas fa-chart-line nav-icon"></i>
+                            Business Dashboard
+                            <div class="status-indicator"></div>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadContent('/monitoring-dashboard.html', 'System Monitoring', this)">
+                            <i class="fas fa-tachometer-alt nav-icon"></i>
+                            System Monitoring
+                            <div class="status-indicator"></div>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Management Tools</div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadContent('/admin/coupon-management.html', 'Coupon Management', this)">
+                            <i class="fas fa-ticket-alt nav-icon"></i>
+                            Coupon Management
+                            <div class="status-indicator"></div>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadContent('/admin/user-management.html', 'User Management', this)">
+                            <i class="fas fa-users nav-icon"></i>
+                            User Management
+                            <div class="status-indicator"></div>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadContent('/admin/notification-campaigns.html', 'Notification Campaigns', this)">
+                            <i class="fas fa-bell nav-icon"></i>
+                            Notification Campaigns
+                            <div class="status-indicator"></div>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Security & Compliance</div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadContent('/admin/data-compliance.html', 'Data Compliance', this)">
+                            <i class="fas fa-shield-alt nav-icon"></i>
+                            Data Compliance
+                            <div class="status-indicator"></div>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <h1 class="content-title" id="contentTitle">
+                    <i class="fas fa-home"></i>
+                    Welcome to Zabardoo Admin
+                </h1>
+                <div class="content-actions">
+                    <button class="btn" onclick="goToHome()">
+                        <i class="fas fa-home"></i>
+                        Home
+                    </button>
+                    <button class="btn" onclick="refreshContent()">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                    <button class="btn btn-primary" onclick="openInNewTab()">
+                        <i class="fas fa-external-link-alt"></i>
+                        Open in New Tab
+                    </button>
+                </div>
+            </div>
+            
+            <div class="content-frame" id="contentFrame">
+                <div class="welcome-content">
+                    <div class="welcome-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h2 class="welcome-title">Welcome to Zabardoo Admin Dashboard</h2>
+                    <p class="welcome-description">
+                        Select any option from the sidebar to manage your Zabardoo bot system. 
+                        All your admin tools are organized and ready to use.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentUrl = '';
+        let currentTitle = '';
+        
+        function loadContent(url, title, linkElement) {
+            // Update active state
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            linkElement.classList.add('active');
+            
+            // Update title
+            document.getElementById('contentTitle').innerHTML = `
+                <i class="${getIconForTitle(title)}"></i>
+                ${title}
+            `;
+            
+            // Show loading state
+            document.getElementById('contentFrame').innerHTML = `
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <div>Loading ${title}...</div>
+                </div>
+            `;
+            
+            // Load content in iframe
+            setTimeout(() => {
+                document.getElementById('contentFrame').innerHTML = `
+                    <iframe class="content-iframe" src="${url}" onload="hideLoading()"></iframe>
+                `;
+                currentUrl = url;
+                currentTitle = title;
+            }, 500);
+            
+            // Close mobile sidebar
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('open');
+            }
+        }
+        
+        function getIconForTitle(title) {
+            const icons = {
+                'GPT Chat Management': 'fas fa-robot',
+                'Favorites Management': 'fas fa-heart',
+                'Telegram WebApp': 'fab fa-telegram',
+                'Business Dashboard': 'fas fa-chart-line',
+                'System Monitoring': 'fas fa-tachometer-alt',
+                'Coupon Management': 'fas fa-ticket-alt',
+                'User Management': 'fas fa-users',
+                'Notification Campaigns': 'fas fa-bell',
+                'Data Compliance': 'fas fa-shield-alt'
+            };
+            return icons[title] || 'fas fa-cog';
+        }
+        
+        function hideLoading() {
+            // Loading is handled by iframe onload
+        }
+        
+        function refreshContent() {
+            if (currentUrl) {
+                const iframe = document.querySelector('.content-iframe');
+                if (iframe) {
+                    iframe.src = iframe.src;
+                }
+            }
+        }
+        
+        function openInNewTab() {
+            if (currentUrl) {
+                window.open(currentUrl, '_blank');
+            }
+        }
+        
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+        
+        function goToHome() {
+            // Clear active states
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Set home as active
+            document.querySelector('[onclick*="goToHome"]').classList.add('active');
+            
+            // Update title
+            document.getElementById('contentTitle').innerHTML = `
+                <i class="fas fa-home"></i>
+                Welcome to Zabardoo Admin
+            `;
+            
+            // Show welcome content
+            document.getElementById('contentFrame').innerHTML = `
+                <div class="welcome-content">
+                    <div class="welcome-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h2 class="welcome-title">Welcome to Zabardoo Admin Dashboard</h2>
+                    <p class="welcome-description">
+                        Select any option from the sidebar to manage your Zabardoo bot system. 
+                        All your admin tools are organized and ready to use.
+                    </p>
+                </div>
+            `;
+            
+            // Clear current URL
+            currentUrl = '';
+            currentTitle = '';
+            
+            // Close mobile sidebar
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('open');
+            }
+        }
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const menuBtn = document.querySelector('.mobile-menu-btn');
+                
+                if (!sidebar.contains(event.target) && !menuBtn.contains(event.target)) {
+                    sidebar.classList.remove('open');
+                }
+            }
+        });
+        
+        // Auto-load GPT Chat Management on page load
+        window.addEventListener('load', function() {
+            const gptLink = document.querySelector('[onclick*="gpt-chat-management"]');
+            if (gptLink) {
+                setTimeout(() => {
+                    gptLink.click();
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

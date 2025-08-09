@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zabardoo Business Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+         
+
+        
+        body {
+            font-family: 'Segoe UI', Tns-serif;
+            background: );
+         
+x;
+        }
+        
+        .dashboard-contai
+            max-width: 160px;
+            margin: 0 auto;
+         
+
+            box-shad,0.1);
+            overflow: hidden;
+        }
+        
+ader {
+            backgro);
+            color: white;
+            padding: 30px
+          flex;
+en;
+            align-it;
+        }
+        
+        .header-left h1 {
+         em;
+
+        }
+        
+        .header-left p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+ 
+        .header-right 
+            text-align: right;
+        }
+        
+        .date-range-selector {
+            background: rgba(255,255,255,0.2
+         
+ 8px;
+            padding: 10px 15px;
+            color: white;
+         m: 10px;
+   }
+        
+        .last-updated {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+{
+            display: grid;
+            grid-template-colu1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        
+ic-card {
+            background: 
+            border-radius: 12px;
+            padding: 25px;
+         ,0.1);
+eea;
+            transition: all 0.3s 
+            position: relate;
+         verf   o
+
+        .metric-change.negative {
+            color: #ef4444;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .insights-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .insight-item {
+            padding: 1rem;
+            border-left: 4px solid #667eea;
+            background: #f8fafc;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert.warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .alert.critical {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+        }
+
+        .alert.info {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .controls input, .controls select, .controls button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .controls button:hover {
+            background: #5a67d8;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 Zabardoo Analytics Dashboard</h1>
+        <p>Real-time business metrics and insights for your Telegram coupon bot</p>
+    </div>
+
+    <div class="container">
+        <!-- Controls -->
+        <div class="controls">
+            <label>From:</label>
+            <input type="date" id="dateFrom" />
+            
+            <label>To:</label>
+            <input type="date" id="dateTo" />
+            
+            <button onclick="loadDashboard()">🔄 Refresh</button>
+            <button onclick="exportData('csv')">📊 Export CSV</button>
+            <button onclick="exportData('json')">📄 Export JSON</button>
+            <button onclick="toggleRealTime()">⚡ Real-time</button>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+            <p>Loading dashboard data...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="error" style="display: none;"></div>
+
+        <!-- Metrics Overview -->
+        <div id="metricsGrid" class="metrics-grid" style="display: none;"></div>
+
+        <!-- Charts -->
+        <div id="chartsGrid" class="charts-grid" style="display: none;"></div>
+
+        <!-- Insights -->
+        <div id="insightsSection" class="insights-section" style="display: none;"></div>
+    </div>
+
+    <script>
+        let realTimeInterval = null;
+        let dashboardData = null;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default date range (last 30 days)
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+            
+            document.getElementById('dateTo').value = today.toISOString().split('T')[0];
+            document.getElementById('dateFrom').value = thirtyDaysAgo.toISOString().split('T')[0];
+            
+            loadDashboard();
+        });
+
+        async function loadDashboard() {
+            try {
+                showLoading();
+                hideError();
+
+                const dateFrom = document.getElementById('dateFrom').value;
+                const dateTo = document.getElementById('dateTo').value;
+                
+                const params = new URLSearchParams({
+                    from: dateFrom,
+                    to: dateTo
+                });
+
+                const [metricsResponse, insightsResponse] = await Promise.all([
+                    fetch(`/api/dashboard/metrics?${params}`),
+                    fetch(`/api/dashboard/insights?${params}`)
+                ]);
+
+                if (!metricsResponse.ok || !insightsResponse.ok) {
+                    throw new Error('Failed to load dashboard data');
+                }
+
+                const metricsData = await metricsResponse.json();
+                const insightsData = await insightsResponse.json();
+
+                dashboardData = metricsData.data;
+                
+                renderMetrics(dashboardData);
+                renderCharts(dashboardData);
+                renderInsights(insightsData.data);
+                
+                hideLoading();
+                showDashboard();
+
+            } catch (error) {
+                hideLoading();
+                showError('Failed to load dashboard: ' + error.message);
+            }
+        }
+
+        function renderMetrics(data) {
+            const metricsGrid = document.getElementById('metricsGrid');
+            metricsGrid.innerHTML = '';
+
+            const metrics = [
+                {
+                    label: 'Total Users',
+                    value: data.overview.totalUsers.toLocaleString(),
+                    change: data.overview.growthRate
+                },
+                {
+                    label: 'Active Users',
+                    value: data.overview.activeUsers.toLocaleString(),
+                    change: null
+                },
+                {
+                    label: 'Total Revenue',
+                    value: '₹' + data.overview.totalRevenue.toLocaleString(),
+                    change: data.revenue.revenueGrowth
+                },
+                {
+                    label: 'Conversion Rate',
+                    value: (data.overview.conversionRate * 100).toFixed(1) + '%',
+                    change: null
+                },
+                {
+                    label: 'Avg Order Value',
+                    value: '₹' + data.overview.averageOrderValue.toFixed(2),
+                    change: null
+                },
+                {
+                    label: 'Total Cashback',
+                    value: '₹' + data.overview.totalCashback.toLocaleString(),
+                    change: null
+                }
+            ];
+
+            metrics.forEach(metric => {
+                const card = document.createElement('div');
+                card.className = 'metric-card';
+                
+                let changeHtml = '';
+                if (metric.change !== null) {
+                    const changeClass = metric.change >= 0 ? 'positive' : 'negative';
+                    const changeIcon = metric.change >= 0 ? '📈' : '📉';
+                    changeHtml = `<div class="metric-change ${changeClass}">${changeIcon} ${metric.change.toFixed(1)}%</div>`;
+                }
+                
+                card.innerHTML = `
+                    <div class="metric-value">${metric.value}</div>
+                    <div class="metric-label">${metric.label}</div>
+                    ${changeHtml}
+                `;
+                
+                metricsGrid.appendChild(card);
+            });
+        }
+
+        function renderCharts(data) {
+            const chartsGrid = document.getElementById('chartsGrid');
+            chartsGrid.innerHTML = '';
+
+            // Revenue by Channel Chart
+            const revenueChannelCard = createChartCard('Revenue by Channel');
+            chartsGrid.appendChild(revenueChannelCard);
+            
+            const revenueCtx = revenueChannelCard.querySelector('canvas').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.revenue.revenueByChannel.map(c => c.channel),
+                    datasets: [{
+                        data: data.revenue.revenueByChannel.map(c => c.revenue),
+                        backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#f5576c']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Conversion Trends Chart
+            const conversionTrendCard = createChartCard('Conversion Trends');
+            chartsGrid.appendChild(conversionTrendCard);
+            
+            const conversionCtx = conversionTrendCard.querySelector('canvas').getContext('2d');
+            new Chart(conversionCtx, {
+                type: 'line',
+                data: {
+                    labels: data.conversion.conversionTrends.map(t => new Date(t.date).toLocaleDateString()),
+                    datasets: [{
+                        label: 'Conversion Rate',
+                        data: data.conversion.conversionTrends.map(t => t.conversionRate * 100),
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Channel Performance Chart
+            const channelPerfCard = createChartCard('Channel Performance');
+            chartsGrid.appendChild(channelPerfCard);
+            
+            const channelCtx = channelPerfCard.querySelector('canvas').getContext('2d');
+            new Chart(channelCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.channels.channelPerformance.map(c => c.channel),
+                    datasets: [{
+                        label: 'ROI',
+                        data: data.channels.channelPerformance.map(c => c.roi),
+                        backgroundColor: 'rgba(102, 126, 234, 0.8)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + 'x';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderInsights(data) {
+            const insightsSection = document.getElementById('insightsSection');
+            insightsSection.innerHTML = '<h2 class="chart-title">📊 Business Insights & Recommendations</h2>';
+
+            // Alerts
+            if (data.alerts && data.alerts.length > 0) {
+                data.alerts.forEach(alert => {
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = `alert ${alert.type}`;
+                    alertDiv.innerHTML = `<strong>${alert.type.toUpperCase()}:</strong> ${alert.message}`;
+                    insightsSection.appendChild(alertDiv);
+                });
+            }
+
+            const insightsGrid = document.createElement('div');
+            insightsGrid.className = 'insights-grid';
+
+            // Insights
+            if (data.insights && data.insights.length > 0) {
+                const insightsDiv = document.createElement('div');
+                insightsDiv.innerHTML = '<h3>🔍 Key Insights</h3>';
+                data.insights.forEach(insight => {
+                    const item = document.createElement('div');
+                    item.className = 'insight-item';
+                    item.textContent = insight;
+                    insightsDiv.appendChild(item);
+                });
+                insightsGrid.appendChild(insightsDiv);
+            }
+
+            // Recommendations
+            if (data.recommendations && data.recommendations.length > 0) {
+                const recommendationsDiv = document.createElement('div');
+                recommendationsDiv.innerHTML = '<h3>💡 Recommendations</h3>';
+                data.recommendations.forEach(rec => {
+                    const item = document.createElement('div');
+                    item.className = 'insight-item';
+                    item.textContent = rec;
+                    recommendationsDiv.appendChild(item);
+                });
+                insightsGrid.appendChild(recommendationsDiv);
+            }
+
+            insightsSection.appendChild(insightsGrid);
+        }
+
+        function createChartCard(title) {
+            const card = document.createElement('div');
+            card.className = 'chart-card';
+            card.innerHTML = `
+                <div class="chart-title">${title}</div>
+                <canvas></canvas>
+            `;
+            return card;
+        }
+
+        async function exportData(format) {
+            try {
+                const dateFrom = document.getElementById('dateFrom').value;
+                const dateTo = document.getElementById('dateTo').value;
+                
+                const params = new URLSearchParams({
+                    format,
+                    from: dateFrom,
+                    to: dateTo
+                });
+
+                const response = await fetch(`/api/dashboard/export?${params}`);
+                
+                if (!response.ok) {
+                    throw new Error('Export failed');
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `dashboard_export_${new Date().toISOString().split('T')[0]}.${format}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+
+            } catch (error) {
+                showError('Export failed: ' + error.message);
+            }
+        }
+
+        function toggleRealTime() {
+            if (realTimeInterval) {
+                clearInterval(realTimeInterval);
+                realTimeInterval = null;
+                document.querySelector('button[onclick="toggleRealTime()"]').textContent = '⚡ Real-time';
+            } else {
+                realTimeInterval = setInterval(loadRealTimeMetrics, 30000); // 30 seconds
+                document.querySelector('button[onclick="toggleRealTime()"]').textContent = '⏸️ Stop Real-time';
+                loadRealTimeMetrics();
+            }
+        }
+
+        async function loadRealTimeMetrics() {
+            try {
+                const response = await fetch('/api/dashboard/realtime');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateRealTimeDisplay(data.data);
+                }
+            } catch (error) {
+                console.error('Failed to load real-time metrics:', error);
+            }
+        }
+
+        function updateRealTimeDisplay(data) {
+            // Update real-time metrics in the UI
+            // This would update specific elements with real-time data
+            console.log('Real-time update:', data);
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function showDashboard() {
+            document.getElementById('metricsGrid').style.display = 'grid';
+            document.getElementById('chartsGrid').style.display = 'grid';
+            document.getElementById('insightsSection').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

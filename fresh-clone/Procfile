@@ -1,0 +1,1 @@
+web: node scripts/demo-fixed-menu-bot.js

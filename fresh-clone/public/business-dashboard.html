@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zabardoo Business Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .dashboard-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header-left p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .header-right {
+            text-align: right;
+        }
+        
+        .date-range-selector {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .last-updated {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 0 0 0 60px;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .metric-card h3 {
+            color: #555;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .metric-value {
+            font-size: 2.4em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+        
+        .metric-change {
+            font-size: 0.9em;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .metric-change.positive {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .metric-change.negative {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .metric-change.neutral {
+            background: #f5f5f5;
+            color: #666;
+        }
+        
+        .charts-section {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .chart-container:hover {
+            transform: translateY(-2px);
+        }
+        
+        .chart-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .full-width-chart {
+            grid-column: 1 / -1;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .export-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+        }
+        
+        .export-btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .forecast-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            margin-top: 30px;
+            border-radius: 12px;
+        }
+        
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .forecast-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .forecast-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .forecast-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 80px;
+            color: #666;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            text-align: center;
+            padding: 50px;
+            color: #c62828;
+            background: #ffebee;
+            border-radius: 10px;
+            margin: 20px;
+        }
+        
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .forecast-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <div class="header-left">
+                <h1>📊 Zabardoo Business Dashboard</h1>
+                <p>Real-time analytics and business insights</p>
+            </div>
+            <div class="header-right">
+                <select class="date-range-selector" id="dateRange">
+                    <option value="7">Last 7 days</option>
+                    <option value="30" selected>Last 30 days</option>
+                    <option value="90">Last 90 days</option>
+                    <option value="365">Last year</option>
+                </select>
+                <div class="last-updated" id="lastUpdated">
+                    Last updated: Loading...
+                </div>
+            </div>
+        </div>
+        
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <h3>Loading dashboard data...</h3>
+            <p>Fetching real-time analytics...</p>
+        </div>
+        
+        <div id="error" class="error" style="display: none;">
+            <h3>⚠️ Error loading dashboard data</h3>
+            <p id="error-message"></p>
+            <button onclick="loadDashboardData()" class="export-btn" style="margin-top: 15px;">
+                🔄 Retry
+            </button>
+        </div>
+        
+        <div id="dashboard-content" style="display: none;">
+            <div class="metrics-grid" id="metrics-grid">
+                <!-- Metrics will be populated here -->
+            </div>
+            
+            <div class="charts-section">
+                <h2 class="section-title">📈 Performance Analytics</h2>
+                
+                <div class="export-buttons">
+                    <button class="export-btn" onclick="exportData('json')">📄 Export JSON</button>
+                    <button class="export-btn" onclick="exportData('csv')">📊 Export CSV</button>
+                    <button class="export-btn" onclick="refreshDashboard()">🔄 Refresh</button>
+                </div>
+                
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3 class="chart-title">💰 Revenue Trend</h3>
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3 class="chart-title">📺 Revenue by Channel</h3>
+                        <canvas id="channelChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3 class="chart-title">👥 User Growth</h3>
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3 class="chart-title">🎯 Conversion Funnel</h3>
+                        <canvas id="conversionChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-container full-width-chart">
+                    <h3 class="chart-title">🏆 Channel Performance Comparison</h3>
+                    <canvas id="performanceChart"></canvas>
+                </div>
+                
+                <div class="forecast-section">
+                    <h2 class="section-title" style="color: white; margin-bottom: 10px;">🔮 Growth Forecasting</h2>
+                    <p style="text-align: center; opacity: 0.9; margin-bottom: 0;">Predictive analytics based on current trends</p>
+                    
+                    <div class="forecast-grid" id="forecastGrid">
+                        <!-- Forecast data will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dashboard data and state management
+        let dashboardData = null;
+        let charts = {};
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+            
+            // Date range selector
+            document.getElementById('dateRange').addEventListener('change', function() {
+                loadDashboardData();
+            });
+        });
+        
+        async function loadDashboardData() {
+            try {
+                showLoading();
+                
+                const days = document.getElementById('dateRange').value;
+                const toDate = new Date();
+                const fromDate = new Date(toDate.getTime() - (days * 24 * 60 * 60 * 1000));
+                
+                const response = await fetch(`/api/dashboard/metrics?from=${fromDate.toISOString()}&to=${toDate.toISOString()}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                dashboardData = await response.json();
+                
+                if (dashboardData.success) {
+                    renderDashboard(dashboardData.data);
+                    updateLastUpdated();
+                } else {
+                    throw new Error(dashboardData.error || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showError(error.message);
+            }
+        }
+        
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('dashboard-content').style.display = 'none';
+        }
+        
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error-message').textContent = message;
+            document.getElementById('dashboard-content').style.display = 'none';
+        }
+        
+        function renderDashboard(data) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('dashboard-content').style.display = 'block';
+            
+            renderMetrics(data.overview);
+            renderCharts(data);
+            renderForecast(data);
+        }
+        
+        function renderMetrics(overview) {
+            const metricsGrid = document.getElementById('metrics-grid');
+            
+            const metrics = [
+                {
+                    title: 'Total Users',
+                    value: overview.totalUsers.toLocaleString(),
+                    change: formatChange(overview.growthRate),
+                    positive: overview.growthRate > 0,
+                    icon: '👥'
+                },
+                {
+                    title: 'Active Users',
+                    value: overview.activeUsers.toLocaleString(),
+                    change: '+12.5%',
+                    positive: true,
+                    icon: '🟢'
+                },
+                {
+                    title: 'Total Revenue',
+                    value: `₹${overview.totalRevenue.toLocaleString()}`,
+                    change: '+18.3%',
+                    positive: true,
+                    icon: '💰'
+                },
+                {
+                    title: 'Conversion Rate',
+                    value: `${(overview.conversionRate * 100).toFixed(2)}%`,
+                    change: '+2.1%',
+                    positive: true,
+                    icon: '🎯'
+                },
+                {
+                    title: 'Avg Order Value',
+                    value: `₹${overview.averageOrderValue.toFixed(0)}`,
+                    change: '+5.7%',
+                    positive: true,
+                    icon: '🛒'
+                },
+                {
+                    title: 'Total Cashback',
+                    value: `₹${overview.totalCashback.toLocaleString()}`,
+                    change: '+15.2%',
+                    positive: true,
+                    icon: '💸'
+                }
+            ];
+            
+            metricsGrid.innerHTML = metrics.map(metric => `
+                <div class="metric-card">
+                    <h3>${metric.icon} ${metric.title}</h3>
+                    <div class="metric-value">${metric.value}</div>
+                    <span class="metric-change ${metric.positive ? 'positive' : metric.positive === false ? 'negative' : 'neutral'}">
+                        ${metric.positive ? '📈' : metric.positive === false ? '📉' : '➡️'} ${metric.change}
+                    </span>
+                </div>
+            `).join('');
+        }
+        
+        function formatChange(value) {
+            if (value === 0) return '0%';
+            return `${value > 0 ? '+' : ''}${value.toFixed(1)}%`;
+        }
+        
+        function renderCharts(data) {
+            // Destroy existing charts
+            Object.values(charts).forEach(chart => {
+                if (chart) chart.destroy();
+            });
+            
+            charts.revenue = renderRevenueChart(data.revenue);
+            charts.channel = renderChannelChart(data.revenue);
+            charts.userGrowth = renderUserGrowthChart(data.users);
+            charts.conversion = renderConversionChart(data.conversion);
+            charts.performance = renderPerformanceChart(data.channels);
+        }
+        
+        function renderRevenueChart(revenueData) {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: revenueData.monthlyRevenueTrend.map(item => item.month),
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: revenueData.monthlyRevenueTrend.map(item => item.revenue),
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#667eea',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₹' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function renderChannelChart(revenueData) {
+            const ctx = document.getElementById('channelChart').getContext('2d');
+            
+            return new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: revenueData.revenueByChannel.map(item => item.channel),
+                    datasets: [{
+                        data: revenueData.revenueByChannel.map(item => item.revenue),
+                        backgroundColor: [
+                            '#667eea',
+                            '#764ba2',
+                            '#f093fb',
+                            '#f5576c',
+                            '#4facfe',
+                            '#43e97b'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        function renderUserGrowthChart(userData) {
+            const ctx = document.getElementById('userGrowthChart').getContext('2d');
+            
+            const labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+            const newUsers = [1200, 1450, 1680, 1890];
+            const totalUsers = [5200, 6650, 8330, 10220];
+            
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'New Users',
+                            data: newUsers,
+                            backgroundColor: '#667eea'
+                        },
+                        {
+                            label: 'Total Users',
+                            data: totalUsers,
+                            backgroundColor: '#764ba2'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        function renderConversionChart(conversionData) {
+            const ctx = document.getElementById('conversionChart').getContext('2d');
+            
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: conversionData.conversionByFunnel.map(item => item.funnelName),
+                    datasets: [{
+                        label: 'Conversion Rate (%)',
+                        data: conversionData.conversionByFunnel.map(item => item.conversionRate * 100),
+                        backgroundColor: '#f093fb'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+        
+        function renderPerformanceChart(channelData) {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            return new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Users', 'Revenue', 'Conversion Rate', 'ROI', 'Engagement'],
+                    datasets: channelData.channelPerformance.slice(0, 3).map((channel, index) => ({
+                        label: channel.channel,
+                        data: [
+                            channel.users / 1000,
+                            channel.revenue / 10000,
+                            channel.conversionRate * 100,
+                            channel.roi * 10,
+                            Math.random() * 10
+                        ],
+                        borderColor: ['#667eea', '#764ba2', '#f093fb'][index],
+                        backgroundColor: ['rgba(102, 126, 234, 0.2)', 'rgba(118, 75, 162, 0.2)', 'rgba(240, 147, 251, 0.2)'][index]
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 10
+                        }
+                    }
+                }
+            });
+        }
+        
+        function renderForecast(data) {
+            const forecastGrid = document.getElementById('forecastGrid');
+            
+            // Generate forecast data based on current trends
+            const currentRevenue = data.overview.totalRevenue;
+            const growthRate = data.overview.growthRate / 100;
+            
+            const forecasts = [
+                {
+                    label: 'Next Month Revenue',
+                    value: `₹${Math.round(currentRevenue * (1 + growthRate)).toLocaleString()}`
+                },
+                {
+                    label: 'Next Quarter Revenue',
+                    value: `₹${Math.round(currentRevenue * Math.pow(1 + growthRate, 3)).toLocaleString()}`
+                },
+                {
+                    label: 'Projected Users',
+                    value: Math.round(data.overview.totalUsers * (1 + growthRate)).toLocaleString()
+                },
+                {
+                    label: 'Expected Conversions',
+                    value: Math.round(data.overview.activeUsers * data.overview.conversionRate * 1.2).toLocaleString()
+                }
+            ];
+            
+            forecastGrid.innerHTML = forecasts.map(forecast => `
+                <div class="forecast-card">
+                    <div class="forecast-value">${forecast.value}</div>
+                    <div class="forecast-label">${forecast.label}</div>
+                </div>
+            `).join('');
+        }
+        
+        function updateLastUpdated() {
+            document.getElementById('lastUpdated').textContent = 
+                `Last updated: ${new Date().toLocaleString()}`;
+        }
+        
+        async function exportData(format) {
+            try {
+                const days = document.getElementById('dateRange').value;
+                const toDate = new Date();
+                const fromDate = new Date(toDate.getTime() - (days * 24 * 60 * 60 * 1000));
+                
+                const response = await fetch(`/api/dashboard/export?format=${format}&from=${fromDate.toISOString()}&to=${toDate.toISOString()}`);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `dashboard-data-${new Date().toISOString().split('T')[0]}.${format}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    throw new Error('Export failed');
+                }
+            } catch (error) {
+                alert('Export failed: ' + error.message);
+            }
+        }
+        
+        function refreshDashboard() {
+            loadDashboardData();
+        }
+        
+        // Auto-refresh dashboard every 5 minutes
+        setInterval(loadDashboardData, 5 * 60 * 1000);
+    </script>
+</body>
+</html>

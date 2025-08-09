@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management Panel - Zabardoo Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.75rem 1rem;
+            margin: 0.25rem 0;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .stat-card-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+        }
+        .stat-card-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .stat-card-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: #495057;
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .loading {
+            display: none;
+        }
+        .bulk-actions {
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .filter-section {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head><b
+ody>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white">Zabardoo Admin</h4>
+                        <small class="text-white-50">User Management</small>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" data-section="dashboard">
+                                <i class="fas fa-tachometer-alt me-2"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="users">
+                                <i class="fas fa-users me-2"></i>
+                                All Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="channels">
+                                <i class="fas fa-broadcast-tower me-2"></i>
+                                Personal Channels
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="moderation">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                Moderation
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="ban-list">
+                                <i class="fas fa-ban me-2"></i>
+                                Ban List
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="notifications">
+                                <i class="fas fa-bell me-2"></i>
+                                Notifications
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-section="analytics">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Analytics
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">User Management</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-primary" onclick="showBulkNotificationModal()">
+                                <i class="fas fa-bell me-2"></i>Send Notification
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="refreshData()">
+                                <i class="fas fa-sync-alt me-2"></i>Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>       
+         <!-- Dashboard Section -->
+                <div id="dashboard-section" class="content-section">
+                    <div class="row mb-4">
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card stat-card">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-uppercase mb-1">Total Users</div>
+                                            <div class="h5 mb-0 font-weight-bold" id="total-users">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-users fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card stat-card-success">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-uppercase mb-1">Active Users</div>
+                                            <div class="h5 mb-0 font-weight-bold" id="active-users">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-user-check fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card stat-card-warning">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-uppercase mb-1">Banned Users</div>
+                                            <div class="h5 mb-0 font-weight-bold" id="banned-users">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-user-slash fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card stat-card-info">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-uppercase mb-1">Personal Channels</div>
+                                            <div class="h5 mb-0 font-weight-bold" id="personal-channels">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-broadcast-tower fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Recent Users</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm" id="recent-users-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>User</th>
+                                                    <th>Status</th>
+                                                    <th>Channel</th>
+                                                    <th>Registered</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Recent users will be loaded here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">User Activity</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="activity-levels">
+                                        <!-- Activity levels will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>   
+             <!-- All Users Section -->
+                <div id="users-section" class="content-section" style="display: none;">
+                    <!-- Filters -->
+                    <div class="filter-section">
+                        <h5>Filters</h5>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="filter-status">
+                                    <option value="">All</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="banned">Banned</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Channel Status</label>
+                                <select class="form-select" id="filter-channel-status">
+                                    <option value="">All</option>
+                                    <option value="active">Active</option>
+                                    <option value="suspended">Suspended</option>
+                                    <option value="deleted">Deleted</option>
+                                    <option value="none">No Channel</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Location</label>
+                                <input type="text" class="form-control" id="filter-location" placeholder="Location">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Search</label>
+                                <input type="text" class="form-control" id="filter-search" placeholder="Search users...">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Registration From</label>
+                                <input type="date" class="form-control" id="filter-registration-from">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Registration To</label>
+                                <input type="date" class="form-control" id="filter-registration-to">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Sort By</label>
+                                <select class="form-select" id="filter-sort-by">
+                                    <option value="registeredAt">Registration Date</option>
+                                    <option value="lastActiveAt">Last Active</option>
+                                    <option value="totalSpent">Total Spent</option>
+                                    <option value="couponsUsed">Coupons Used</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Order</label>
+                                <select class="form-select" id="filter-sort-order">
+                                    <option value="desc">Descending</option>
+                                    <option value="asc">Ascending</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-primary" onclick="applyUserFilters()">
+                                    <i class="fas fa-filter me-2"></i>Apply Filters
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="clearUserFilters()">
+                                    <i class="fas fa-times me-2"></i>Clear Filters
+                                </button>
+                                <button type="button" class="btn btn-outline-success" onclick="exportUsers()">
+                                    <i class="fas fa-download me-2"></i>Export
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bulk Actions -->
+                    <div class="bulk-actions" style="display: none;" id="bulk-actions-bar">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <span id="selected-count">0</span> users selected
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-warning btn-sm" onclick="bulkOperation('ban')">
+                                        <i class="fas fa-ban me-1"></i>Ban
+                                    </button>
+                                    <button type="button" class="btn btn-success btn-sm" onclick="bulkOperation('unban')">
+                                        <i class="fas fa-check me-1"></i>Unban
+                                    </button>
+                                    <button type="button" class="btn btn-info btn-sm" onclick="bulkOperation('suspend_channel')">
+                                        <i class="fas fa-pause me-1"></i>Suspend Channel
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="showBulkNotificationModal()">
+                                        <i class="fas fa-bell me-1"></i>Notify
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Table -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="users-table">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <input type="checkbox" id="select-all-users">
+                                            </th>
+                                            <th>User</th>
+                                            <th>Status</th>
+                                            <th>Channel</th>
+                                            <th>Total Spent</th>
+                                            <th>Coupons Used</th>
+                                            <th>Last Active</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Users will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Pagination -->
+                            <nav aria-label="Users pagination">
+                                <ul class="pagination justify-content-center" id="users-pagination">
+                                    <!-- Pagination will be generated here -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>         
+       <!-- Personal Channels Section -->
+                <div id="channels-section" class="content-section" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Personal Channels Management</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="channels-table">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Channel ID</th>
+                                            <th>Status</th>
+                                            <th>Created</th>
+                                            <th>Messages</th>
+                                            <th>Engagement</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Channels will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Moderation Section -->
+                <div id="moderation-section" class="content-section" style="display: none;">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Moderation Logs</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="moderation-logs-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Moderator</th>
+                                                    <th>User</th>
+                                                    <th>Action</th>
+                                                    <th>Reason</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Moderation logs will be loaded here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Group Moderation Settings</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="group-moderation-form">
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="auto-moderation">
+                                                <label class="form-check-label" for="auto-moderation">
+                                                    Auto Moderation
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="spam-detection">
+                                                <label class="form-check-label" for="spam-detection">
+                                                    Spam Detection
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="link-filtering">
+                                                <label class="form-check-label" for="link-filtering">
+                                                    Link Filtering
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Message Frequency Limit</label>
+                                            <input type="number" class="form-control" id="message-frequency" min="1" max="60" value="5">
+                                            <small class="form-text text-muted">Messages per minute</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Auto Ban Threshold</label>
+                                            <input type="number" class="form-control" id="auto-ban-threshold" min="1" max="50" value="10">
+                                            <small class="form-text text-muted">Violations before auto ban</small>
+                                        </div>
+                                        <button type="button" class="btn btn-primary" onclick="saveGroupModerationSettings()">
+                                            <i class="fas fa-save me-2"></i>Save Settings
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ban List Section -->
+                <div id="ban-list-section" class="content-section" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Banned Users</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="ban-list-table">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Banned By</th>
+                                            <th>Reason</th>
+                                            <th>Banned Date</th>
+                                            <th>Expires</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Banned users will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading indicator -->
+                <div class="loading text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading data...</p>
+                </div>
+            </main>
+        </div>
+    </div>    <!-- 
+User Details Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalTitle">User Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="user-details">
+                        <!-- User details will be loaded here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-warning" onclick="banUser()">Ban User</button>
+                    <button type="button" class="btn btn-info" onclick="manageChannel()">Manage Channel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ban User Modal -->
+    <div class="modal fade" id="banModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ban User</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Reason *</label>
+                        <textarea class="form-control" id="ban-reason" rows="3" placeholder="Enter ban reason..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Duration (hours)</label>
+                        <input type="number" class="form-control" id="ban-duration" min="1" placeholder="Leave empty for permanent ban">
+                        <small class="form-text text-muted">Leave empty for permanent ban</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmBan()">Ban User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Channel Management Modal -->
+    <div class="modal fade" id="channelModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Manage Personal Channel</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Action *</label>
+                        <select class="form-select" id="channel-action" required>
+                            <option value="">Select action</option>
+                            <option value="create">Create Channel</option>
+                            <option value="suspend">Suspend Channel</option>
+                            <option value="restore">Restore Channel</option>
+                            <option value="delete">Delete Channel</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reason</label>
+                        <textarea class="form-control" id="channel-reason" rows="3" placeholder="Enter reason for this action..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmChannelAction()">Apply Action</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Notification Modal -->
+    <div class="modal fade" id="notificationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Send Notification</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Title *</label>
+                        <input type="text" class="form-control" id="notification-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message *</label>
+                        <textarea class="form-control" id="notification-message" rows="4" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <select class="form-select" id="notification-type">
+                            <option value="info">Info</option>
+                            <option value="warning">Warning</option>
+                            <option value="promotion">Promotion</option>
+                            <option value="system">System</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Action URL (optional)</label>
+                        <input type="url" class="form-control" id="notification-url" placeholder="https://...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Recipients</label>
+                        <div id="notification-recipients">
+                            <span id="recipient-count">0</span> users selected
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="sendBulkNotification()">Send Notification</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>    <s
+cript>
+        // Global variables
+        let currentUserId = null;
+        let selectedUsers = new Set();
+        let currentPage = 1;
+        let currentFilters = {};
+
+        // Initialize the application
+        $(document).ready(function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Load initial data
+            loadDashboardData();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Setup navigation
+            setupNavigation();
+        }
+
+        function setupEventListeners() {
+            // Select all checkbox
+            $('#select-all-users').change(function() {
+                const isChecked = $(this).is(':checked');
+                $('.user-checkbox').prop('checked', isChecked);
+                updateSelectedUsers();
+            });
+
+            // Individual user checkboxes
+            $(document).on('change', '.user-checkbox', function() {
+                updateSelectedUsers();
+            });
+
+            // Filter inputs
+            $('#filter-search').on('input', debounce(applyUserFilters, 500));
+        }
+
+        function setupNavigation() {
+            $('.sidebar .nav-link').click(function(e) {
+                e.preventDefault();
+                const section = $(this).data('section');
+                showSection(section);
+                
+                // Update active nav item
+                $('.sidebar .nav-link').removeClass('active');
+                $(this).addClass('active');
+            });
+        }
+
+        function showSection(section) {
+            $('.content-section').hide();
+            $(`#${section}-section`).show();
+            
+            switch(section) {
+                case 'dashboard':
+                    loadDashboardData();
+                    break;
+                case 'users':
+                    loadUsersData();
+                    break;
+                case 'channels':
+                    loadChannelsData();
+                    break;
+                case 'moderation':
+                    loadModerationData();
+                    break;
+                case 'ban-list':
+                    loadBanListData();
+                    break;
+                case 'notifications':
+                    loadNotificationsData();
+                    break;
+                case 'analytics':
+                    loadAnalyticsData();
+                    break;
+            }
+        }
+
+        // Dashboard functions
+        function loadDashboardData() {
+            showLoading();
+            
+            Promise.all([
+                fetch('/api/admin/users/stats').then(r => r.json()),
+                fetch('/api/admin/users?limit=10&sortBy=registeredAt&sortOrder=desc').then(r => r.json())
+            ]).then(([statsData, recentData]) => {
+                if (statsData.success) {
+                    updateDashboardStats(statsData.data);
+                }
+                if (recentData.success) {
+                    updateRecentUsers(recentData.data.users);
+                }
+                hideLoading();
+            }).catch(error => {
+                console.error('Error loading dashboard data:', error);
+                hideLoading();
+                showAlert('Error loading dashboard data', 'danger');
+            });
+        }
+
+        function updateDashboardStats(stats) {
+            $('#total-users').text(stats.totalUsers);
+            $('#active-users').text(stats.activeUsers);
+            $('#banned-users').text(stats.bannedUsers);
+            $('#personal-channels').text(stats.usersWithPersonalChannels);
+            
+            // Update activity levels
+            const activityHtml = `
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span>High Activity</span>
+                        <span class="badge bg-success">${stats.activityLevels.high}</span>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span>Medium Activity</span>
+                        <span class="badge bg-warning">${stats.activityLevels.medium}</span>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span>Low Activity</span>
+                        <span class="badge bg-info">${stats.activityLevels.low}</span>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span>Inactive</span>
+                        <span class="badge bg-secondary">${stats.activityLevels.inactive}</span>
+                    </div>
+                </div>
+            `;
+            $('#activity-levels').html(activityHtml);
+        }
+
+        function updateRecentUsers(users) {
+            const tbody = $('#recent-users-table tbody');
+            tbody.empty();
+            
+            users.forEach(user => {
+                const row = `
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar me-2">
+                                    ${getUserInitials(user)}
+                                </div>
+                                <div>
+                                    <div class="fw-bold">${user.firstName || ''} ${user.lastName || ''}</div>
+                                    <small class="text-muted">@${user.username || user.telegramId}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge ${getUserStatusBadgeClass(user)}">${getUserStatus(user)}</span></td>
+                        <td><span class="badge ${getChannelStatusBadgeClass(user.channelStatus)}">${user.channelStatus}</span></td>
+                        <td>${formatDate(user.registeredAt)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="showUserDetails('${user.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        }
+
+        // Users functions
+        function loadUsersData() {
+            showLoading();
+            
+            const params = new URLSearchParams({
+                page: currentPage,
+                limit: 20,
+                ...currentFilters
+            });
+            
+            fetch(`/api/admin/users?${params}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateUsersTable(data.data);
+                        updatePagination(data.data, 'users');
+                    } else {
+                        showAlert('Error loading users: ' + data.error, 'danger');
+                    }
+                    hideLoading();
+                })
+                .catch(error => {
+                    console.error('Error loading users:', error);
+                    hideLoading();
+                    showAlert('Error loading users', 'danger');
+                });
+        }
+
+        function updateUsersTable(data) {
+            const tbody = $('#users-table tbody');
+            tbody.empty();
+            
+            data.users.forEach(user => {
+                const row = `
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="user-checkbox" value="${user.id}">
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar me-2">
+                                    ${getUserInitials(user)}
+                                </div>
+                                <div>
+                                    <div class="fw-bold">${user.firstName || ''} ${user.lastName || ''}</div>
+                                    <small class="text-muted">@${user.username || user.telegramId}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge ${getUserStatusBadgeClass(user)}">${getUserStatus(user)}</span></td>
+                        <td><span class="badge ${getChannelStatusBadgeClass(user.channelStatus)}">${user.channelStatus}</span></td>
+                        <td>₹${formatNumber(user.totalSpent)}</td>
+                        <td>${user.couponsUsed}</td>
+                        <td>${user.lastActiveAt ? formatDate(user.lastActiveAt) : 'Never'}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary" onclick="showUserDetails('${user.id}')" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-outline-warning" onclick="showBanModal('${user.id}')" title="Ban User">
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                                <button class="btn btn-outline-info" onclick="showChannelModal('${user.id}')" title="Manage Channel">
+                                    <i class="fas fa-broadcast-tower"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        }
+
+        // Modal functions
+        function showUserDetails(userId) {
+            currentUserId = userId;
+            
+            fetch(`/api/admin/users/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        populateUserDetails(data.data);
+                        $('#userModal').modal('show');
+                    } else {
+                        showAlert('Error loading user details: ' + data.error, 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading user details:', error);
+                    showAlert('Error loading user details', 'danger');
+                });
+        }
+
+        function populateUserDetails(user) {
+            const detailsHtml = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Basic Information</h6>
+                        <p><strong>Name:</strong> ${user.firstName || ''} ${user.lastName || ''}</p>
+                        <p><strong>Username:</strong> @${user.username || 'N/A'}</p>
+                        <p><strong>Telegram ID:</strong> ${user.telegramId}</p>
+                        <p><strong>Email:</strong> ${user.email || 'N/A'}</p>
+                        <p><strong>Phone:</strong> ${user.phoneNumber || 'N/A'}</p>
+                        <p><strong>Location:</strong> ${user.location || 'N/A'}</p>
+                        <p><strong>Language:</strong> ${user.language}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Account Status</h6>
+                        <p><strong>Status:</strong> <span class="badge ${getUserStatusBadgeClass(user)}">${getUserStatus(user)}</span></p>
+                        <p><strong>Channel:</strong> <span class="badge ${getChannelStatusBadgeClass(user.channelStatus)}">${user.channelStatus}</span></p>
+                        <p><strong>Registered:</strong> ${formatDate(user.registeredAt)}</p>
+                        <p><strong>Last Active:</strong> ${user.lastActiveAt ? formatDate(user.lastActiveAt) : 'Never'}</p>
+                        <p><strong>Total Spent:</strong> ₹${formatNumber(user.totalSpent)}</p>
+                        <p><strong>Coupons Used:</strong> ${user.couponsUsed}</p>
+                    </div>
+                </div>
+                ${user.isBanned ? `
+                    <div class="alert alert-warning">
+                        <h6>Ban Information</h6>
+                        <p><strong>Banned By:</strong> ${user.bannedBy}</p>
+                        <p><strong>Banned At:</strong> ${formatDate(user.bannedAt)}</p>
+                        <p><strong>Reason:</strong> ${user.banReason}</p>
+                        ${user.banExpiresAt ? `<p><strong>Expires:</strong> ${formatDate(user.banExpiresAt)}</p>` : '<p><strong>Type:</strong> Permanent</p>'}
+                    </div>
+                ` : ''}
+            `;
+            $('#user-details').html(detailsHtml);
+        }
+
+        function showBanModal(userId) {
+            currentUserId = userId;
+            $('#ban-reason').val('');
+            $('#ban-duration').val('');
+            $('#banModal').modal('show');
+        }
+
+        function confirmBan() {
+            const reason = $('#ban-reason').val();
+            const duration = $('#ban-duration').val();
+
+            if (!reason.trim()) {
+                showAlert('Please enter a ban reason', 'warning');
+                return;
+            }
+
+            const banData = {
+                action: 'ban',
+                reason: reason,
+                duration: duration ? parseInt(duration) : null
+            };
+
+            fetch(`/api/admin/users/${currentUserId}/ban`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(banData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    $('#banModal').modal('hide');
+                    showAlert('User banned successfully', 'success');
+                    refreshData();
+                } else {
+                    showAlert('Error banning user: ' + data.error, 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error banning user:', error);
+                showAlert('Error banning user', 'danger');
+            });
+        }
+
+        // Utility functions
+        function getUserInitials(user) {
+            if (user.firstName && user.lastName) {
+                return user.firstName.charAt(0) + user.lastName.charAt(0);
+            } else if (user.firstName) {
+                return user.firstName.charAt(0);
+            } else if (user.username) {
+                return user.username.charAt(0).toUpperCase();
+            } else {
+                return 'U';
+            }
+        }
+
+        function getUserStatus(user) {
+            if (user.isBanned) return 'Banned';
+            if (user.isActive) return 'Active';
+            return 'Inactive';
+        }
+
+        function getUserStatusBadgeClass(user) {
+            if (user.isBanned) return 'bg-danger';
+            if (user.isActive) return 'bg-success';
+            return 'bg-secondary';
+        }
+
+        function getChannelStatusBadgeClass(status) {
+            switch(status) {
+                case 'active': return 'bg-success';
+                case 'suspended': return 'bg-warning';
+                case 'deleted': return 'bg-danger';
+                case 'none': return 'bg-secondary';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatNumber(number) {
+            return new Intl.NumberFormat('en-IN').format(number);
+        }
+
+        function showLoading() {
+            $('.loading').show();
+        }
+
+        function hideLoading() {
+            $('.loading').hide();
+        }
+
+        function showAlert(message, type = 'info') {
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            // Remove existing alerts
+            $('.alert').remove();
+            
+            // Add new alert at the top of main content
+            $('.main-content').prepend(alertHtml);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                $('.alert').alert('close');
+            }, 5000);
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function refreshData() {
+            const activeSection = $('.sidebar .nav-link.active').data('section');
+            showSection(activeSection);
+        }
+
+        // Placeholder functions for other sections
+        function loadChannelsData() {
+            console.log('Loading channels data...');
+        }
+
+        function loadModerationData() {
+            console.log('Loading moderation data...');
+        }
+
+        function loadBanListData() {
+            console.log('Loading ban list data...');
+        }
+
+        function loadNotificationsData() {
+            console.log('Loading notifications data...');
+        }
+
+        function loadAnalyticsData() {
+            console.log('Loading analytics data...');
+        }
+
+        function applyUserFilters() {
+            console.log('Applying user filters...');
+        }
+
+        function clearUserFilters() {
+            console.log('Clearing user filters...');
+        }
+
+        function updateSelectedUsers() {
+            console.log('Updating selected users...');
+        }
+
+        function bulkOperation(operation) {
+            console.log('Bulk operation:', operation);
+        }
+
+        function showBulkNotificationModal() {
+            console.log('Show bulk notification modal');
+        }
+
+        function updatePagination(data, type) {
+            console.log('Update pagination for:', type);
+        }
+
+        function exportUsers() {
+            console.log('Export users');
+        }
+    </script>
+</body>
+</html>

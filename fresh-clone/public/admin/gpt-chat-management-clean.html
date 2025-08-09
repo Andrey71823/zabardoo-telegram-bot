@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT Chat Management - Zabardoo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #fafbfc;
+            color: #202124;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e8eaed;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 400;
+            color: #202124;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid #dadce0;
+            background: #ffffff;
+            color: #3c4043;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-color: #dadce0;
+        }
+        
+        .btn-primary {
+            background: #1a73e8;
+            color: #ffffff;
+            border-color: #1a73e8;
+        }
+        
+        .btn-primary:hover {
+            background: #1557b0;
+            border-color: #1557b0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid #e8eaed;
+            border-radius: 8px;
+            padding: 20px;
+            transition: box-shadow 0.15s ease;
+        }
+        
+        .stat-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .stat-title {
+            font-size: 14px;
+            color: #5f6368;
+            font-weight: 500;
+        }
+        
+        .stat-icon {
+            color: #5f6368;
+            font-size: 18px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 400;
+            color: #202124;
+            margin-bottom: 4px;
+        }
+        
+        .stat-change {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .stat-change.positive {
+            color: #34a853;
+        }
+        
+        .stat-change.negative {
+            color: #ea4335;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .card {
+            background: #ffffff;
+            border: 1px solid #e8eaed;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e8eaed;
+            background: #fafbfc;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #202124;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-body {
+            padding: 0;
+        }
+        
+        .chat-interface {
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #fafbfc;
+        }
+        
+        .message {
+            margin-bottom: 16px;
+            max-width: 80%;
+        }
+        
+        .message.user {
+            margin-left: auto;
+        }
+        
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .message.user .message-bubble {
+            background: #1a73e8;
+            color: #ffffff;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.assistant .message-bubble {
+            background: #ffffff;
+            color: #202124;
+            border: 1px solid #e8eaed;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .chat-input {
+            padding: 16px 20px;
+            border-top: 1px solid #e8eaed;
+            background: #ffffff;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .form-control {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #1a73e8;
+        }
+        
+        .personality-panel {
+            padding: 24px;
+        }
+        
+        .personality-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #202124;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .personality-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .personality-btn {
+            padding: 12px 16px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            background: #ffffff;
+            color: #3c4043;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .personality-btn:hover {
+            border-color: #1a73e8;
+        }
+        
+        .personality-btn.active {
+            background: #e8f0fe;
+            border-color: #1a73e8;
+            color: #1a73e8;
+        }
+        
+        .analytics-card {
+            margin-top: 24px;
+        }
+        
+        .chart-container {
+            padding: 20px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #5f6368;
+        }
+        
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        
+        .template-card {
+            background: #ffffff;
+            border: 1px solid #e8eaed;
+            border-radius: 8px;
+            padding: 20px;
+            transition: box-shadow 0.15s ease;
+        }
+        
+        .template-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .template-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .template-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #202124;
+        }
+        
+        .template-description {
+            font-size: 14px;
+            color: #5f6368;
+            margin-bottom: 12px;
+        }
+        
+        .template-example {
+            background: #f8f9fa;
+            border: 1px solid #e8eaed;
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 13px;
+            color: #5f6368;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            margin-bottom: 16px;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        
+        .icon {
+            width: 16px;
+            height: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .container {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-robot"></i>
+                GPT Chat Management
+            </h1>
+            <div class="header-actions">
+                <button class="btn">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-download"></i>
+                    Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Active Chats</span>
+                    <i class="fas fa-comments stat-icon"></i>
+                </div>
+                <div class="stat-value">1,247</div>
+                <div class="stat-change positive">+15.8% from last week</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Messages Today</span>
+                    <i class="fas fa-paper-plane stat-icon"></i>
+                </div>
+                <div class="stat-value">8,932</div>
+                <div class="stat-change positive">+24.0% from yesterday</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Avg Response Time</span>
+                    <i class="fas fa-clock stat-icon"></i>
+                </div>
+                <div class="stat-value">1.2s</div>
+                <div class="stat-change positive">-24.2% faster</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Success Rate</span>
+                    <i class="fas fa-check-circle stat-icon"></i>
+                </div>
+                <div class="stat-value">98.5%</div>
+                <div class="stat-change positive">+0.3% improvement</div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="main-grid">
+            <!-- Chat Interface -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-comments"></i>
+                        Test GPT Chat Interface
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="chat-interface">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message assistant">
+                                <div class="message-bubble">
+                                    Hi! I'm your AI assistant for deal discovery. How can I help you find amazing deals today?
+                                </div>
+                            </div>
+                            <div class="message user">
+                                <div class="message-bubble">
+                                    Find me the best deals on electronics
+                                </div>
+                            </div>
+                            <div class="message assistant">
+                                <div class="message-bubble">
+                                    Great! Here are the hottest electronics deals right now:<br><br>
+                                    📱 <strong>Samsung Galaxy S24</strong> - 28% OFF (₹52,000)<br>
+                                    💻 <strong>MacBook Air M3</strong> - 15% OFF (₹85,000)<br>
+                                    🎧 <strong>Sony WH-1000XM5</strong> - 25% OFF (₹22,500)<br><br>
+                                    All with cashback up to 8%! Would you like more details?
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Type your message..." id="chatInput">
+                                <button class="btn btn-primary" onclick="sendMessage()">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personality Panel -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-cog"></i>
+                        AI Personality
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="personality-panel">
+                        <div class="personality-options">
+                            <button class="personality-btn active" onclick="setPersonality('cool')">
+                                <i class="fas fa-fire"></i>
+                                Cool & Trendy
+                            </button>
+                            <button class="personality-btn" onclick="setPersonality('funny')">
+                                <i class="fas fa-laugh"></i>
+                                Funny & Witty
+                            </button>
+                            <button class="personality-btn" onclick="setPersonality('informative')">
+                                <i class="fas fa-graduation-cap"></i>
+                                Informative & Professional
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h4 class="card-title">
+                            <i class="fas fa-chart-line"></i>
+                            Chat Analytics
+                        </h4>
+                    </div>
+                    <div class="chart-container">
+                        <div style="text-align: center;">
+                            <i class="fas fa-chart-pie" style="font-size: 48px; color: #dadce0; margin-bottom: 16px;"></i>
+                            <div>Analytics chart will be displayed here</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prompt Templates -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-file-alt"></i>
+                    Prompt Templates
+                </h3>
+            </div>
+            <div class="card-body" style="padding: 24px;">
+                <div class="templates-grid">
+                    <div class="template-card">
+                        <div class="template-header">
+                            <i class="fas fa-gift" style="color: #ea4335;"></i>
+                            <span class="template-title">Best Gift for Girlfriend</span>
+                        </div>
+                        <div class="template-description">
+                            Helps users find romantic gifts and deals
+                        </div>
+                        <div class="template-example">
+                            "Find me the best gift deals for my girlfriend"
+                        </div>
+                        <button class="btn btn-sm">
+                            <i class="fas fa-edit"></i>
+                            Edit Template
+                        </button>
+                    </div>
+                    
+                    <div class="template-card">
+                        <div class="template-header">
+                            <i class="fas fa-shopping-cart" style="color: #34a853;"></i>
+                            <span class="template-title">Deals for Groceries</span>
+                        </div>
+                        <div class="template-description">
+                            Finds grocery and food delivery deals
+                        </div>
+                        <div class="template-example">
+                            "Show me the best grocery deals available now"
+                        </div>
+                        <button class="btn btn-sm">
+                            <i class="fas fa-edit"></i>
+                            Edit Template
+                        </button>
+                    </div>
+                    
+                    <div class="template-card">
+                        <div class="template-header">
+                            <i class="fas fa-money-bill-wave" style="color: #fbbc04;"></i>
+                            <span class="template-title">Best Cashback Now</span>
+                        </div>
+                        <div class="template-description">
+                            Shows highest cashback opportunities
+                        </div>
+                        <div class="template-example">
+                            "Where's the best cashback now?"
+                        </div>
+                        <button class="btn btn-sm">
+                            <i class="fas fa-edit"></i>
+                            Edit Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setPersonality(type) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.personality-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            console.log('Personality set to:', type);
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                const messagesContainer = document.getElementById('chatMessages');
+                
+                // Add user message
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user';
+                userMessage.innerHTML = `<div class="message-bubble">${message}</div>`;
+                messagesContainer.appendChild(userMessage);
+                
+                // Clear input
+                input.value = '';
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const aiMessage = document.createElement('div');
+                    aiMessage.className = 'message assistant';
+                    aiMessage.innerHTML = `<div class="message-bubble">Thanks for your message! I'm processing your request about "${message}". This is a demo response.</div>`;
+                    messagesContainer.appendChild(aiMessage);
+                    
+                    // Scroll to bottom
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }, 1000);
+                
+                // Scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+        
+        // Allow Enter key to send message
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

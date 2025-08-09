@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Dashboard - Zabardoo Telegram Bot</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .header p {
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .status-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+
+        .status-card.warning {
+            border-left-color: #f39c12;
+        }
+
+        .status-card.error {
+            border-left-color: #e74c3c;
+        }
+
+        .status-card.success {
+            border-left-color: #27ae60;
+        }
+
+        .status-card h3 {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .status-card .unit {
+            font-size: 1rem;
+            color: #666;
+            font-weight: normal;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chart-container h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.2rem;
+        }
+
+        .alerts-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .alert-item {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #ddd;
+        }
+
+        .alert-item.critical {
+            background-color: #fdf2f2;
+            border-left-color: #e53e3e;
+        }
+
+        .alert-item.error {
+            background-color: #fef5e7;
+            border-left-color: #dd6b20;
+        }
+
+        .alert-item.warning {
+            background-color: #fffbeb;
+            border-left-color: #d69e2e;
+        }
+
+        .alert-item.info {
+            background-color: #ebf8ff;
+            border-left-color: #3182ce;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-time {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .metric-card h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .refresh-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .refresh-button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #e53e3e;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .status-bar {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔍 Monitoring Dashboard</h1>
+        <p>Real-time system performance and health monitoring</p>
+    </div>
+
+    <div class="container">
+        <div id="error-container"></div>
+        
+        <div class="status-bar">
+            <div class="status-card success" id="cpu-status">
+                <h3>CPU Usage</h3>
+                <div class="value">--<span class="unit">%</span></div>
+            </div>
+            <div class="status-card success" id="memory-status">
+                <h3>Memory Usage</h3>
+                <div class="value">--<span class="unit">%</span></div>
+            </div>
+            <div class="status-card success" id="requests-status">
+                <h3>Requests/sec</h3>
+                <div class="value">--</div>
+            </div>
+            <div class="status-card success" id="response-time-status">
+                <h3>Avg Response Time</h3>
+                <div class="value">--<span class="unit">ms</span></div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="chart-container">
+                <h3>📊 System Performance</h3>
+                <canvas id="performanceChart" width="400" height="200"></canvas>
+            </div>
+            
+            <div class="alerts-container">
+                <h3>🚨 Active Alerts</h3>
+                <div id="alerts-list">
+                    <p style="text-align: center; color: #666; padding: 2rem;">Loading alerts...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>🖥️ System Metrics</h3>
+                <div id="system-metrics">
+                    <div class="metric-row">
+                        <span class="metric-label">Platform</span>
+                        <span class="metric-value" id="platform">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Uptime</span>
+                        <span class="metric-value" id="uptime">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Load Average</span>
+                        <span class="metric-value" id="load-average">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Total Memory</span>
+                        <span class="metric-value" id="total-memory">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>🚀 Application Metrics</h3>
+                <div id="app-metrics">
+                    <div class="metric-row">
+                        <span class="metric-label">Total Requests</span>
+                        <span class="metric-value" id="total-requests">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Error Rate</span>
+                        <span class="metric-value" id="error-rate">--%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Active Connections</span>
+                        <span class="metric-value" id="active-connections">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">App Uptime</span>
+                        <span class="metric-value" id="app-uptime">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>💾 Database Metrics</h3>
+                <div id="db-metrics">
+                    <div class="metric-row">
+                        <span class="metric-label">Active Connections</span>
+                        <span class="metric-value" id="db-connections">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Total Queries</span>
+                        <span class="metric-value" id="total-queries">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Avg Query Time</span>
+                        <span class="metric-value" id="avg-query-time">--ms</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Pool Usage</span>
+                        <span class="metric-value" id="pool-usage">--%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>⚡ Cache Metrics</h3>
+                <div id="cache-metrics">
+                    <div class="metric-row">
+                        <span class="metric-label">Hit Rate</span>
+                        <span class="metric-value" id="cache-hit-rate">--%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Total Operations</span>
+                        <span class="metric-value" id="cache-operations">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Avg Response Time</span>
+                        <span class="metric-value" id="cache-response-time">--ms</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Memory Usage</span>
+                        <span class="metric-value" id="cache-memory">--MB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="last-updated" id="last-updated">
+            Last updated: --
+        </div>
+    </div>
+
+    <button class="refresh-button" onclick="refreshData()">
+        🔄 Refresh
+    </button>
+
+    <script>
+        let performanceChart;
+        let chartData = {
+            labels: [],
+            cpu: [],
+            memory: [],
+            responseTime: []
+        };
+
+        // Initialize chart
+        function initChart() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            performanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [
+                        {
+                            label: 'CPU Usage (%)',
+                            data: chartData.cpu,
+                            borderColor: '#e74c3c',
+                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Memory Usage (%)',
+                            data: chartData.memory,
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Response Time (ms)',
+                            data: chartData.responseTime,
+                            borderColor: '#f39c12',
+                            backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Percentage (%)'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Response Time (ms)'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update chart data
+        function updateChart(metrics) {
+            const now = new Date().toLocaleTimeString();
+            
+            chartData.labels.push(now);
+            chartData.cpu.push(metrics.system?.cpu?.usage || 0);
+            chartData.memory.push(metrics.system?.memory?.usage || 0);
+            chartData.responseTime.push(metrics.system?.application?.averageResponseTime || 0);
+
+            // Keep only last 20 data points
+            if (chartData.labels.length > 20) {
+                chartData.labels.shift();
+                chartData.cpu.shift();
+                chartData.memory.shift();
+                chartData.responseTime.shift();
+            }
+
+            performanceChart.update();
+        }
+
+        // Format bytes to human readable
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Format uptime
+        function formatUptime(ms) {
+            const seconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (days > 0) return `${days}d ${hours % 24}h`;
+            if (hours > 0) return `${hours}h ${minutes % 60}m`;
+            if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+            return `${seconds}s`;
+        }
+
+        // Update status cards
+        function updateStatusCards(metrics) {
+            const cpuUsage = metrics.system?.cpu?.usage || 0;
+            const memoryUsage = metrics.system?.memory?.usage || 0;
+            const requestsPerSecond = metrics.system?.application?.requestsPerSecond || 0;
+            const avgResponseTime = metrics.system?.application?.averageResponseTime || 0;
+
+            // Update values
+            document.querySelector('#cpu-status .value').innerHTML = `${cpuUsage.toFixed(1)}<span class="unit">%</span>`;
+            document.querySelector('#memory-status .value').innerHTML = `${memoryUsage.toFixed(1)}<span class="unit">%</span>`;
+            document.querySelector('#requests-status .value').textContent = requestsPerSecond.toFixed(1);
+            document.querySelector('#response-time-status .value').innerHTML = `${avgResponseTime.toFixed(0)}<span class="unit">ms</span>`;
+
+            // Update status colors
+            updateStatusCard('cpu-status', cpuUsage, [70, 90]);
+            updateStatusCard('memory-status', memoryUsage, [80, 95]);
+            updateStatusCard('response-time-status', avgResponseTime, [1000, 2000]);
+        }
+
+        function updateStatusCard(cardId, value, thresholds) {
+            const card = document.getElementById(cardId);
+            card.className = 'status-card';
+            
+            if (value > thresholds[1]) {
+                card.classList.add('error');
+            } else if (value > thresholds[0]) {
+                card.classList.add('warning');
+            } else {
+                card.classList.add('success');
+            }
+        }
+
+        // Update alerts
+        function updateAlerts(alerts) {
+            const alertsList = document.getElementById('alerts-list');
+            
+            if (!alerts.active || alerts.active.length === 0) {
+                alertsList.innerHTML = '<p style="text-align: center; color: #27ae60; padding: 2rem;">✅ No active alerts</p>';
+                return;
+            }
+
+            const alertsHtml = alerts.active.map(alert => `
+                <div class="alert-item ${alert.level}">
+                    <div class="alert-title">${alert.title}</div>
+                    <div class="alert-description">${alert.description}</div>
+                    <div class="alert-time">${new Date(alert.timestamp).toLocaleString()}</div>
+                </div>
+            `).join('');
+
+            alertsList.innerHTML = alertsHtml;
+        }
+
+        // Update metrics
+        function updateMetrics(data) {
+            const metrics = data.monitoring?.metricsCollector || {};
+            const system = data.system || {};
+
+            // System metrics
+            document.getElementById('platform').textContent = system.platform || '--';
+            document.getElementById('uptime').textContent = system.uptime ? formatUptime(system.uptime * 1000) : '--';
+            document.getElementById('load-average').textContent = system.cpu?.loadAverage ? system.cpu.loadAverage.map(l => l.toFixed(2)).join(', ') : '--';
+            document.getElementById('total-memory').textContent = system.memory?.total ? formatBytes(system.memory.total) : '--';
+
+            // Application metrics
+            const appStats = metrics.applicationStats || {};
+            document.getElementById('total-requests').textContent = appStats.requestsTotal || '--';
+            document.getElementById('error-rate').textContent = appStats.totalErrors && appStats.requestsTotal 
+                ? ((appStats.totalErrors / appStats.requestsTotal) * 100).toFixed(2) + '%' 
+                : '--%';
+            document.getElementById('active-connections').textContent = appStats.activeConnections || '--';
+            document.getElementById('app-uptime').textContent = system.application?.uptime ? formatUptime(system.application.uptime) : '--';
+
+            // Database metrics
+            document.getElementById('db-connections').textContent = system.database?.activeConnections || '--';
+            document.getElementById('total-queries').textContent = system.database?.totalQueries || '--';
+            document.getElementById('avg-query-time').textContent = system.database?.averageQueryTime ? system.database.averageQueryTime.toFixed(2) + 'ms' : '--ms';
+            document.getElementById('pool-usage').textContent = system.database?.connectionPoolUsage ? system.database.connectionPoolUsage.toFixed(1) + '%' : '--%';
+
+            // Cache metrics
+            document.getElementById('cache-hit-rate').textContent = system.cache?.hitRate ? system.cache.hitRate.toFixed(1) + '%' : '--%';
+            document.getElementById('cache-operations').textContent = system.cache?.totalOperations || '--';
+            document.getElementById('cache-response-time').textContent = system.cache?.averageResponseTime ? system.cache.averageResponseTime.toFixed(2) + 'ms' : '--ms';
+            document.getElementById('cache-memory').textContent = system.cache?.memoryUsage ? formatBytes(system.cache.memoryUsage) : '--MB';
+        }
+
+        // Show error
+        function showError(message) {
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.innerHTML = `
+                <div class="error-message">
+                    <strong>Error:</strong> ${message}
+                </div>
+            `;
+        }
+
+        // Clear error
+        function clearError() {
+            document.getElementById('error-container').innerHTML = '';
+        }
+
+        // Fetch monitoring data
+        async function fetchMonitoringData() {
+            try {
+                clearError();
+                document.body.classList.add('loading');
+
+                const [statusResponse, alertsResponse] = await Promise.all([
+                    fetch('/monitoring/status'),
+                    fetch('/monitoring/alerts')
+                ]);
+
+                if (!statusResponse.ok || !alertsResponse.ok) {
+                    throw new Error('Failed to fetch monitoring data');
+                }
+
+                const statusData = await statusResponse.json();
+                const alertsData = await alertsResponse.json();
+
+                updateStatusCards(statusData);
+                updateChart(statusData);
+                updateAlerts(alertsData);
+                updateMetrics(statusData);
+
+                document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleString()}`;
+
+            } catch (error) {
+                console.error('Error fetching monitoring data:', error);
+                showError('Failed to fetch monitoring data. Please check if the monitoring service is running.');
+            } finally {
+                document.body.classList.remove('loading');
+            }
+        }
+
+        // Refresh data
+        function refreshData() {
+            fetchMonitoringData();
+        }
+
+        // Initialize dashboard
+        function initDashboard() {
+            initChart();
+            fetchMonitoringData();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(fetchMonitoringData, 30000);
+        }
+
+        // Start dashboard when page loads
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>
