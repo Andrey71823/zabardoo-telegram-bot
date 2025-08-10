@@ -305,6 +305,83 @@ class EnhancedGuideTelegramBot {
     };
   }
 
+  // =====================
+  // Утилиты форматирования витрины категорий/магазинов
+  // =====================
+  getDealsDataset() {
+    if (this._dealsDataset) return this._dealsDataset;
+    // Простые мок-данные по категориям для красивого вывода
+    const mk = (icon, name, price, discount, cashback) => ({ icon, name, price, discount, cashback });
+    this._dealsDataset = {
+      electronics: [
+        mk('📱','Samsung Galaxy S24','₹65,999','28% OFF','6% cashback'),
+        mk('💻','MacBook Air M3','₹99,999','15% OFF','4% cashback'),
+        mk('🎧','Sony WH-1000XM5','₹22,500','25% OFF','4% cashback'),
+        mk('⌚','Apple Watch SE','₹24,999','18% OFF','3% cashback'),
+        mk('🎮','PS5 Slim','₹44,990','12% OFF','5% cashback'),
+        mk('🖥️','Dell Ultrasharp 27"','₹29,999','20% OFF','3% cashback'),
+        mk('🔊','JBL Charge 5','₹11,999','22% OFF','4% cashback'),
+        mk('🖱️','Logitech MX Master 3s','₹8,499','17% OFF','2% cashback')
+      ],
+      fashion: [
+        mk('👟','Nike Air Max 270','₹8,999','35% OFF','5% cashback'),
+        mk('👗','Zara Summer Dress','₹2,499','40% OFF','3% cashback'),
+        mk('👔','H&M Shirts (2+1)','₹1,999','Buy 2 Get 1','2% cashback'),
+        mk('🧥','Levi’s Jacket','₹4,499','30% OFF','3% cashback'),
+        mk('👜','Caprese Tote','₹2,299','45% OFF','4% cashback'),
+        mk('👖','Wrangler Jeans','₹1,799','38% OFF','3% cashback')
+      ],
+      beauty: [
+        mk('💄','Lakme Lipstick Set','₹999','40% OFF','5% cashback'),
+        mk('🧴','L’Oreal Shampoo','₹349','30% OFF','3% cashback'),
+        mk('🧖‍♀️','Mamaearth Face Wash','₹249','35% OFF','3% cashback'),
+        mk('💅','Nykaa Nail Kit','₹399','45% OFF','4% cashback'),
+        mk('🧴','Nivea Body Lotion','₹279','28% OFF','2% cashback'),
+        mk('🧴','Plum Serum','₹599','25% OFF','3% cashback'),
+        mk('🧴','WOW Skin Science Combo','₹899','42% OFF','4% cashback')
+      ],
+      food: [
+        mk('🍕','Domino’s Large 1+1','₹499','40% OFF','2% cashback'),
+        mk('🍔','McDonald’s Meals','₹199','30% OFF','2% cashback'),
+        mk('🍗','KFC Bucket','₹399','35% OFF','3% cashback'),
+        mk('🥤','Starbucks 2 for 1','₹299','50% OFF','1% cashback'),
+        mk('🍱','Box8 Meals','₹169','45% OFF','2% cashback'),
+        mk('🍩','Dunkin’ Donuts','₹149','30% OFF','1% cashback'),
+        mk('🍜','Faasos Rolls','₹149','40% OFF','2% cashback')
+      ]
+    };
+    return this._dealsDataset;
+  }
+
+  pickRandomDeals(items, count) {
+    const copy = [...items];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy.slice(0, count);
+  }
+
+  formatCategoryBlock(categoryKey, emoji, count = 6, randomize = false) {
+    const all = this.getDealsDataset()[categoryKey] || [];
+    const items = randomize ? this.pickRandomDeals(all, Math.min(count, all.length)) : all.slice(0, Math.min(count, all.length));
+    const total = all.length;
+    const titleMap = { electronics: 'Electronics', fashion: 'Fashion', beauty: 'Beauty', food: 'Food' };
+    const lines = items.map(d => `• ${d.icon} <b>${this.sanitize(d.name)}</b> — ${d.price} (${d.discount} + ${d.cashback})`).join('\n');
+    const header = `${emoji} <b>${titleMap[categoryKey]} Deals</b>\n\n` +
+      `📦 <b>Предложений сегодня:</b> ${total}${total > items.length ? `  •  Показано: ${items.length}` : ''}\n\n`;
+    return header + lines;
+  }
+
+  getCategoryKeyboardWithMore(categoryKey) {
+    return {
+      inline_keyboard: [
+        [ { text: '⬇️ Показать ещё', callback_data: `more_${categoryKey}` } ],
+        ...this.getCategoryKeyboard().inline_keyboard
+      ]
+    };
+  }
+
   getCategoryKeyboard() {
     return {
       inline_keyboard: [
@@ -1828,113 +1905,55 @@ Based on your history and preferences:
         break;
 
       case 'electronics':
-        responseText = `📱 <b>Electronics Deals</b>
-
-🔥 <b>Top Electronics Offers:</b>
-• Samsung Galaxy S24 - 28% OFF + 6% cashback
-• iPhone 15 Pro - 15% OFF + 5% cashback
-• MacBook Air M3 - 12% OFF + 4% cashback
-• Sony WH-1000XM5 - 25% OFF + 4% cashback
-• OnePlus 12 - 30% OFF + 6% cashback
-
-💡 <b>Smart Home:</b>
-• Amazon Echo - 40% OFF + 3% cashback
-• Google Nest - 35% OFF + 3% cashback
-
-🎁 +3 XP for browsing electronics!`;
-        keyboard = this.getCategoryKeyboard();
+        responseText = this.formatCategoryBlock('electronics', '📱', 6, true);
+        keyboard = this.getCategoryKeyboardWithMore('electronics');
         this.awardXP(callbackQuery.from.id, 3, 'electronics');
         break;
 
       case 'fashion':
-        responseText = `👗 <b>Fashion Deals</b>
-
-✨ <b>Top Fashion Offers:</b>
-• Zara Collection - 50% OFF + 4% cashback
-• H&M Summer Sale - 40% OFF + 3% cashback
-• Nike Sportswear - 35% OFF + 5% cashback
-• Adidas Originals - 30% OFF + 4% cashback
-• Levi's Jeans - 45% OFF + 4% cashback
-
-👠 <b>Accessories:</b>
-• Ray-Ban Sunglasses - 25% OFF + 3% cashback
-• Fossil Watches - 40% OFF + 5% cashback
-
-🎁 +3 XP for browsing fashion!`;
-        keyboard = this.getCategoryKeyboard();
+        responseText = this.formatCategoryBlock('fashion', '👗', 6, true);
+        keyboard = this.getCategoryKeyboardWithMore('fashion');
         this.awardXP(callbackQuery.from.id, 3, 'fashion');
         break;
 
       case 'beauty':
-        responseText = `💄 <b>Beauty Deals</b>
-
-💅 <b>Top Beauty Offers:</b>
-• Lakme Cosmetics - 40% OFF + 5% cashback
-• Nykaa Collection - 35% OFF + 4% cashback
-• L'Oreal Paris - 30% OFF + 4% cashback
-• Maybelline - 45% OFF + 3% cashback
-• MAC Cosmetics - 25% OFF + 6% cashback
-
-🧴 <b>Skincare:</b>
-• The Body Shop - 50% OFF + 4% cashback
-• Himalaya - 30% OFF + 3% cashback
-
-🎁 +3 XP for browsing beauty!`;
-        keyboard = this.getCategoryKeyboard();
+        responseText = this.formatCategoryBlock('beauty', '💄', 7, true);
+        keyboard = this.getCategoryKeyboardWithMore('beauty');
         this.awardXP(callbackQuery.from.id, 3, 'beauty');
         break;
 
       case 'food':
-        responseText = `🍔 <b>Food Deals</b>
-
-🍕 <b>Restaurant Offers:</b>
-• Domino's Pizza - 40% OFF + 2% cashback
-• McDonald's - 30% OFF + 2% cashback
-• KFC - 35% OFF + 3% cashback
-• Subway - 25% OFF + 2% cashback
-• Pizza Hut - 45% OFF + 3% cashback
-
-🛒 <b>Grocery:</b>
-• BigBasket - 20% OFF + 2% cashback
-• Grofers - 25% OFF + 2% cashback
-
-🎁 +3 XP for browsing food deals!`;
-        keyboard = this.getCategoryKeyboard();
+        responseText = this.formatCategoryBlock('food', '🍔', 7, true);
+        keyboard = this.getCategoryKeyboardWithMore('food');
         this.awardXP(callbackQuery.from.id, 3, 'food');
         break;
 
       case 'stores':
         responseText = `🏪 <b>Popular Indian Stores</b>
 
-🛍️ <b>E-Commerce Giants:</b>
-🔸 <b>Amazon India</b> - Up to 70% OFF + 5% cashback
-   📱 Electronics, Books, Fashion, Home
-🔸 <b>Flipkart</b> - Up to 80% OFF + 6% cashback
-   📱 Mobiles, Electronics, Fashion, Grocery
-🔸 <b>Myntra</b> - Up to 60% OFF + 4% cashback
-   👗 Fashion, Beauty, Home & Living
-🔸 <b>Ajio</b> - Up to 70% OFF + 4% cashback
-   👕 Fashion, Footwear, Accessories
+🛍️ <b>E-Commerce:</b>
+• Amazon India — до 70% OFF + 5% cashback
+• Flipkart — до 80% OFF + 6% cashback
+• Myntra — до 60% OFF + 4% cashback
+• Ajio — до 70% OFF + 4% cashback
 
-💄 <b>Beauty & Personal Care:</b>
-🔸 <b>Nykaa</b> - Up to 50% OFF + 5% cashback
-🔸 <b>Purplle</b> - Up to 45% OFF + 3% cashback
+💄 <b>Beauty:</b>
+• Nykaa — до 50% OFF + 5% cashback
+• Purplle — до 45% OFF + 3% cashback
 
 🏬 <b>Department Stores:</b>
-🔸 <b>Lifestyle</b> - 40% OFF + 3% cashback
-🔸 <b>Shoppers Stop</b> - 50% OFF + 4% cashback
-🔸 <b>Westside</b> - 35% OFF + 2% cashback
+• Lifestyle — 40% OFF + 3% cashback
+• Shoppers Stop — 50% OFF + 4% cashback
+• Westside — 35% OFF + 2% cashback
 
 🍔 <b>Food & Grocery:</b>
-🔸 <b>Swiggy</b> - Up to 60% OFF + 2% cashback
-🔸 <b>Zomato</b> - Up to 50% OFF + 3% cashback
-🔸 <b>BigBasket</b> - Up to 30% OFF + 2% cashback
-🔸 <b>Grofers (Blinkit)</b> - Up to 25% OFF + 2% cashback
+• Swiggy — до 60% OFF + 2% cashback
+• Zomato — до 50% OFF + 3% cashback
+• BigBasket — до 30% OFF + 2% cashback
+• Blinkit — до 25% OFF + 2% cashback
 
-💡 <b>Pro Tip:</b> 🎤 Send voice message or 📸 photo for personalized store recommendations!
-
-🎁 +3 XP for browsing stores!`;
-        keyboard = this.getCategoryKeyboard();
+💡 <b>Совет:</b> пришли голос/фото для персональных рекомендаций магазинов.`;
+        keyboard = this.getCategoryKeyboardWithMore('electronics');
         this.awardXP(callbackQuery.from.id, 3, 'stores');
         break;
 
@@ -1990,6 +2009,24 @@ You can unpause anytime in settings.
 🎁 +2 XP for managing settings!`;
         keyboard = this.getMainKeyboard();
         this.awardXP(callbackQuery.from.id, 2, 'settings_change');
+        break;
+
+      // Пагинация "Показать ещё" для витрин
+      case 'more_electronics':
+        responseText = this.formatCategoryBlock('electronics', '📱', 8, true);
+        keyboard = this.getCategoryKeyboardWithMore('electronics');
+        break;
+      case 'more_fashion':
+        responseText = this.formatCategoryBlock('fashion', '👗', 8, true);
+        keyboard = this.getCategoryKeyboardWithMore('fashion');
+        break;
+      case 'more_beauty':
+        responseText = this.formatCategoryBlock('beauty', '💄', 8, true);
+        keyboard = this.getCategoryKeyboardWithMore('beauty');
+        break;
+      case 'more_food':
+        responseText = this.formatCategoryBlock('food', '🍔', 8, true);
+        keyboard = this.getCategoryKeyboardWithMore('food');
         break;
 
       // Feedback buttons
