@@ -424,8 +424,15 @@
     </div>
     
     <script>
-        // Disallow embedding in foreign iframes (defense in depth with CSP)
-        try { if (window.top !== window.self) { document.body.innerHTML = ''; } } catch (_) {}
+        // Allow same-origin embedding (needed for our own iframe-based layout)
+        // Previous strict check caused browsers to show blocked content banners.
+        // CSP already restricts frame-ancestors to 'self'.
+        try {
+          if (window.top !== window.self) {
+            // If embedded by another origin, browsers will block via CSP.
+            // Do nothing here to avoid false-positive blocking.
+          }
+        } catch (_) {}
         let currentUrl = '';
         let currentTitle = '';
         
@@ -550,5 +557,8 @@
             goToHome();
         });
     </script>
+    
+    <!-- Load admin navigation functionality -->
+    <script src="/admin/admin-nav.js"></script>
 </body>
 </html>
