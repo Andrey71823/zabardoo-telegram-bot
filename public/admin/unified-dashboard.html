@@ -438,6 +438,23 @@
         let currentUrl = '';
         let currentTitle = '';
         
+        function baseOrigin() {
+            // If browser auto-upgraded to https on :8080 (no TLS), force http to avoid SSL errors
+            try {
+                if (location.protocol === 'https:' && location.port === '8080') {
+                    return 'http://' + location.host;
+                }
+            } catch (_) {}
+            return location.origin;
+        }
+
+        function absolutize(url){
+            if (!/^https?:\/\//i.test(url)) {
+                return baseOrigin() + url;
+            }
+            return url;
+        }
+
         function loadContent(url, title, linkElement) {
             // Update active state
             document.querySelectorAll('.nav-link').forEach(link => {
@@ -461,8 +478,9 @@
             
             // Load content in iframe
             setTimeout(() => {
+                const abs = absolutize(url);
                 document.getElementById('contentFrame').innerHTML = `
-                    <iframe class="content-iframe" src="${url}" onload="hideLoading()"></iframe>
+                    <iframe class="content-iframe" src="${abs}" onload="hideLoading()"></iframe>
                 `;
                 currentUrl = url;
                 currentTitle = title;
@@ -497,14 +515,15 @@
             if (currentUrl) {
                 const iframe = document.querySelector('.content-iframe');
                 if (iframe) {
-                    iframe.src = iframe.src;
+                    const abs = absolutize(currentUrl);
+                    iframe.src = abs;
                 }
             }
         }
         
         function openInNewTab() {
             if (currentUrl) {
-                window.open(currentUrl, '_blank');
+                window.open(absolutize(currentUrl), '_blank');
             }
         }
         
@@ -529,7 +548,7 @@
             
             // Load home dashboard
             document.getElementById('contentFrame').innerHTML = `
-                <iframe class="content-iframe" src="/dashboard.html"></iframe>
+                <iframe class="content-iframe" src="${absolutize('/dashboard.html')}"></iframe>
             `;
             
             // Clear current URL
