@@ -5,7 +5,494 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zabardoo Admin – Home</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="/dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+    <style>
+    /* Nexus Design System */
+    :root {
+      --nexus-primary: #6366f1;
+      --nexus-primary-dark: #4f46e5;
+      --nexus-secondary: #64748b;
+      --nexus-success: #10b981;
+      --nexus-warning: #f59e0b;
+      --nexus-danger: #ef4444;
+      --nexus-info: #3b82f6;
+      
+      --nexus-bg-primary: #ffffff;
+      --nexus-bg-secondary: #f8fafc;
+      --nexus-bg-tertiary: #f1f5f9;
+      
+      --nexus-text-primary: #0f172a;
+      --nexus-text-secondary: #475569;
+      --nexus-text-tertiary: #64748b;
+      
+      --nexus-border: #e2e8f0;
+      --nexus-border-light: #f1f5f9;
+      
+      --nexus-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --nexus-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --nexus-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --nexus-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --nexus-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      
+      --nexus-radius-sm: 0.375rem;
+      --nexus-radius: 0.5rem;
+      --nexus-radius-md: 0.75rem;
+      --nexus-radius-lg: 1rem;
+      --nexus-radius-xl: 1.5rem;
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--nexus-bg-secondary);
+      color: var(--nexus-text-primary);
+      line-height: 1.5;
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header */
+    .hero {
+      background: var(--nexus-bg-primary);
+      border: 1px solid var(--nexus-border);
+      border-radius: var(--nexus-radius-lg);
+      box-shadow: var(--nexus-shadow);
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .hero h1 { 
+      font-size: 2rem; 
+      margin: 0; 
+      font-weight: 700; 
+      color: var(--nexus-text-primary);
+      letter-spacing: -0.025em;
+    }
+    
+    .hero p { 
+      color: var(--nexus-text-secondary); 
+      margin: 0.5rem 0 0; 
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    /* Quick Actions */
+    .quick-actions { 
+      display: flex; 
+      gap: 1rem; 
+      flex-wrap: wrap; 
+    }
+    
+    .qa-btn {
+      display: inline-flex; 
+      align-items: center; 
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem; 
+      border: 1px solid var(--nexus-border); 
+      border-radius: var(--nexus-radius);
+      background: var(--nexus-bg-primary); 
+      color: var(--nexus-text-secondary); 
+      text-decoration: none; 
+      font-weight: 500; 
+      font-size: 0.875rem;
+      box-shadow: var(--nexus-shadow-sm);
+      transition: all 0.2s ease;
+    }
+    
+    .qa-btn:hover { 
+      background: var(--nexus-bg-tertiary);
+      border-color: var(--nexus-text-tertiary);
+      transform: translateY(-1px);
+      box-shadow: var(--nexus-shadow-md);
+    }
+
+    /* Layout */
+    .grid-2 { 
+      display: grid; 
+      grid-template-columns: 1.3fr 1fr; 
+      gap: 2rem; 
+    }
+    
+    .metrics { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      grid-template-rows: repeat(2, 1fr);
+      gap: 1.5rem; 
+      height: 100%;
+    }
+
+    /* Cards */
+    .card { 
+      background: var(--nexus-bg-primary); 
+      border: 1px solid var(--nexus-border); 
+      border-radius: var(--nexus-radius-lg); 
+      box-shadow: var(--nexus-shadow);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideInUp 0.6s ease-out forwards;
+    }
+    
+    .card:hover {
+      box-shadow: var(--nexus-shadow-xl);
+      transform: translateY(-4px);
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--nexus-primary), var(--nexus-info));
+      opacity: 0.8;
+    }
+
+    @keyframes slideInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes countUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .card-body { 
+      padding: 1.5rem; 
+    }
+    
+    .card h3 { 
+      margin: 0 0 1rem; 
+      font-size: 0.75rem; 
+      color: var(--nexus-text-tertiary); 
+      font-weight: 500; 
+      text-transform: uppercase;
+      letter-spacing: 0.1em; 
+    }
+    
+    .metric-value { 
+      font-size: 1.875rem; 
+      font-weight: 700; 
+      color: var(--nexus-text-primary);
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      animation: countUp 0.8s ease-out 0.3s both;
+    }
+    
+    .metric-sub { 
+      color: var(--nexus-text-tertiary); 
+      font-size: 0.75rem; 
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-weight: 500;
+    }
+
+    /* Metric Icons */
+    .metric-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: var(--nexus-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--nexus-primary), var(--nexus-info));
+      color: white;
+      animation: countUp 0.6s ease-out 0.1s both;
+    }
+
+    .metric-icon.success {
+      background: linear-gradient(135deg, var(--nexus-success), #059669);
+    }
+
+    .metric-icon.warning {
+      background: linear-gradient(135deg, var(--nexus-warning), #d97706);
+    }
+
+    .metric-icon.info {
+      background: linear-gradient(135deg, var(--nexus-info), #2563eb);
+    }
+    
+    .delta-up { 
+      color: var(--nexus-success); 
+      font-weight: 500; 
+      font-size: 0.875rem; 
+    }
+    
+    .delta-down { 
+      color: var(--nexus-danger); 
+      font-weight: 500; 
+      font-size: 0.875rem; 
+    }
+
+    /* Charts */
+    .chart-card {
+      position: relative;
+      height: 650px !important;
+      min-height: 650px !important;
+      max-height: 650px !important;
+      overflow: hidden !important;
+    }
+    
+    .chart-card .card-body {
+      height: 648px !important;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    .chart-card canvas { 
+      width: 100% !important; 
+      height: 360px !important;
+      max-height: 360px !important;
+      flex-shrink: 0 !important;
+    }
+
+    /* Equal height for first row cards */
+    .grid-2 .card {
+      height: 650px !important;
+      min-height: 650px !important;
+      max-height: 650px !important;
+    }
+
+    /* Metrics cards inside the grid */
+    .metrics .card {
+      height: auto !important;
+      min-height: 180px !important;
+      max-height: 200px !important;
+    }
+    
+    .chart-title { 
+      font-size: 0.875rem; 
+      font-weight: 600; 
+      margin: 0 0 1.5rem; 
+      color: var(--nexus-text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chart-subtitle {
+      font-size: 0.75rem;
+      color: var(--nexus-text-tertiary);
+      font-weight: 400;
+      margin-top: 0.25rem;
+    }
+
+    .chart-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--nexus-text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .chart-change {
+      font-size: 0.75rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .chart-change.positive {
+      color: var(--nexus-success);
+    }
+
+    .chart-change.negative {
+      color: var(--nexus-danger);
+    }
+
+    /* Shortcuts */
+    .shortcuts { 
+      display: grid; 
+      grid-template-columns: repeat(6, 1fr); 
+      gap: 1rem; 
+      margin-top: 1rem; 
+    }
+    
+    .shortcut { 
+      padding: 1.5rem 1rem; 
+      text-align: center; 
+      border: 1px solid var(--nexus-border); 
+      border-radius: var(--nexus-radius-lg); 
+      background: var(--nexus-bg-primary); 
+      box-shadow: var(--nexus-shadow); 
+      text-decoration: none; 
+      color: var(--nexus-text-primary); 
+      font-weight: 500; 
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+    }
+    
+    .shortcut:hover {
+      background: var(--nexus-bg-tertiary);
+      transform: translateY(-2px);
+      box-shadow: var(--nexus-shadow-md);
+    }
+    
+    .shortcut i { 
+      display: block; 
+      font-size: 1.5rem; 
+      margin-bottom: 0.75rem; 
+      color: var(--nexus-primary);
+    }
+
+    /* Activity */
+    .activity { 
+      margin-top: 1rem; 
+    }
+    
+    .activity-item { 
+      display: flex; 
+      align-items: center; 
+      gap: 1rem;
+      border-bottom: 1px solid var(--nexus-border-light); 
+      padding: 1rem 0; 
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .activity-item:hover {
+      background: var(--nexus-bg-tertiary);
+      margin: 0 -1.5rem;
+      padding: 1rem 1.5rem;
+      border-radius: var(--nexus-radius);
+      transform: translateX(4px);
+    }
+    
+    .activity-item:last-child { 
+      border-bottom: 0; 
+    }
+
+    .activity-icon {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .activity-icon.success {
+      background: linear-gradient(135deg, var(--nexus-success), #059669);
+    }
+
+    .activity-icon.info {
+      background: linear-gradient(135deg, var(--nexus-info), #2563eb);
+    }
+
+    .activity-icon.warning {
+      background: linear-gradient(135deg, var(--nexus-warning), #d97706);
+    }
+
+    .activity-icon.primary {
+      background: linear-gradient(135deg, var(--nexus-primary), var(--nexus-primary-dark));
+    }
+
+    .activity-content {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .activity-text {
+      color: var(--nexus-text-primary);
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .activity-time {
+      color: var(--nexus-text-tertiary); 
+      font-size: 0.75rem;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .activity-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: var(--nexus-radius-sm);
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-left: 0.5rem;
+    }
+
+    .activity-badge.new {
+      background: var(--nexus-success);
+      color: white;
+    }
+
+    .activity-badge.sent {
+      background: var(--nexus-info);
+      color: white;
+    }
+
+    .activity-badge.system {
+      background: var(--nexus-secondary);
+      color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) { 
+      .metrics { grid-template-columns: repeat(2, 1fr); } 
+      .grid-2 { grid-template-columns: 1fr; } 
+      .shortcuts { grid-template-columns: repeat(3, 1fr); } 
+      .container { padding: 1.5rem; }
+    }
+    
+    @media (max-width: 680px) { 
+      .metrics { grid-template-columns: 1fr; } 
+      .shortcuts { grid-template-columns: repeat(2, 1fr); }
+      .hero {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .quick-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      .container { padding: 1rem; }
+    }
+    </style>
 </head>
 <body>
   <div class="container">
@@ -25,81 +512,39 @@
     </div>
 
     <div class="grid-2">
-      <div class="card metrics-section">
+      <div class="card">
         <div class="card-body">
           <div class="metrics" id="metrics"></div>
         </div>
-      </div>
+        </div>
 
-      <div class="card dashboard-card">
+      <div class="card chart-card">
         <div class="card-body">
-          <div class="chart-container">
-            <div class="chart-title">
-              <div>
-                <div>Revenue by Channel</div>
-                <div class="chart-subtitle">Last 30 days</div>
-              </div>
-              <div class="chart-value-container">
-                <div class="chart-value">₹42.7L</div>
-                <div class="chart-change positive">
-                  <i class="fas fa-arrow-up"></i>
-                  +4.3%
-                </div>
-              </div>
-            </div>
-            <div class="donut-chart"></div>
-            <div class="donut-legend">
-              <div class="legend-item">
-                <div class="legend-color legend-primary"></div>
-                <span>Personal Channels (58%)</span>
-              </div>
-              <div class="legend-item">
-                <div class="legend-color legend-info"></div>
-                <span>Group (26%)</span>
-              </div>
-              <div class="legend-item">
-                <div class="legend-color legend-success"></div>
-                <span>AI Recs (16%)</span>
-              </div>
-            </div>
-          </div>
+          <div class="chart-title">Revenue by Channel</div>
+          <canvas id="chartRevenue"></canvas>
         </div>
       </div>
-    </div>
+        </div>
 
-    <div class="grid-2 second-row">
-      <div class="card dashboard-card">
+    <div class="grid-2" style="margin-top:12px;">
+      <div class="card chart-card">
         <div class="card-body">
-          <div class="chart-container">
-            <div class="chart-title">
-              <div>
-                <div>User Growth</div>
-                <div class="chart-subtitle">Daily active users (30 days)</div>
-              </div>
-              <div class="chart-value-container">
-                <div class="chart-value">8,644</div>
-                <div class="chart-change positive">
-                  <i class="fas fa-arrow-up"></i>
-                  +1.2%
-                </div>
-              </div>
-            </div>
-            <div class="bar-chart" id="barChart"></div>
-          </div>
+          <div class="chart-title">User Growth (30 days)</div>
+          <canvas id="chartUsers"></canvas>
         </div>
       </div>
 
       <div class="card">
         <div class="card-body activity">
-          <div class="chart-title activity-title">Recent Activity</div>
+          <div class="chart-title" style="margin-bottom:6px;">Recent Activity</div>
           <div id="activity"></div>
         </div>
       </div>
     </div>
 
-    <div class="card shortcuts-section">
+    <div class="card" style="margin-top:12px;">
       <div class="card-body">
-        <div class="chart-title shortcuts-title">Shortcuts</div>
+        <div class="chart-title" style="margin-bottom:8px;">Shortcuts</div>
         <div class="shortcuts">
           <a class="shortcut" href="/admin/gpt-chat-management-clean.html"><i class="fas fa-robot"></i> GPT Chat</a>
           <a class="shortcut" href="/admin/favorites-management.html"><i class="fas fa-heart"></i> Favorites</a>
@@ -110,8 +555,238 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
 
-  <script src="/dashboard.js"></script>
+    <script>
+    // Dashboard JavaScript
+    const fmt = new Intl.NumberFormat('en-IN');
+    const metricsEl = document.getElementById('metrics');
+    const activityEl = document.getElementById('activity');
+
+    function mockData() {
+      const totalUsers = 124567;
+      const activeToday = 8644;
+      const revenue = 4275600;
+      const conversion = 0.042;
+      const cashback = 214560;
+      const uptime = 99.96;
+      
+      return {
+        metrics: [
+          { label: 'Total Users', value: fmt.format(totalUsers), delta: +3.8 },
+          { label: 'Active Today', value: fmt.format(activeToday), delta: +1.2 },
+          { label: 'Revenue (₹)', value: '₹' + fmt.format(revenue), delta: +4.3 },
+          { label: 'Conversion Rate', value: (conversion * 100).toFixed(1) + '%', delta: +0.3 },
+          { label: 'Total Cashback', value: '₹' + fmt.format(cashback), delta: +2.1 },
+          { label: 'Uptime', value: uptime.toFixed(2) + '%', delta: +0.01 }
+        ],
+        revenueByChannel: [
+          { name: 'Personal Channels', value: 58 },
+          { name: 'Group', value: 26 },
+          { name: 'AI Recs', value: 16 }
+        ],
+        usersDaily: Array.from({ length: 30 }, (_, i) => 500 + Math.round(80 + Math.sin(i/4) * 60 + Math.random()*40)),
+        activity: [
+          { text: 'New coupon approved: Flipkart Electronics', time: '2m' },
+          { text: 'Campaign sent to 12,400 users', time: '12m' },
+          { text: 'Top user redeemed cashback ₹450', time: '25m' },
+          { text: 'Myntra Fashion deals synced', time: '48m' },
+          { text: 'System health OK – CPU 32%', time: '1h' }
+        ]
+      };
+    }
+
+    function renderMetrics(data) {
+      if (!metricsEl) return;
+      
+      metricsEl.innerHTML = '';
+      const icons = ['fas fa-users', 'fas fa-user-check', 'fas fa-rupee-sign', 'fas fa-chart-line', 'fas fa-gift', 'fas fa-server'];
+      const iconClasses = ['primary', 'success', 'warning', 'info', 'success', 'info'];
+      
+      data.metrics.forEach((m, index) => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.style.animationDelay = `${index * 0.1}s`;
+        div.innerHTML = `
+          <div class="card-body">
+            <div class="metric-icon ${iconClasses[index]}">
+              <i class="${icons[index]}"></i>
+            </div>
+            <h3>${m.label}</h3>
+            <div class="metric-value">${m.value}</div>
+            <div class="metric-sub ${m.delta >= 0 ? 'delta-up' : 'delta-down'}">
+              <i class="fas fa-arrow-${m.delta >= 0 ? 'up' : 'down'}"></i>
+              ${Math.abs(m.delta).toFixed(1)}% from last week
+            </div>
+          </div>`;
+        metricsEl.appendChild(div);
+      });
+    }
+
+    function renderActivity(list) {
+      if (!activityEl) return;
+      
+      activityEl.innerHTML = '';
+      
+      // Activity types with icons and colors
+      const activityTypes = [
+        { icon: 'fas fa-check-circle', class: 'success', badge: 'new' },
+        { icon: 'fas fa-paper-plane', class: 'info', badge: 'sent' },
+        { icon: 'fas fa-gift', class: 'warning', badge: 'new' },
+        { icon: 'fas fa-sync-alt', class: 'primary', badge: '' },
+        { icon: 'fas fa-server', class: 'info', badge: 'system' }
+      ];
+      
+      list.forEach((a, index) => {
+        const row = document.createElement('div');
+        row.className = 'activity-item';
+        
+        const type = activityTypes[index] || activityTypes[0];
+        const badge = type.badge ? `<span class="activity-badge ${type.badge}">${type.badge}</span>` : '';
+        
+        row.innerHTML = `
+          <div class="activity-icon ${type.class}">
+            <i class="${type.icon}"></i>
+          </div>
+          <div class="activity-content">
+            <div class="activity-text">
+              ${a.text}${badge}
+            </div>
+            <div class="activity-time">${a.time} ago</div>
+          </div>
+        `;
+        
+        activityEl.appendChild(row);
+      });
+    }
+
+    function renderCharts(data) {
+      // Revenue Chart
+      const revContainer = document.getElementById('chartRevenue').parentElement;
+      revContainer.innerHTML = `
+        <div class="chart-title">
+          <div>
+            <div>Revenue by Channel</div>
+            <div class="chart-subtitle">Last 30 days</div>
+          </div>
+          <div style="text-align: right;">
+            <div class="chart-value">₹42.7L</div>
+            <div class="chart-change positive">
+              <i class="fas fa-arrow-up"></i>
+              +4.3%
+            </div>
+          </div>
+        </div>
+        <div style="height: 420px; overflow: hidden;">
+          <canvas id="chartRevenue" style="height: 420px !important; max-height: 420px !important;"></canvas>
+        </div>
+      `;
+
+      const revCtx = document.getElementById('chartRevenue').getContext('2d');
+      new Chart(revCtx, {
+        type: 'doughnut',
+        data: {
+          labels: data.revenueByChannel.map(x => x.name),
+          datasets: [{
+            data: data.revenueByChannel.map(x => x.value),
+            backgroundColor: ['#6366f1', '#3b82f6', '#10b981'],
+            hoverOffset: 12,
+            borderWidth: 0,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { 
+              position: 'bottom',
+              labels: {
+                color: '#64748b',
+                font: { size: 11, weight: '500' },
+                padding: 20,
+                usePointStyle: true,
+                pointStyle: 'circle'
+              }
+            }
+          },
+          cutout: '70%',
+          animation: { 
+            animateRotate: true, 
+            duration: 1500,
+            easing: 'easeInOutQuart'
+          }
+        }
+      });
+
+      // User Growth Chart
+      const usersContainer = document.getElementById('chartUsers').parentElement;
+      usersContainer.innerHTML = `
+        <div class="chart-title">
+          <div>
+            <div>User Growth</div>
+            <div class="chart-subtitle">Daily active users (30 days)</div>
+          </div>
+          <div style="text-align: right;">
+            <div class="chart-value">8,644</div>
+            <div class="chart-change positive">
+              <i class="fas fa-arrow-up"></i>
+              +1.2%
+            </div>
+          </div>
+        </div>
+        <div style="height: 420px; overflow: hidden;">
+          <canvas id="chartUsers" style="height: 420px !important; max-height: 420px !important;"></canvas>
+        </div>
+      `;
+
+      const usersCtx = document.getElementById('chartUsers').getContext('2d');
+      new Chart(usersCtx, {
+        type: 'bar',
+        data: {
+          labels: Array.from({ length: 30 }, (_, i) => i + 1),
+          datasets: [{
+            data: data.usersDaily,
+            backgroundColor: (ctx) => {
+              const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 200);
+              gradient.addColorStop(0, '#6366f1');
+              gradient.addColorStop(1, '#a5b4fc');
+              return gradient;
+            },
+            borderRadius: 4,
+            borderSkipped: false,
+            barPercentage: 0.8,
+            categoryPercentage: 0.9
+          }]
+        },
+        options: { 
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { 
+            legend: { display: false }
+          }, 
+          scales: { 
+            x: { display: false, grid: { display: false } }, 
+            y: { display: false, grid: { display: false } }
+          },
+          animation: {
+            duration: 2000,
+            easing: 'easeInOutQuart',
+            delay: (ctx) => ctx.dataIndex * 50
+          }
+        }
+      });
+    }
+
+    // Initialize dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Dashboard loading...');
+      const data = mockData();
+      renderMetrics(data);
+      renderActivity(data.activity);
+      renderCharts(data);
+      console.log('Dashboard loaded!');
+    });
+    </script>
 </body>
 </html>
