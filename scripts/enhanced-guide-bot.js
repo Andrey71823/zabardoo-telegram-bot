@@ -369,14 +369,14 @@ class EnhancedGuideTelegramBot {
     const titleMap = { electronics: 'Electronics', fashion: 'Fashion', beauty: 'Beauty', food: 'Food' };
     const lines = items.map(d => `• ${d.icon} <b>${this.sanitize(d.name)}</b> — ${d.price} (${d.discount} + ${d.cashback})`).join('\n');
     const header = `${emoji} <b>${titleMap[categoryKey]} Deals</b>\n\n` +
-      `📦 <b>Предложений сегодня:</b> ${total}${total > items.length ? `  •  Показано: ${items.length}` : ''}\n\n`;
+      `📦 <b>Offers today:</b> ${total}${total > items.length ? `  •  Showing: ${items.length}` : ''}\n\n`;
     return header + lines;
   }
 
   getCategoryKeyboardWithMore(categoryKey) {
     return {
       inline_keyboard: [
-        [ { text: '⬇️ Показать ещё', callback_data: `more_${categoryKey}` } ],
+        [ { text: '⬇️ Show more', callback_data: `more_${categoryKey}` } ],
         ...this.getCategoryKeyboard().inline_keyboard
       ]
     };
@@ -504,63 +504,63 @@ class EnhancedGuideTelegramBot {
       const userChatId = String(targetUserId);
       // Who triggered reply
       const adminName = message.from.first_name || 'Admin';
-      const header = `👨‍💼 <b>${adminName} (Администрация)</b>\n`;
+      const header = `👨‍💼 <b>${adminName} (Admin)</b>\n`;
       if (message.text) {
         await this.sendMessage(userChatId, `${header}\n${message.text}`, {
-          inline_keyboard: [[{ text: '↩️ Ответить администратору', callback_data: 'reply_admin_start' }]]
+          inline_keyboard: [[{ text: '↩️ Reply to admin', callback_data: 'reply_admin_start' }]]
         });
       }
       if (message.photo && message.photo.length > 0) {
         const best = message.photo[message.photo.length - 1];
-        const caption = message.caption || `${adminName}: 📷 фото`;
+        const caption = message.caption || `${adminName}: 📷 photo`;
         await this.sendPhoto(userChatId, best.file_id, `${caption}`, {
-          inline_keyboard: [[{ text: '↩️ Ответить администратору', callback_data: 'reply_admin_start' }]]
+          inline_keyboard: [[{ text: '↩️ Reply to admin', callback_data: 'reply_admin_start' }]]
         });
       }
       if (message.document) {
-        const caption = message.caption || `${adminName}: 📎 документ`;
+        const caption = message.caption || `${adminName}: 📎 document`;
         await this.sendDocument(userChatId, message.document.file_id, caption, {
-          inline_keyboard: [[{ text: '↩️ Ответить администратору', callback_data: 'reply_admin_start' }]]
+          inline_keyboard: [[{ text: '↩️ Reply to admin', callback_data: 'reply_admin_start' }]]
         });
       }
       if (message.voice) {
-        const caption = message.caption || `${adminName}: 🎤 голосовое сообщение`;
+        const caption = message.caption || `${adminName}: 🎤 voice message`;
         await this.sendVoice(userChatId, message.voice.file_id, caption, {
-          inline_keyboard: [[{ text: '↩️ Ответить администратору', callback_data: 'reply_admin_start' }]]
+          inline_keyboard: [[{ text: '↩️ Reply to admin', callback_data: 'reply_admin_start' }]]
         });
       }
       // Notify admin
-      await this.sendMessage(this.feedbackGroupId, `✅ Сообщение отправлено пользователю ${targetUserId}.`);
+      await this.sendMessage(this.feedbackGroupId, `✅ Message delivered to user ${targetUserId}.`);
     } catch (e) {
-      await this.sendMessage(this.feedbackGroupId, `⚠️ Не удалось отправить сообщение пользователю: ${e.message}`);
+      await this.sendMessage(this.feedbackGroupId, `⚠️ Failed to deliver message to user: ${e.message}`);
     }
   }
 
   async forwardUserReplyToAdmin(message) {
     try {
-      const header = `📨 <b>Ответ пользователя</b>\n\n👤 <b>User:</b> ${message.from.first_name} (@${message.from.username || 'no_username'})\n🆔 <b>ID:</b> ${message.from.id}\n📅 <b>Date:</b> ${new Date().toLocaleString()}\n`;
+      const header = `📨 <b>User reply</b>\n\n👤 <b>User:</b> ${message.from.first_name} (@${message.from.username || 'no_username'})\n🆔 <b>ID:</b> ${message.from.id}\n📅 <b>Date:</b> ${new Date().toLocaleString()}\n`;
       if (message.text) {
         await this.sendMessage(this.feedbackGroupId, `${header}\n💬 <b>Message:</b>\n${message.text}`, {
-          inline_keyboard: [[{ text: '↩️ Ответить пользователю', callback_data: `answer_user_${message.from.id}` }]]
+          inline_keyboard: [[{ text: '↩️ Reply to user', callback_data: `answer_user_${message.from.id}` }]]
         });
       }
       if (message.photo && message.photo.length > 0) {
         const best = message.photo[message.photo.length - 1];
         const caption = message.caption || '';
         await this.sendPhoto(this.feedbackGroupId, best.file_id, `${header}\n${caption}`, {
-          inline_keyboard: [[{ text: '↩️ Ответить пользователю', callback_data: `answer_user_${message.from.id}` }]]
+          inline_keyboard: [[{ text: '↩️ Reply to user', callback_data: `answer_user_${message.from.id}` }]]
         });
       }
       if (message.document) {
         const caption = message.caption || '';
         await this.sendDocument(this.feedbackGroupId, message.document.file_id, `${header}\n${caption}`, {
-          inline_keyboard: [[{ text: '↩️ Ответить пользователю', callback_data: `answer_user_${message.from.id}` }]]
+          inline_keyboard: [[{ text: '↩️ Reply to user', callback_data: `answer_user_${message.from.id}` }]]
         });
       }
       if (message.voice) {
         const caption = message.caption || '';
         await this.sendVoice(this.feedbackGroupId, message.voice.file_id, `${header}\n${caption}`, {
-          inline_keyboard: [[{ text: '↩️ Ответить пользователю', callback_data: `answer_user_${message.from.id}` }]]
+          inline_keyboard: [[{ text: '↩️ Reply to user', callback_data: `answer_user_${message.from.id}` }]]
         });
       }
       // Keep session until admin ends
@@ -1551,13 +1551,8 @@ ${text}
     // Forward to feedback group/channel if configured
     try {
       if (this.feedbackGroupId) {
-        const tagMap = {
-          suggestion: 'Пожелание',
-          bug: 'Жалоба/Баг',
-          feature: 'Запрос фичи',
-          general: 'Общий отзыв'
-        };
-        const tag = tagMap[feedbackType] || 'Отзыв';
+        const tagMap = { suggestion: 'Suggestion', bug: 'Bug', feature: 'Feature request', general: 'Feedback' };
+        const tag = tagMap[feedbackType] || 'Feedback';
         const groupMessage = `🗣️ <b>${tag}</b>
 
 👤 <b>User:</b> ${userName} (@${message.from.username || 'no_username'})
@@ -1568,7 +1563,7 @@ ${text}
 ${text}`;
         const forwarded = await this.sendMessage(this.feedbackGroupId, groupMessage, {
           inline_keyboard: [
-            [ { text: '↩️ Ответить пользователю', callback_data: `answer_user_${userId}` } ]
+            [ { text: '↩️ Reply to user', callback_data: `answer_user_${userId}` } ]
           ]
         });
         // map admin reply session message -> user id if needed later
@@ -1598,7 +1593,7 @@ Thank you ${userName}! Your ${feedbackType} has been sent to our admin team.
     // For user: show Reply to admin button
     await this.sendMessage(chatId, confirmationMessage, {
       inline_keyboard: [
-        [ { text: '↩️ Ответить администратору', callback_data: 'reply_admin_start' } ],
+        [ { text: '↩️ Reply to admin', callback_data: 'reply_admin_start' } ],
         ...this.getMainKeyboard().inline_keyboard
       ]
     });
@@ -1632,20 +1627,20 @@ Thank you ${userName}! Your ${feedbackType} has been sent to our admin team.
           this.groupReplySessions.set(chatId, { userId: targetUserId, adminId: callbackQuery.from.id });
 
           await this.sendMessage(chatId,
-            '✍️ Напишите ответ пользователю (можно отправить текст или фото). Сообщение будет доставлено приватно.',
+            '✍️ Type your reply to the user (text or photo). It will be delivered privately.',
             { force_reply: true, selective: true }
           );
           // Send a separate control message with an inline button to end dialog
-          await this.sendMessage(chatId, '✅ Управление диалогом', {
-            inline_keyboard: [[{ text: '✅ Завершить диалог', callback_data: 'admin_reply_end' }]]
+          await this.sendMessage(chatId, '✅ Dialog controls', {
+            inline_keyboard: [[{ text: '✅ End dialog', callback_data: 'admin_reply_end' }]]
           });
           // Do not edit the original complaint message
           return;
         } else {
-          responseText = '⚠️ Невозможно определить пользователя для ответа.';
+          responseText = '⚠️ Cannot determine target user to reply.';
         }
       } catch (e) {
-        responseText = '⚠️ Ошибка при запуске ответа.';
+        responseText = '⚠️ Failed to initiate reply.';
       }
       await this.sendMessage(chatId, responseText);
       return;
@@ -1654,18 +1649,18 @@ Thank you ${userName}! Your ${feedbackType} has been sent to our admin team.
     switch (data) {
       case 'admin_reply_end':
         this.adminReplySessions.delete(callbackQuery.from.id);
-        responseText = '✅ Диалог завершен. Ответы больше не будут отправляться пользователю.';
+        responseText = '✅ Dialog ended. Your messages will no longer be sent to the user.';
         break;
 
       case 'reply_admin_start':
         this.userReplySessions.set(callbackQuery.from.id, true);
-        responseText = '✍️ Напишите ответ администрации (можно отправить текст или фото).';
-        keyboard = { inline_keyboard: [[{ text: '✅ Завершить диалог', callback_data: 'user_reply_end' }]] };
+        responseText = '✍️ Type your reply to the admin (text or photo).';
+        keyboard = { inline_keyboard: [[{ text: '✅ End dialog', callback_data: 'user_reply_end' }]] };
         break;
 
       case 'user_reply_end':
         this.userReplySessions.delete(callbackQuery.from.id);
-        responseText = '✅ Диалог с администрацией завершен.';
+        responseText = '✅ Dialog with admin ended.';
         break;
       case 'find_deals':
         responseText = `🔍 <b>Top Deals for ${userName}!</b>
@@ -1932,14 +1927,14 @@ Based on your history and preferences:
         responseText = `🏪 <b>Popular Indian Stores</b>
 
 🛍️ <b>E-Commerce:</b>
-• Amazon India — до 70% OFF + 5% cashback
-• Flipkart — до 80% OFF + 6% cashback
-• Myntra — до 60% OFF + 4% cashback
-• Ajio — до 70% OFF + 4% cashback
+• Amazon India — up to 70% OFF + 5% cashback
+• Flipkart — up to 80% OFF + 6% cashback
+• Myntra — up to 60% OFF + 4% cashback
+• Ajio — up to 70% OFF + 4% cashback
 
 💄 <b>Beauty:</b>
-• Nykaa — до 50% OFF + 5% cashback
-• Purplle — до 45% OFF + 3% cashback
+• Nykaa — up to 50% OFF + 5% cashback
+• Purplle — up to 45% OFF + 3% cashback
 
 🏬 <b>Department Stores:</b>
 • Lifestyle — 40% OFF + 3% cashback
@@ -1947,12 +1942,12 @@ Based on your history and preferences:
 • Westside — 35% OFF + 2% cashback
 
 🍔 <b>Food & Grocery:</b>
-• Swiggy — до 60% OFF + 2% cashback
-• Zomato — до 50% OFF + 3% cashback
-• BigBasket — до 30% OFF + 2% cashback
-• Blinkit — до 25% OFF + 2% cashback
+• Swiggy — up to 60% OFF + 2% cashback
+• Zomato — up to 50% OFF + 3% cashback
+• BigBasket — up to 30% OFF + 2% cashback
+• Blinkit — up to 25% OFF + 2% cashback
 
-💡 <b>Совет:</b> пришли голос/фото для персональных рекомендаций магазинов.`;
+💡 <b>Tip:</b> send a voice/photo for personalized store recommendations.`;
         keyboard = this.getCategoryKeyboardWithMore('electronics');
         this.awardXP(callbackQuery.from.id, 3, 'stores');
         break;
