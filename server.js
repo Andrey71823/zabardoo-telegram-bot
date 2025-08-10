@@ -26,6 +26,8 @@ app.use(helmet({
       "img-src": ["'self'", 'data:', 'https:'],
       "font-src": ["'self'", 'https:', 'data:'],
       "connect-src": ["'self'", 'https:'],
+      // explicitly allow same-origin iframes for unified-dashboard content
+      "frame-src": ["'self'"],
       "frame-ancestors": ["'self'"],
       "object-src": ["'none'"]
     }
