@@ -871,7 +871,8 @@ ${lines.join('\n')}
         }
       }
 
-      await this.editMessage(chatId, processingMessage.message_id, response, this.getCategoryKeyboard());
+      // Preserve history for voice flow
+      await this.sendMessage(chatId, response, this.getCategoryKeyboard());
       this.awardXP(message.from.id, 15, 'voice_search');
     }, 3000);
   }
@@ -997,13 +998,15 @@ ${lines.join('\n')}
 ${real.length === 0 ? '⚠️ No exact match found. Showing similar items.' : ''}
 
 💡 Prices and availability are fetched live from stores.`;
-          await this.editMessage(chatId, processingMessage.message_id, realMsg, this.getCategoryKeyboard());
+          // Preserve history for photo flow (real data)
+          await this.sendMessage(chatId, realMsg, this.getCategoryKeyboard());
           this.awardXP(message.from.id, 20, 'photo_search');
           return;
         }
       }
 
-      await this.editMessage(chatId, processingMessage.message_id, response, this.getCategoryKeyboard());
+      // Preserve history for photo flow (mock)
+      await this.sendMessage(chatId, response, this.getCategoryKeyboard());
       this.awardXP(message.from.id, 20, 'photo_search');
     }, 4000);
   }
@@ -1435,7 +1438,8 @@ Try a different name, or send a clear photo/voice for better accuracy.`;
         }
       }
 
-      await this.editMessage(chatId, processingMessage.message_id, response, replyMarkup);
+      // Preserve history for text flow
+      await this.sendMessage(chatId, response, replyMarkup);
       this.lastMessageIds.set(chatId, processingMessage.message_id);
     }, 2000);
   }
