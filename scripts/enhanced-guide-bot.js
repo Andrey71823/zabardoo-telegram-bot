@@ -2300,7 +2300,8 @@ Choose any option below to continue your shopping journey:`;
         responseText = `🎮 Feature "${data}" coming soon! Stay tuned for updates! 🚀`;
     }
 
-    await this.editMessage(chatId, messageId, responseText, keyboard);
+    // Preserve chat history: send a new message instead of editing previous one
+    await this.sendMessage(chatId, responseText, keyboard);
   }
 
   initializeUser(telegramUser) {
