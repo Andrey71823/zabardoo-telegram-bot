@@ -5,87 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zabardoo Admin – Home</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
-    <style>
-    :root {
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --border: #eef2f7;
-      --shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
-      --primary: #3b82f6;
-      --accent: #6366f1;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-    }
-
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-    }
-
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 24px;
-    }
-
-    .hero {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-            border-radius: 12px;
-      box-shadow: var(--shadow);
-      padding: 20px 20px;
-            display: flex;
-            align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-    .hero h1 { font-size: 20px; margin: 0; font-weight: 700; }
-    .hero p { color: var(--muted); margin: 4px 0 0; font-size: 13px; }
-
-    .quick-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .qa-btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px;
-      background: #fff; color: #0f172a; text-decoration: none; font-weight: 600; font-size: 13px;
-      box-shadow: var(--shadow);
-    }
-    .qa-btn:hover { border-color: #dbe3ea; }
-
-    .grid-2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; }
-    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-
-    .card { background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
-    .card-body { padding: 16px; }
-    .card h3 { margin: 0 0 8px; font-size: 13px; color: #475569; font-weight: 700; letter-spacing: 0.2px; }
-    .metric-value { font-size: 22px; font-weight: 800; color: #0f172a; }
-    .metric-sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
-    .delta-up { color: var(--success); font-weight: 700; font-size: 12px; }
-    .delta-down { color: var(--danger); font-weight: 700; font-size: 12px; }
-
-    .chart-card canvas { width: 100%; height: 220px; }
-    .chart-title { font-size: 13px; font-weight: 700; margin: 0 0 8px; color: #334155; }
-
-    .shortcuts { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 12px; }
-    .shortcut { padding: 12px; text-align: center; border: 1px solid var(--border); border-radius: 12px; background: #fff; box-shadow: var(--shadow); text-decoration: none; color: #0f172a; font-weight: 600; font-size: 12px; }
-    .shortcut i { display: block; font-size: 18px; margin-bottom: 6px; color: var(--primary); }
-
-    .activity { margin-top: 12px; }
-    .activity-item { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px dashed var(--border); padding: 10px 0; font-size: 13px; }
-    .activity-item:last-child { border-bottom: 0; }
-    .muted { color: var(--muted); font-size: 12px; }
-
-    @media (max-width: 1100px) { .metrics { grid-template-columns: repeat(2, 1fr); } .grid-2 { grid-template-columns: 1fr; } .shortcuts { grid-template-columns: repeat(3, 1fr); } }
-    @media (max-width: 680px) { .metrics { grid-template-columns: 1fr; } .shortcuts { grid-template-columns: repeat(2, 1fr); } }
-    </style>
+  <link rel="stylesheet" href="/dashboard.css" />
 </head>
 <body>
   <div class="container">
@@ -105,39 +25,81 @@
     </div>
 
     <div class="grid-2">
-      <div class="card">
+      <div class="card metrics-section">
         <div class="card-body">
           <div class="metrics" id="metrics"></div>
         </div>
-        </div>
+      </div>
 
-      <div class="card chart-card">
+      <div class="card dashboard-card">
         <div class="card-body">
-          <div class="chart-title">Revenue by Channel</div>
-          <canvas id="chartRevenue"></canvas>
+          <div class="chart-container">
+            <div class="chart-title">
+              <div>
+                <div>Revenue by Channel</div>
+                <div class="chart-subtitle">Last 30 days</div>
+              </div>
+              <div class="chart-value-container">
+                <div class="chart-value">₹42.7L</div>
+                <div class="chart-change positive">
+                  <i class="fas fa-arrow-up"></i>
+                  +4.3%
+                </div>
+              </div>
+            </div>
+            <div class="donut-chart"></div>
+            <div class="donut-legend">
+              <div class="legend-item">
+                <div class="legend-color legend-primary"></div>
+                <span>Personal Channels (58%)</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color legend-info"></div>
+                <span>Group (26%)</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color legend-success"></div>
+                <span>AI Recs (16%)</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-        </div>
+    </div>
 
-    <div class="grid-2" style="margin-top:12px;">
-      <div class="card chart-card">
+    <div class="grid-2 second-row">
+      <div class="card dashboard-card">
         <div class="card-body">
-          <div class="chart-title">User Growth (30 days)</div>
-          <canvas id="chartUsers"></canvas>
+          <div class="chart-container">
+            <div class="chart-title">
+              <div>
+                <div>User Growth</div>
+                <div class="chart-subtitle">Daily active users (30 days)</div>
+              </div>
+              <div class="chart-value-container">
+                <div class="chart-value">8,644</div>
+                <div class="chart-change positive">
+                  <i class="fas fa-arrow-up"></i>
+                  +1.2%
+                </div>
+              </div>
+            </div>
+            <div class="bar-chart" id="barChart"></div>
+          </div>
         </div>
       </div>
 
       <div class="card">
         <div class="card-body activity">
-          <div class="chart-title" style="margin-bottom:6px;">Recent Activity</div>
+          <div class="chart-title activity-title">Recent Activity</div>
           <div id="activity"></div>
         </div>
       </div>
     </div>
 
-    <div class="card" style="margin-top:12px;">
+    <div class="card shortcuts-section">
       <div class="card-body">
-        <div class="chart-title" style="margin-bottom:8px;">Shortcuts</div>
+        <div class="chart-title shortcuts-title">Shortcuts</div>
         <div class="shortcuts">
           <a class="shortcut" href="/admin/gpt-chat-management-clean.html"><i class="fas fa-robot"></i> GPT Chat</a>
           <a class="shortcut" href="/admin/favorites-management.html"><i class="fas fa-heart"></i> Favorites</a>
@@ -148,107 +110,8 @@
         </div>
       </div>
     </div>
-    </div>
+  </div>
 
-    <script>
-    const fmt = new Intl.NumberFormat('en-IN');
-    const metricsEl = document.getElementById('metrics');
-    const activityEl = document.getElementById('activity');
-
-    function mockData() {
-      const totalUsers = 124567;
-      const activeToday = 8644;
-      const revenue = 4275600; // INR
-      const conversion = 0.042;
-      const cashback = 214560;
-      const uptime = 99.96;
-      return {
-        metrics: [
-          { label: 'Total Users', value: fmt.format(totalUsers), delta: +3.8 },
-          { label: 'Active Today', value: fmt.format(activeToday), delta: +1.2 },
-          { label: 'Revenue (₹)', value: '₹' + fmt.format(revenue), delta: +4.3 },
-          { label: 'Conversion Rate', value: (conversion * 100).toFixed(1) + '%', delta: +0.3 },
-          { label: 'Total Cashback', value: '₹' + fmt.format(cashback), delta: +2.1 },
-          { label: 'Uptime', value: uptime.toFixed(2) + '%', delta: +0.01 }
-        ],
-        revenueByChannel: [
-          { name: 'Personal Channels', value: 58 },
-          { name: 'Group', value: 26 },
-          { name: 'AI Recs', value: 16 }
-        ],
-        usersDaily: Array.from({ length: 30 }, (_, i) => 500 + Math.round(80 + Math.sin(i/4) * 60 + Math.random()*40)),
-        activity: [
-          { text: 'New coupon approved: Flipkart Electronics', time: '2m' },
-          { text: 'Campaign sent to 12,400 users', time: '12m' },
-          { text: 'Top user redeemed cashback ₹450', time: '25m' },
-          { text: 'Myntra Fashion deals synced', time: '48m' },
-          { text: 'System health OK – CPU 32%', time: '1h' }
-        ]
-      };
-        }
-
-        function renderMetrics(data) {
-      metricsEl.innerHTML = '';
-      data.metrics.forEach(m => {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.innerHTML = `<div class="card-body">
-            <h3>${m.label}</h3>
-            <div class="metric-value">${m.value}</div>
-            <div class="metric-sub ${m.delta >= 0 ? 'delta-up' : 'delta-down'}">${m.delta >= 0 ? '▲' : '▼'} ${Math.abs(m.delta).toFixed(2)}%</div>
-          </div>`;
-        metricsEl.appendChild(div);
-      });
-    }
-
-    function renderActivity(list) {
-      activityEl.innerHTML = '';
-      list.forEach(a => {
-        const row = document.createElement('div');
-        row.className = 'activity-item';
-        row.innerHTML = `<span>${a.text}</span><span class="muted">${a.time} ago</span>`;
-        activityEl.appendChild(row);
-            });
-        }
-
-        function renderCharts(data) {
-      const revCtx = document.getElementById('chartRevenue').getContext('2d');
-      new Chart(revCtx, {
-                type: 'doughnut',
-                data: {
-          labels: data.revenueByChannel.map(x => x.name),
-                    datasets: [{
-            data: data.revenueByChannel.map(x => x.value),
-            backgroundColor: ['#3b82f6', '#6366f1', '#22c55e'],
-            borderWidth: 0
-          }]
-        },
-        options: { plugins: { legend: { position: 'bottom' } }, cutout: '58%' }
-      });
-
-      const usersCtx = document.getElementById('chartUsers').getContext('2d');
-      new Chart(usersCtx, {
-                type: 'line',
-                data: {
-          labels: Array.from({ length: 30 }, (_, i) => i + 1),
-                    datasets: [{
-            data: data.usersDaily,
-            fill: true,
-            tension: 0.35,
-            borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59, 130, 246, 0.10)',
-            pointRadius: 0,
-            borderWidth: 2
-          }]
-        },
-        options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
-      });
-    }
-
-    const data = mockData();
-    renderMetrics(data);
-    renderActivity(data.activity);
-    renderCharts(data);
-    </script>
+  <script src="/dashboard.js"></script>
 </body>
 </html>
