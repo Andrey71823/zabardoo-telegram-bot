@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-// Complete Zabardoo Telegram Bot - Based on Documentation
+// Complete bazaarGuru Telegram Bot - Based on Documentation
 const https = require('https');
 const querystring = require('querystring');
 
-class CompleteZabardooBot {
+class CompletebazaarGuruBot {
   constructor(token) {
     this.token = token;
     this.baseUrl = `https://api.telegram.org/bot${token}`;
@@ -96,7 +96,7 @@ class CompleteZabardooBot {
         [
           { text: '💰 Cashback', callback_data: 'cashback' },
           { text: '🎲 Random Deal', callback_data: 'random_deal' },
-          { text: '🧠 Ask Zabardoo', callback_data: 'ask_zabardoo' }
+          { text: '🧠 Ask bazaarGuru', callback_data: 'ask_bazaarGuru' }
         ],
         [
           { text: '⚙️ Settings', callback_data: 'settings' },
@@ -108,7 +108,7 @@ class CompleteZabardooBot {
   }
 
   async start() {
-    console.log('🚀 Starting Complete Zabardoo Telegram Bot...');
+    console.log('🚀 Starting Complete bazaarGuru Telegram Bot...');
     
     // Set bot commands
     await this.setMyCommands();
@@ -222,7 +222,7 @@ class CompleteZabardooBot {
     const userName = message.from.first_name || 'Friend';
     const user = this.users.get(message.from.id);
     
-    const welcomeMessage = `🎉 <b>Welcome to Zabardoo Enhanced Bot, ${userName}!</b> 🌟
+    const welcomeMessage = `🎉 <b>Welcome to bazaarGuru Enhanced Bot, ${userName}!</b> 🌟
 
 🚀 I'm your AI-powered deal discovery assistant!
 
@@ -337,8 +337,8 @@ ${user.achievements.length > 0 ? user.achievements.slice(-3).map(a => `✅ ${a}`
         this.awardXP(callbackQuery.from.id, 3, 'view_profile');
         break;
 
-      case 'ask_zabardoo':
-        responseText = `🧠 <b>Ask Zabardoo AI Assistant</b>
+      case 'ask_bazaarGuru':
+        responseText = `🧠 <b>Ask bazaarGuru AI Assistant</b>
 
 💬 <b>I'm your personal shopping AI!</b>
 
@@ -366,7 +366,7 @@ ${user.achievements.length > 0 ? user.achievements.slice(-3).map(a => `✅ ${a}`
 🚀 <b>Just send me a message to start chatting!</b>`;
         
         await this.editMessage(chatId, messageId, responseText, this.getMainKeyboard());
-        this.awardXP(callbackQuery.from.id, 8, 'ask_zabardoo');
+        this.awardXP(callbackQuery.from.id, 8, 'ask_bazaarGuru');
         break;
 
       case 'random_deal':
@@ -442,7 +442,7 @@ All future messages and deal descriptions will be in English.`;
         break;
 
       case 'help':
-        responseText = `🆘 <b>Zabardoo Bot Quick Help</b>
+        responseText = `🆘 <b>bazaarGuru Bot Quick Help</b>
 
 🎯 <b>Main Functions:</b>
 • Find deals and get cashback
@@ -589,7 +589,7 @@ if (!token) {
   process.exit(1);
 }
 
-const bot = new CompleteZabardooBot(token);
+const bot = new CompletebazaarGuruBot(token);
 bot.start().catch(console.error);
 
 // Graceful shutdown

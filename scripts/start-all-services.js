@@ -7,7 +7,7 @@ const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-console.log('🚀 Starting Zabardoo Telegram Bot System...\n');
+console.log('🚀 Starting bazaarGuru Telegram Bot System...\n');
 
 // Service configurations
 const services = [
@@ -289,7 +289,7 @@ async function main() {
 // Handle command line arguments
 if (process.argv.includes('--help')) {
   console.log(`
-Zabardoo Telegram Bot System Launcher
+bazaarGuru Telegram Bot System Launcher
 
 Usage: node start-all-services.js [options]
 

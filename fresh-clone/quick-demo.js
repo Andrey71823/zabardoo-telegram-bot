@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-console.log('🚀 ZABARDOO ENHANCED TELEGRAM BOT - QUICK DEMO');
+console.log('🚀 bazaarGuru ENHANCED TELEGRAM BOT - QUICK DEMO');
 console.log('=' .repeat(60));
 console.log('');
 console.log('🌟 Revolutionary AI-Powered Deal Discovery Bot for India');

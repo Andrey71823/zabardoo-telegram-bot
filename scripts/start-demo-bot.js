@@ -24,7 +24,7 @@ class DemoBotServer {
         <!DOCTYPE html>
         <html>
         <head>
-          <title>🚀 Zabardoo Enhanced Bot - Demo Server</title>
+          <title>🚀 bazaarGuru Enhanced Bot - Demo Server</title>
           <meta charset="utf-8">
           <style>
             body { 
@@ -55,7 +55,7 @@ class DemoBotServer {
         <body>
           <div class="container">
             <div class="header">
-              <h1>🚀 Zabardoo Enhanced Telegram Bot</h1>
+              <h1>🚀 bazaarGuru Enhanced Telegram Bot</h1>
               <p>Revolutionary AI-Powered Deal Discovery Platform for India</p>
               <span class="status demo">DEMO MODE</span>
             </div>
@@ -160,7 +160,7 @@ class DemoBotServer {
           </style>
         </head>
         <body>
-          <h1>🎬 Zabardoo Enhanced Bot - Live Demo</h1>
+          <h1>🎬 bazaarGuru Enhanced Bot - Live Demo</h1>
           <div class="demo-output" id="demo-output">Loading demo...</div>
           <a href="/" class="btn">← Back to Dashboard</a>
           
@@ -358,7 +358,7 @@ class DemoBotServer {
 
   start() {
     this.app.listen(this.port, () => {
-      console.log('🚀 ZABARDOO ENHANCED BOT - DEMO SERVER STARTED!');
+      console.log('🚀 bazaarGuru ENHANCED BOT - DEMO SERVER STARTED!');
       console.log('=' .repeat(60));
       console.log('');
       console.log('🌟 Revolutionary AI-Powered Deal Discovery Bot for India');

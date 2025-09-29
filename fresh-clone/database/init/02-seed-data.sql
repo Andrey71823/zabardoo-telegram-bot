@@ -1,4 +1,4 @@
--- Seed data for Zabardoo Telegram Bot
+-- Seed data for bazaarGuru Telegram Bot
 
 -- Insert popular Indian stores
 INSERT INTO indian_stores (name, domain, is_popular, average_commission, conversion_rate) VALUES
@@ -22,35 +22,35 @@ INSERT INTO indian_stores (name, domain, is_popular, average_commission, convers
 INSERT INTO coupons (title, description, store_id, category, discount_type, discount_value, coupon_code, site_page_url, is_text_coupon, is_popular_in_india) VALUES
 ('Flipkart Big Billion Days - Up to 80% Off', 'Massive discounts on electronics, fashion, and home appliances during Big Billion Days sale', 
  (SELECT id FROM indian_stores WHERE name = 'Flipkart'), 'Electronics', 'percentage', 80.00, 'BIGBILLION80', 
- 'https://zabardoo.com/coupons/flipkart-big-billion-days', true, true),
+ 'https://bazaarGuru.com/coupons/flipkart-big-billion-days', true, true),
 
 ('Amazon India Great Indian Festival - Extra 10% Off', 'Additional 10% discount on already discounted items during Great Indian Festival', 
  (SELECT id FROM indian_stores WHERE name = 'Amazon India'), 'Electronics', 'percentage', 10.00, 'FESTIVAL10', 
- 'https://zabardoo.com/coupons/amazon-great-indian-festival', true, true),
+ 'https://bazaarGuru.com/coupons/amazon-great-indian-festival', true, true),
 
 ('Myntra End of Reason Sale - Flat 70% Off', 'Flat 70% discount on fashion and lifestyle products', 
  (SELECT id FROM indian_stores WHERE name = 'Myntra'), 'Fashion', 'percentage', 70.00, 'EORS70', 
- 'https://zabardoo.com/coupons/myntra-end-of-reason-sale', true, true),
+ 'https://bazaarGuru.com/coupons/myntra-end-of-reason-sale', true, true),
 
 ('Nykaa Beauty Bonanza - Buy 2 Get 1 Free', 'Buy any 2 beauty products and get 1 free on Nykaa', 
  (SELECT id FROM indian_stores WHERE name = 'Nykaa'), 'Beauty', 'offer', NULL, 'BEAUTY2GET1', 
- 'https://zabardoo.com/coupons/nykaa-beauty-bonanza', true, true),
+ 'https://bazaarGuru.com/coupons/nykaa-beauty-bonanza', true, true),
 
 ('BigBasket Fresh Deals - ₹200 Off on ₹1000', 'Get ₹200 off on grocery orders above ₹1000', 
  (SELECT id FROM indian_stores WHERE name = 'BigBasket'), 'Grocery', 'fixed', 200.00, 'FRESH200', 
- 'https://zabardoo.com/coupons/bigbasket-fresh-deals', true, true),
+ 'https://bazaarGuru.com/coupons/bigbasket-fresh-deals', true, true),
 
 ('Swiggy Super Saver - 60% Off + Free Delivery', 'Get 60% off on food orders with free delivery', 
  (SELECT id FROM indian_stores WHERE name = 'Swiggy'), 'Food', 'percentage', 60.00, 'SUPERSAVER60', 
- 'https://zabardoo.com/coupons/swiggy-super-saver', true, true),
+ 'https://bazaarGuru.com/coupons/swiggy-super-saver', true, true),
 
 ('MakeMyTrip Travel Sale - Up to ₹5000 Off', 'Save up to ₹5000 on domestic flight bookings', 
  (SELECT id FROM indian_stores WHERE name = 'MakeMyTrip'), 'Travel', 'fixed', 5000.00, 'TRAVEL5000', 
- 'https://zabardoo.com/coupons/makemytrip-travel-sale', true, true),
+ 'https://bazaarGuru.com/coupons/makemytrip-travel-sale', true, true),
 
 ('Lenskart Eyewear Festival - Buy 1 Get 1 Free', 'Buy any eyewear and get another one absolutely free', 
  (SELECT id FROM indian_stores WHERE name = 'Lenskart'), 'Eyewear', 'offer', NULL, 'EYEWEAR1GET1', 
- 'https://zabardoo.com/coupons/lenskart-eyewear-festival', true, true);
+ 'https://bazaarGuru.com/coupons/lenskart-eyewear-festival', true, true);
 
 -- Insert sample users (for testing purposes)
 INSERT INTO users (telegram_id, username, first_name, last_name, language_code, personal_channel_id) VALUES
@@ -128,7 +128,7 @@ INSERT INTO cashback_transactions (user_id, purchase_id, amount, status, confirm
 
 -- Insert test group
 INSERT INTO groups (id, telegram_group_id, name, description, member_count, moderation_level, allow_coupon_creation) VALUES
-(uuid_generate_v4(), '-1001234567890', 'Zabardoo Deals Group', 'Main group for sharing and creating coupon deals', 3, 'medium', true);
+(uuid_generate_v4(), '-1001234567890', 'bazaarGuru Deals Group', 'Main group for sharing and creating coupon deals', 3, 'medium', true);
 
 -- Insert group members
 INSERT INTO group_members (group_id, user_id, role, status, contribution_score) VALUES
@@ -148,13 +148,13 @@ INSERT INTO moderation_rules (group_id, rule_type, parameters, action, severity)
 ((SELECT id FROM groups WHERE telegram_group_id = '-1001234567890'), 
  'rate_limit', '{"maxMessagesPerMinute": 5}', 'mute', 'medium'),
 ((SELECT id FROM groups WHERE telegram_group_id = '-1001234567890'), 
- 'link_filter', '{"allowedDomains": ["flipkart.com", "amazon.in", "myntra.com", "zabardoo.com"]}', 'warn', 'low');
+ 'link_filter', '{"allowedDomains": ["flipkart.com", "amazon.in", "myntra.com", "bazaarGuru.com"]}', 'warn', 'low');
 
 -- Insert sample group messages
 INSERT INTO group_messages (group_id, user_id, message_id, content, message_type, is_moderated, moderation_action) VALUES
 ((SELECT id FROM groups WHERE telegram_group_id = '-1001234567890'),
  (SELECT id FROM users WHERE telegram_id = 123456789),
- 'msg_001', 'Welcome to Zabardoo Deals Group! Share your best coupon finds here.', 'text', true, 'approved'),
+ 'msg_001', 'Welcome to bazaarGuru Deals Group! Share your best coupon finds here.', 'text', true, 'approved'),
 ((SELECT id FROM groups WHERE telegram_group_id = '-1001234567890'),
  (SELECT id FROM users WHERE telegram_id = 987654321),
  'msg_002', 'Flipkart Big Sale - 70% OFF on Electronics! Code: BIGSALE70 https://flipkart.com/deals', 'coupon', true, 'approved'),
@@ -231,7 +231,7 @@ INSERT INTO content_sync_jobs (rule_id, source_content, target_channels, status,
 -- Insert AI prompt templates
 INSERT INTO ai_prompt_templates (name, category, template, variables, priority) VALUES
 ('Greeting Template', 'greeting', 
- 'Привет, {{userName}}! 👋 Рад видеть вас снова в Zabardoo. Готов помочь найти лучшие купоны и скидки! Что вас интересует сегодня?',
+ 'Привет, {{userName}}! 👋 Рад видеть вас снова в bazaarGuru. Готов помочь найти лучшие купоны и скидки! Что вас интересует сегодня?',
  '["userName"]', 1),
 ('Coupon Recommendation Template', 'coupon_recommendation',
  'Специально для вас я нашел отличное предложение! 🎯\n\n{{couponTitle}}\n💰 Скидка: {{discount}}\n🏪 Магазин: {{store}}\n\n{{personalizedReason}}',

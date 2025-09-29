@@ -11,14 +11,14 @@
 ### Верхнее меню (Inline) - уже правильное:
 ```
 🔍 Find Deals | 🎮 My Profile | 📖 Guide
-💰 Cashback | 🎲 Random Deal | 🧠 Ask Zabardoo  
+💰 Cashback | 🎲 Random Deal | 🧠 Ask bazaarGuru  
 ⚙️ Settings | 🌐 Language | 🆘 Help
 ```
 
 ### Нижнее меню (ReplyKeyboard) - исправлено на:
 ```
 🔍 Find Deals | 🎮 My Profile | 📖 Guide
-💰 Cashback | 🎲 Random Deal | 🧠 Ask Zabardoo
+💰 Cashback | 🎲 Random Deal | 🧠 Ask bazaarGuru
 ⚙️ Settings | 🌐 Language | 🆘 Help
 ```
 
@@ -50,7 +50,7 @@ npm run test:english-menu
 - 💻 Ноутбуки → 📖 Guide
 - 🏠 Товары для дома → 💰 Cashback
 - 💬 Пожелание → 🎲 Random Deal
-- 😋 Жалоба → 🧠 Ask Zabardoo
+- 😋 Жалоба → 🧠 Ask bazaarGuru
 - ℹ️ Помощь → 🆘 Help
 
 ### ✅ Новое английское меню:
@@ -59,7 +59,7 @@ npm run test:english-menu
 - 📖 Guide
 - 💰 Cashback
 - 🎲 Random Deal
-- 🧠 Ask Zabardoo
+- 🧠 Ask bazaarGuru
 - ⚙️ Settings
 - 🌐 Language
 - 🆘 Help

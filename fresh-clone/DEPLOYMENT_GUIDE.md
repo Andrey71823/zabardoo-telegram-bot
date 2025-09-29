@@ -39,7 +39,7 @@ TELEGRAM_GROUP_ID=your_group_id
 OPENAI_API_KEY=your_openai_key
 
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/zabardoo
+DATABASE_URL=postgresql://user:password@localhost:5432/bazaarGuru
 REDIS_URL=redis://localhost:6379
 
 # Ports
@@ -226,7 +226,7 @@ curl http://localhost:8080/health  # Gateway
 2. **База данных недоступна**:
    ```bash
    # Проверьте подключение к PostgreSQL
-   psql -h localhost -U your_user -d zabardoo
+   psql -h localhost -U your_user -d bazaarGuru
    ```
 
 3. **Redis недоступен**:
@@ -268,7 +268,7 @@ docker-compose -f docker-compose.prod.yml build
 ### 2. Переменные окружения для продакшена
 ```env
 NODE_ENV=production
-DATABASE_URL=postgresql://prod_user:prod_pass@prod_host:5432/zabardoo_prod
+DATABASE_URL=postgresql://prod_user:prod_pass@prod_host:5432/bazaarGuru_prod
 REDIS_URL=redis://prod_redis:6379
 TELEGRAM_BOT_TOKEN=prod_bot_token
 ```

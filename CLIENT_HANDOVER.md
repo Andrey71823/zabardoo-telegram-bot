@@ -1,4 +1,4 @@
-# 🎊 CLIENT HANDOVER - Zabardoo Enhanced Telegram Bot
+# 🎊 CLIENT HANDOVER - bazaarGuru Enhanced Telegram Bot
 
 ## 🚀 Your Revolutionary AI-Powered Bot is Ready!
 
@@ -283,7 +283,7 @@ npm run monitor
 
 ## 🎉 Ready to Launch!
 
-Your **Zabardoo Enhanced Telegram Bot** is:
+Your **bazaarGuru Enhanced Telegram Bot** is:
 
 - ✅ **100% Complete**: All features implemented and tested
 - ✅ **Production Ready**: Can be deployed immediately

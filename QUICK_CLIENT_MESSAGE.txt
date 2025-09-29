@@ -1,9 +1,9 @@
-🎉 Zabardoo Telegram Bot MVP готов!
+🎉 bazaarGuru Telegram Bot MVP готов!
 
 Привет! MVP бота готов для тестирования. 
 
-🤖 Telegram Bot: @zabardoo_deals_bot
-(или t.me/zabardoo_deals_bot)
+🤖 Telegram Bot: @bazaarGuru_deals_bot
+(или t.me/bazaarGuru_deals_bot)
 
 ✅ Что работает:
 • AI-персонализированные рекомендации купонов

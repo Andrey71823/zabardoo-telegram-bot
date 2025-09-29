@@ -111,7 +111,7 @@ bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const firstName = msg.from.first_name || 'Friend';
   
-  const welcomeMessage = `🎉 Welcome to Zabardoo Enhanced Bot, ${firstName}! 🌟
+  const welcomeMessage = `🎉 Welcome to bazaarGuru Enhanced Bot, ${firstName}! 🌟
 
 🚀 I'm your AI-powered deal discovery assistant!
 
@@ -256,8 +256,8 @@ bot.on('message', async (msg) => {
         await handleRandomDeal(chatId);
         break;
       
-      case '💬 Ask Zabardoo':
-        await handleAskZabardoo(chatId);
+      case '💬 Ask bazaarGuru':
+        await handleAskbazaarGuru(chatId);
         break;
       
       case '⚙️ Settings':
@@ -378,7 +378,7 @@ async function handleHotDeals(chatId) {
 }
 
 async function handleGuide(chatId) {
-  const guideMessage = `📖 *Zabardoo Shopping Guide*
+  const guideMessage = `📖 *bazaarGuru Shopping Guide*
 
 🛍️ *How to Shop Smart:*
 
@@ -687,7 +687,7 @@ Need more help? Just ask! 😊`;
   });
 }
 
-// Удалены функции Random Deal, Ask Zabardoo, Language - их нет в верхнем меню
+// Удалены функции Random Deal, Ask bazaarGuru, Language - их нет в верхнем меню
 
 async function handleProductSearch(chatId, query) {
   await bot.sendMessage(chatId, `🔍 Searching for "${query}"...`);
@@ -726,7 +726,7 @@ bot.on('polling_error', (error) => {
   console.error('Polling error:', error);
 });
 
-console.log('🚀 Zabardoo Synchronized Menu Bot is running!');
+console.log('🚀 bazaarGuru Synchronized Menu Bot is running!');
 console.log('📱 Features: Inline buttons in messages + SAME Reply keyboard at bottom');
 console.log('🎯 BOTH Menus have IDENTICAL Structure:');
 console.log('Row 1: [🤖 AI Recommendations] [🔥 Hot Deals] [📖 Guide]');
@@ -735,8 +735,8 @@ console.log('Row 3: [🍔 Food] [🏪 Stores] [⚙️ Settings]');
 console.log('Row 4: [🔍 Find Deals] [🎮 My Profile]');
 console.log('Row 5: [💰 Cashback] [🆘 Help]');
 console.log('✅ All functions available in BOTH inline and reply menus!');as
-ync function handleAskZabardoo(chatId) {
-  const askMessage = `💬 *Ask Zabardoo*
+ync function handleAskbazaarGuru(chatId) {
+  const askMessage = `💬 *Ask bazaarGuru*
 
 🤖 I'm here to help you with:
 

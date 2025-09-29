@@ -6,7 +6,7 @@ const colors = require('colors');
 // Telegram bot token
 const token = '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
 
-class SimpleZabardooBot {
+class SimplebazaarGuruBot {
   constructor() {
     this.bot = new TelegramBot(token, { polling: true });
     this.users = new Map();
@@ -65,7 +65,7 @@ class SimpleZabardooBot {
       this.handleCallbackQuery(callbackQuery);
     });
 
-    console.log('🤖 Simple Zabardoo Bot is running...'.green.bold);
+    console.log('🤖 Simple bazaarGuru Bot is running...'.green.bold);
     console.log('Try sending /start to the bot!'.yellow);
   }
 
@@ -73,7 +73,7 @@ class SimpleZabardooBot {
     const chatId = msg.chat.id;
     const userName = msg.from.first_name || 'User';
 
-    const welcomeMessage = `🎉 Welcome to Zabardoo, ${userName}!
+    const welcomeMessage = `🎉 Welcome to bazaarGuru, ${userName}!
 
 I'm your AI-powered coupon assistant for India!
 
@@ -162,7 +162,7 @@ Why perfect for you:
     const keyboard = {
       inline_keyboard: [
         [
-          { text: '🛒 Get Deal', url: 'https://zabardoo.com' },
+          { text: '🛒 Get Deal', url: 'https://bazaarGuru.com' },
           { text: '📋 Copy Code', callback_data: `copy_${coupon.id}` }
         ]
       ]
@@ -176,7 +176,7 @@ Why perfect for you:
   async handleHelp(msg) {
     const chatId = msg.chat.id;
 
-    const helpMessage = `🤖 Zabardoo Bot Help
+    const helpMessage = `🤖 bazaarGuru Bot Help
 
 Commands:
 /start - Welcome message and main menu
@@ -247,7 +247,7 @@ Just type your question and I'll help! 😊`;
   }
 
   start() {
-    console.log('🚀 Starting Simple Zabardoo Bot...'.green.bold);
+    console.log('🚀 Starting Simple bazaarGuru Bot...'.green.bold);
     console.log('✅ Bot is ready!'.green);
     
     process.on('SIGINT', () => {
@@ -260,8 +260,8 @@ Just type your question and I'll help! 😊`;
 
 // Start the bot
 if (require.main === module) {
-  const bot = new SimpleZabardooBot();
+  const bot = new SimplebazaarGuruBot();
   bot.start();
 }
 
-module.exports = SimpleZabardooBot;
+module.exports = SimplebazaarGuruBot;

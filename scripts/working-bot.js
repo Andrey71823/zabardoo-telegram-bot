@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 // Working Bot - EXACT menu from screenshot + English persistent menu
+require('dotenv').config();
 const https = require('https');
 const querystring = require('querystring');
 
@@ -63,8 +64,9 @@ class WorkingBot {
     }
     
     return this.makeRequest('sendMessage', params);
-  }  // EXACT 
-FIXED MENU from screenshot
+  }
+
+  // EXACT FIXED MENU from screenshot
   getFixedInlineKeyboard() {
     return {
       inline_keyboard: [
@@ -124,8 +126,9 @@ FIXED MENU from screenshot
     } catch (error) {
       console.error('❌ Failed to set commands:', error.message);
     }
-  }  a
-sync pollUpdates() {
+  }
+
+  async pollUpdates() {
     while (this.isRunning) {
       try {
         const updates = await this.makeRequest('getUpdates', {
@@ -187,11 +190,11 @@ sync pollUpdates() {
     const welcomeMessage = `🔍 <b>Top Deals for ${userName}!</b>
 
 🎯 <b>Hot Deals Right Now:</b>
-📱 Samsung Galaxy S24 - 28% OFF (₹52,000)
-👟 Nike Air Max - 35% OFF (₹5,200)
-💻 MacBook Air M3 - 15% OFF (₹85,000)
+📱 Samsung Galaxy S24 - 28% OFF ($520)
+👟 Nike Air Max - 35% OFF ($52)
+💻 MacBook Air M3 - 15% OFF ($850)
 👗 Zara Dress Collection - 40% OFF
-🎧 Sony WH-1000XM5 - 25% OFF (₹22,500)
+🎧 Sony WH-1000XM5 - 25% OFF ($225)
 
 💰 All with cashback up to 8%!
 🎁 +5 XP for browsing deals!
@@ -202,8 +205,9 @@ Choose a category below for more specific deals:`;
 
     await this.sendMessage(chatId, welcomeMessage, this.getFixedInlineKeyboard());
     console.log(`✅ User ${userName} started - sent EXACT menu from screenshot`);
-  }  async han
-dleCallbackQuery(callbackQuery) {
+  }
+
+  async handleCallbackQuery(callbackQuery) {
     const chatId = callbackQuery.message.chat.id;
     const messageId = callbackQuery.message.message_id;
     const data = callbackQuery.data;

@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Nexus Style</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Nexus Design System */
+        :root {
+            --nexus-primary: #6366f1;
+            --nexus-primary-dark: #4f46e5;
+            --nexus-secondary: #64748b;
+            --nexus-success: #10b981;
+            --nexus-warning: #f59e0b;
+            --nexus-danger: #ef4444;
+            --nexus-info: #3b82f6;
+            
+            --nexus-bg-primary: #ffffff;
+            --nexus-bg-secondary: #f8fafc;
+            --nexus-bg-tertiary: #f1f5f9;
+            
+            --nexus-text-primary: #0f172a;
+            --nexus-text-secondary: #475569;
+            --nexus-text-tertiary: #64748b;
+            
+            --nexus-border: #e2e8f0;
+            --nexus-border-light: #f1f5f9;
+            
+            --nexus-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --nexus-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --nexus-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --nexus-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --nexus-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            --nexus-radius-sm: 0.375rem;
+            --nexus-radius: 0.5rem;
+            --nexus-radius-md: 0.75rem;
+            --nexus-radius-lg: 1rem;
+            --nexus-radius-xl: 1.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--nexus-bg-secondary);
+            color: var(--nexus-text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        /* Layout */
+        .nexus-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .nexus-header {
+            background: var(--nexus-bg-primary);
+            border: 1px solid var(--nexus-border);
+            border-radius: var(--nexus-radius-lg);
+            box-shadow: var(--nexus-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .nexus-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nexus-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--nexus-text-primary);
+            margin: 0;
+            letter-spacing: -0.025em;
+        }
+
+        .nexus-subtitle {
+            font-size: 1rem;
+            color: var(--nexus-text-secondary);
+            margin-top: 0.5rem;
+            font-weight: 400;
+        }
+
+        /* Stats Cards */
+        .nexus-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .nexus-stat-card {
+            background: var(--nexus-bg-primary);
+            border: 1px solid var(--nexus-border);
+            border-radius: var(--nexus-radius-lg);
+            box-shadow: var(--nexus-shadow);
+            padding: 2rem;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nexus-stat-card:hover {
+            box-shadow: var(--nexus-shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .nexus-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--nexus-primary), var(--nexus-info));
+        }
+
+        .nexus-stat-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .nexus-stat-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: var(--nexus-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .nexus-stat-icon.primary {
+            background: linear-gradient(135deg, var(--nexus-primary), var(--nexus-primary-dark));
+            color: white;
+        }
+
+        .nexus-stat-icon.success {
+            background: linear-gradient(135deg, var(--nexus-success), #059669);
+            color: white;
+        }
+
+        .nexus-stat-icon.warning {
+            background: linear-gradient(135deg, var(--nexus-warning), #d97706);
+            color: white;
+        }
+
+        .nexus-stat-icon.info {
+            background: linear-gradient(135deg, var(--nexus-info), #2563eb);
+            color: white;
+        }
+
+        .nexus-stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--nexus-text-primary);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .nexus-stat-label {
+            font-size: 0.875rem;
+            color: var(--nexus-text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nexus-stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .nexus-stat-change.positive {
+            color: var(--nexus-success);
+        }
+
+        .nexus-stat-change.negative {
+            color: var(--nexus-danger);
+        }
+
+        /* Main Content */
+        .nexus-main {
+            background: var(--nexus-bg-primary);
+            border: 1px solid var(--nexus-border);
+            border-radius: var(--nexus-radius-lg);
+            box-shadow: var(--nexus-shadow);
+            overflow: hidden;
+        }
+
+        /* Toolbar */
+        .nexus-toolbar {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--nexus-border);
+            background: var(--nexus-bg-tertiary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .nexus-search {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .nexus-search input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid var(--nexus-border);
+            border-radius: var(--nexus-radius);
+            background: var(--nexus-bg-primary);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .nexus-search input:focus {
+            outline: none;
+            border-color: var(--nexus-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .nexus-search i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--nexus-text-tertiary);
+        }
+
+        /* Buttons */
+        .nexus-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--nexus-radius);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nexus-btn-primary {
+            background: linear-gradient(135deg, var(--nexus-primary), var(--nexus-primary-dark));
+            color: white;
+            box-shadow: var(--nexus-shadow-sm);
+        }
+
+        .nexus-btn-primary:hover {
+            box-shadow: var(--nexus-shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .nexus-btn-secondary {
+            background: var(--nexus-bg-primary);
+            color: var(--nexus-text-secondary);
+            border: 1px solid var(--nexus-border);
+        }
+
+        .nexus-btn-secondary:hover {
+            background: var(--nexus-bg-tertiary);
+            border-color: var(--nexus-text-tertiary);
+        }
+
+        /* Table */
+        .nexus-table-container {
+            overflow-x: auto;
+        }
+
+        .nexus-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .nexus-table th {
+            background: var(--nexus-bg-tertiary);
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: var(--nexus-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--nexus-border);
+        }
+
+        .nexus-table td {
+            padding: 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--nexus-border-light);
+            vertical-align: middle;
+        }
+
+        .nexus-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .nexus-table tbody tr:hover {
+            background: var(--nexus-bg-tertiary);
+        }
+
+        /* User Avatar */
+        .nexus-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--nexus-primary), var(--nexus-info));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .nexus-user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nexus-user-details h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--nexus-text-primary);
+            margin: 0;
+        }
+
+        .nexus-user-details p {
+            font-size: 0.75rem;
+            color: var(--nexus-text-tertiary);
+            margin: 0;
+        }
+
+        /* Status Badges */
+        .nexus-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .nexus-badge.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--nexus-success);
+        }
+
+        .nexus-badge.inactive {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--nexus-secondary);
+        }
+
+        .nexus-badge.banned {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--nexus-danger);
+        }
+
+        .nexus-badge.premium {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+        }
+
+        /* Action Buttons */
+        .nexus-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nexus-action-btn {
+            width: 2rem;
+            height: 2rem;
+            border: none;
+            border-radius: var(--nexus-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.75rem;
+        }
+
+        .nexus-action-btn.edit {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--nexus-info);
+        }
+
+        .nexus-action-btn.delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--nexus-danger);
+        }
+
+        .nexus-action-btn.view {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--nexus-secondary);
+        }
+
+        .nexus-action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nexus-container {
+                padding: 1rem;
+            }
+            
+            .nexus-header {
+                padding: 1.5rem;
+            }
+            
+            .nexus-header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .nexus-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .nexus-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .nexus-search {
+                max-width: none;
+            }
+        }
+
+        /* Loading Animation */
+        .nexus-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--nexus-text-tertiary);
+        }
+
+        .nexus-spinner {
+            width: 2rem;
+            height: 2rem;
+            border: 2px solid var(--nexus-border);
+            border-top: 2px solid var(--nexus-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Pagination */
+        .nexus-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 2rem;
+            border-top: 1px solid var(--nexus-border);
+        }
+
+        .nexus-page-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            border: 1px solid var(--nexus-border);
+            background: var(--nexus-bg-primary);
+            color: var(--nexus-text-secondary);
+            border-radius: var(--nexus-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .nexus-page-btn:hover {
+            background: var(--nexus-bg-tertiary);
+        }
+
+        .nexus-page-btn.active {
+            background: var(--nexus-primary);
+            color: white;
+            border-color: var(--nexus-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="nexus-container">
+        <!-- Header -->
+        <div class="nexus-header">
+            <div class="nexus-header-content">
+                <div>
+                    <h1 class="nexus-title">User Management</h1>
+                    <p class="nexus-subtitle">Manage and monitor all users in your bazaarGuru ecosystem</p>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="nexus-btn nexus-btn-secondary">
+                        <i class="fas fa-download"></i>
+                        Export
+                    </button>
+                    <button class="nexus-btn nexus-btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Add User
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="nexus-stats">
+            <div class="nexus-stat-card">
+                <div class="nexus-stat-icon primary">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="nexus-stat-value">32,450</div>
+                <div class="nexus-stat-label">Total Users</div>
+                <div class="nexus-stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+12.5% from last month</span>
+                </div>
+            </div>
+
+            <div class="nexus-stat-card">
+                <div class="nexus-stat-icon success">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="nexus-stat-value">28,340</div>
+                <div class="nexus-stat-label">Active Users</div>
+                <div class="nexus-stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+8.2% from last month</span>
+                </div>
+            </div>
+
+            <div class="nexus-stat-card">
+                <div class="nexus-stat-icon warning">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="nexus-stat-value">2,840</div>
+                <div class="nexus-stat-label">Premium Users</div>
+                <div class="nexus-stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+24.1% from last month</span>
+                </div>
+            </div>
+
+            <div class="nexus-stat-card">
+                <div class="nexus-stat-icon info">
+                    <i class="fas fa-broadcast-tower"></i>
+                </div>
+                <div class="nexus-stat-value">31,200</div>
+                <div class="nexus-stat-label">Personal Channels</div>
+                <div class="nexus-stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+15.3% from last month</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="nexus-main">
+            <!-- Toolbar -->
+            <div class="nexus-toolbar">
+                <div class="nexus-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search users by name, email, or ID..." id="searchInput">
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="nexus-btn nexus-btn-secondary">
+                        <i class="fas fa-filter"></i>
+                        Filters
+                    </button>
+                    <button class="nexus-btn nexus-btn-secondary">
+                        <i class="fas fa-sort"></i>
+                        Sort
+                    </button>
+                    <button class="nexus-btn nexus-btn-secondary">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="nexus-table-container">
+                <table class="nexus-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Status</th>
+                            <th>Channel</th>
+                            <th>Total Spent</th>
+                            <th>Coupons Used</th>
+                            <th>Last Active</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Users will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Loading State -->
+            <div class="nexus-loading" id="loadingState">
+                <div class="nexus-spinner"></div>
+                <span>Loading users...</span>
+            </div>
+
+            <!-- Pagination -->
+            <div class="nexus-pagination">
+                <button class="nexus-page-btn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="nexus-page-btn active">1</button>
+                <button class="nexus-page-btn">2</button>
+                <button class="nexus-page-btn">3</button>
+                <button class="nexus-page-btn">...</button>
+                <button class="nexus-page-btn">12</button>
+                <button class="nexus-page-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock user data
+        const mockUsers = [
+            {
+                id: 1,
+                name: 'Arjun Sharma',
+                email: 'arjun.sharma@gmail.com',
+                avatar: 'AS',
+                status: 'active',
+                channelStatus: 'active',
+                totalSpent: '₹45,230',
+                couponsUsed: 127,
+                lastActive: '2 hours ago',
+                isPremium: true
+            },
+            {
+                id: 2,
+                name: 'Priya Patel',
+                email: 'priya.patel@yahoo.com',
+                avatar: 'PP',
+                status: 'active',
+                channelStatus: 'active',
+                totalSpent: '₹32,180',
+                couponsUsed: 89,
+                lastActive: '5 minutes ago',
+                isPremium: false
+            },
+            {
+                id: 3,
+                name: 'Rahul Kumar',
+                email: 'rahul.kumar@hotmail.com',
+                avatar: 'RK',
+                status: 'inactive',
+                channelStatus: 'suspended',
+                totalSpent: '₹18,750',
+                couponsUsed: 45,
+                lastActive: '3 days ago',
+                isPremium: false
+            },
+            {
+                id: 4,
+                name: 'Sneha Gupta',
+                email: 'sneha.gupta@gmail.com',
+                avatar: 'SG',
+                status: 'active',
+                channelStatus: 'active',
+                totalSpent: '₹67,890',
+                couponsUsed: 203,
+                lastActive: '1 hour ago',
+                isPremium: true
+            },
+            {
+                id: 5,
+                name: 'Vikram Singh',
+                email: 'vikram.singh@outlook.com',
+                avatar: 'VS',
+                status: 'banned',
+                channelStatus: 'deleted',
+                totalSpent: '₹5,420',
+                couponsUsed: 12,
+                lastActive: '1 week ago',
+                isPremium: false
+            }
+        ];
+
+        // Load users into table
+        function loadUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            const loadingState = document.getElementById('loadingState');
+            
+            // Show loading
+            loadingState.style.display = 'flex';
+            tbody.innerHTML = '';
+            
+            // Simulate API call
+            setTimeout(() => {
+                loadingState.style.display = 'none';
+                
+                mockUsers.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div class="nexus-user-info">
+                                <div class="nexus-avatar">${user.avatar}</div>
+                                <div class="nexus-user-details">
+                                    <h4>${user.name} ${user.isPremium ? '<i class="fas fa-crown" style="color: #f59e0b; margin-left: 0.5rem;"></i>' : ''}</h4>
+                                    <p>${user.email}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="nexus-badge ${user.status}">
+                                <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                                ${user.status}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="nexus-badge ${user.channelStatus}">
+                                <i class="fas fa-broadcast-tower" style="font-size: 0.6rem;"></i>
+                                ${user.channelStatus}
+                            </span>
+                        </td>
+                        <td style="font-weight: 600; color: var(--nexus-success);">${user.totalSpent}</td>
+                        <td style="font-weight: 500;">${user.couponsUsed}</td>
+                        <td style="color: var(--nexus-text-secondary);">${user.lastActive}</td>
+                        <td>
+                            <div class="nexus-actions">
+                                <button class="nexus-action-btn view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="nexus-action-btn edit" title="Edit User">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="nexus-action-btn delete" title="Delete User">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }, 1000);
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#usersTableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+        });
+    </script>
+</body>
+</html>

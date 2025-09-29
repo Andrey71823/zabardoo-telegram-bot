@@ -7,7 +7,7 @@
 ```
 ❌ НЕПРАВИЛЬНОЕ МЕНЮ (было на скриншоте):
 Row 1: [🔍 Find Deals] [🎮 My Profile] [📖 Guide]
-Row 2: [💰 Cashback] [🎲 Random Deal] [💬 Ask Zabardoo]
+Row 2: [💰 Cashback] [🎲 Random Deal] [💬 Ask bazaarGuru]
 Row 3: [⚙️ Settings] [🌐 Language] [🆘 Help]
 ```
 
@@ -25,7 +25,7 @@ Row 5: [💰 Cashback] [🆘 Help]
 ## 🔍 Анализ проблемы
 
 ### ❌ Что не так:
-- **Лишние кнопки**: Random Deal, Ask Zabardoo, Language
+- **Лишние кнопки**: Random Deal, Ask bazaarGuru, Language
 - **Недостающие кнопки**: AI Recommendations, Hot Deals, Electronics, Fashion, Beauty, Food, Stores
 - **Неправильная информация**: Кнопки ведут к функциям, которых нет в верхнем меню
 
@@ -64,7 +64,7 @@ node scripts/force-correct-menu-bot.js
 ### 3. Проверить результат:
 - ✅ Нижнее меню должно показывать те же кнопки, что и верхнее
 - ✅ Все 13 функций должны быть доступны в обоих меню
-- ✅ Никаких лишних кнопок (Random Deal, Ask Zabardoo, Language)
+- ✅ Никаких лишних кнопок (Random Deal, Ask bazaarGuru, Language)
 
 ## 📊 Сравнение до и после
 

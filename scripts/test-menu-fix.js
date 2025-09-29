@@ -13,7 +13,7 @@ const correctReplyKeyboard = [
 // НЕПРАВИЛЬНАЯ СТРУКТУРА (которая была на скриншоте)
 const wrongReplyKeyboard = [
   ['🔍 Find Deals', '🎮 My Profile', '📖 Guide'],
-  ['💰 Cashback', '🎲 Random Deal', '💬 Ask Zabardoo'],
+  ['💰 Cashback', '🎲 Random Deal', '💬 Ask bazaarGuru'],
   ['⚙️ Settings', '🌐 Language', '🆘 Help']
 ];
 

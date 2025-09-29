@@ -8,7 +8,7 @@ const bot = new TelegramBot(token, { polling: true });
 const replyKeyboard = {
   keyboard: [
     ['🔍 Find Deals', '🎮 My Profile', '📖 Guide'],
-    ['💰 Cashback', '🎲 Random Deal', '💬 Ask Zabardoo'],
+    ['💰 Cashback', '🎲 Random Deal', '💬 Ask bazaarGuru'],
     ['⚙️ Settings', '🌐 Language', '🆘 Help']
   ],
   resize_keyboard: true,
@@ -59,8 +59,8 @@ bot.on('message', async (msg) => {
     case '🎲 Random Deal':
       expectedFunction = '✅ handleRandomDeal() - Случайное предложение';
       break;
-    case '💬 Ask Zabardoo':
-      expectedFunction = '✅ handleAskZabardoo() - Помощник для вопросов';
+    case '💬 Ask bazaarGuru':
+      expectedFunction = '✅ handleAskbazaarGuru() - Помощник для вопросов';
       break;
     case '⚙️ Settings':
       expectedFunction = '✅ handleSettings() - Настройки';
@@ -85,8 +85,8 @@ bot.on('message', async (msg) => {
     await bot.sendMessage(chatId, '🆘 *ПРАВИЛЬНАЯ функция Help:*\n\nПомощь и поддержка\n• Как использовать бота\n• Контакты поддержки\n• FAQ', {
       parse_mode: 'Markdown'
     });
-  } else if (text === '💬 Ask Zabardoo') {
-    await bot.sendMessage(chatId, '💬 *ПРАВИЛЬНАЯ функция Ask Zabardoo:*\n\nПомощник для вопросов\n• Вопросы о товарах\n• Помощь с выбором\n• Консультации', {
+  } else if (text === '💬 Ask bazaarGuru') {
+    await bot.sendMessage(chatId, '💬 *ПРАВИЛЬНАЯ функция Ask bazaarGuru:*\n\nПомощник для вопросов\n• Вопросы о товарах\n• Помощь с выбором\n• Консультации', {
       parse_mode: 'Markdown'
     });
   } else if (text === '🎲 Random Deal') {

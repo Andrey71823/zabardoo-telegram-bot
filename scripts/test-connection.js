@@ -3,7 +3,7 @@
 // Test Telegram API connection
 const https = require('https');
 
-const token = process.env.TELEGRAM_BOT_TOKEN || '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
+const token = process.env.TELEGRAM_BOT_TOKEN || '8381471660:AAEK_I4XHl3emmH1s5K_hwuzMeNQbjtqsB0';
 
 console.log('🔍 Testing Telegram API connection...');
 console.log(`📡 Using token: ${token.substring(0, 10)}...`);

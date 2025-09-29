@@ -174,7 +174,7 @@ bot.onText(/\/start/, async (msg) => {
   const firstName = msg.from.first_name || 'Friend';
   
   // CLEAN WELCOME MESSAGE - NO INLINE BUTTONS
-  const welcomeMessage = `🎉 Welcome to Zabardoo, ${firstName}! 🛍️
+  const welcomeMessage = `🎉 Welcome to bazaarGuru, ${firstName}! 🛍️
 
 🇮🇳 Your ultimate shopping companion for the best deals from top Indian stores!
 
@@ -203,7 +203,7 @@ Ready to save money? Let's start shopping! 🚀`;
 bot.onText(/\/help/, async (msg) => {
   const chatId = msg.chat.id;
   
-  const helpMessage = `🆘 *Zabardoo Help Guide*
+  const helpMessage = `🆘 *bazaarGuru Help Guide*
 
 🔍 *How to Search:*
 • Type any product name (e.g., "iPhone", "Nike shoes")
@@ -385,7 +385,7 @@ async function handleHotDeals(chatId) {
 }
 
 async function handleGuide(chatId) {
-  const guideMessage = `📖 *Zabardoo Shopping Guide*
+  const guideMessage = `📖 *bazaarGuru Shopping Guide*
 
 🛍️ *How to Shop Smart:*
 
@@ -638,7 +638,7 @@ bot.on('polling_error', (error) => {
   console.error('Polling error:', error);
 });
 
-console.log('🚀 Zabardoo Real Data Bot is running with Indian store integration!');
+console.log('🚀 bazaarGuru Real Data Bot is running with Indian store integration!');
 console.log('📊 Features: Real prices, Live deals, Working coupons, Cashback rates');
 console.log('🏪 Stores: Flipkart, Amazon India, Myntra, Nykaa, AJIO');
 async

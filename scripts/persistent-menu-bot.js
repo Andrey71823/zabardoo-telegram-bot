@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Zabardoo Bot with Correct Persistent Menu
+// bazaarGuru Bot with Correct Persistent Menu
 const https = require('https');
 const querystring = require('querystring');
 
@@ -77,7 +77,7 @@ class PersistentMenuBot {
         [
           { text: '💰 Cashback' },
           { text: '🎲 Random Deal' },
-          { text: '🧠 Ask Zabardoo' }
+          { text: '🧠 Ask bazaarGuru' }
         ],
         [
           { text: '⚙️ Settings' },
@@ -126,7 +126,7 @@ class PersistentMenuBot {
     
     this.isRunning = true;
     console.log('✅ Bot started with correct English persistent menu!');
-    console.log('📱 Persistent menu: Find Deals, My Profile, Guide, Cashback, Random Deal, Ask Zabardoo, Settings, Language, Help');
+    console.log('📱 Persistent menu: Find Deals, My Profile, Guide, Cashback, Random Deal, Ask bazaarGuru, Settings, Language, Help');
     
     this.pollUpdates();
   }
@@ -192,8 +192,8 @@ class PersistentMenuBot {
       await this.handleCashback(message);
     } else if (text === '🎲 Random Deal') {
       await this.handleRandomDeal(message);
-    } else if (text === '🧠 Ask Zabardoo') {
-      await this.handleAskZabardoo(message);
+    } else if (text === '🧠 Ask bazaarGuru') {
+      await this.handleAskbazaarGuru(message);
     } else if (text === '⚙️ Settings') {
       await this.handleSettings(message);
     } else if (text === '🌐 Language') {
@@ -324,10 +324,10 @@ Use the menu below or buttons above to explore more!`;
     await this.sendMessage(chatId, dealMessage, this.getInlineKeyboard());
   }
 
-  async handleAskZabardoo(message) {
+  async handleAskbazaarGuru(message) {
     const chatId = message.chat.id;
     
-    const aiMessage = `🧠 <b>Ask Zabardoo AI Assistant</b>
+    const aiMessage = `🧠 <b>Ask bazaarGuru AI Assistant</b>
 
 💬 <b>I'm your personal shopping AI!</b>
 
@@ -375,7 +375,7 @@ Use the menu below or buttons above to explore more!`;
 • 🔔 Enable notifications for best deals
 
 🆘 <b>Need Help?</b>
-• 📧 Email: support@zabardoo.com
+• 📧 Email: support@bazaarGuru.com
 • 💬 Live Chat: Available 24/7
 • 📞 Phone: +91-XXXX-XXXX-XX
 
@@ -483,7 +483,7 @@ Available languages:
 🎮 <b>My Profile:</b> View your stats and progress
 💰 <b>Cashback:</b> Check your earnings
 🎲 <b>Random Deal:</b> Get surprise offers
-🧠 <b>Ask Zabardoo:</b> Chat with AI assistant
+🧠 <b>Ask bazaarGuru:</b> Chat with AI assistant
 ⚙️ <b>Settings:</b> Customize notifications
 🌐 <b>Language:</b> Change language
 🆘 <b>Help:</b> Get support

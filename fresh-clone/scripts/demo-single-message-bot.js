@@ -6,7 +6,7 @@ const colors = require('colors');
 // Telegram bot token
 const token = '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
 
-class SingleMessageZabardooBot {
+class SingleMessagebazaarGuruBot {
   constructor() {
     this.bot = new TelegramBot(token, { polling: true });
     this.userSessions = new Map(); // Store message IDs for each user
@@ -67,7 +67,7 @@ class SingleMessageZabardooBot {
       this.handleCallbackQuery(callbackQuery);
     });
 
-    console.log('🤖 Single Message Zabardoo Bot is running...'.green.bold);
+    console.log('🤖 Single Message bazaarGuru Bot is running...'.green.bold);
   }
 
   setupPersistentMenu() {
@@ -111,7 +111,7 @@ class SingleMessageZabardooBot {
   buildMainInterface(userName) {
     return `🎉 **Welcome ${userName}!**
 
-🤖 **Zabardoo AI Coupon Assistant**
+🤖 **bazaarGuru AI Coupon Assistant**
 Your personal deal finder for India
 
 📊 **Quick Stats:**
@@ -451,7 +451,7 @@ ${dealsText}
   }
 
   start() {
-    console.log('🚀 Starting Single Message Zabardoo Bot...'.green.bold);
+    console.log('🚀 Starting Single Message bazaarGuru Bot...'.green.bold);
     console.log('✅ Bot ready with single-message interface!'.green);
     
     process.on('SIGINT', () => {
@@ -464,8 +464,8 @@ ${dealsText}
 
 // Start the bot
 if (require.main === module) {
-  const bot = new SingleMessageZabardooBot();
+  const bot = new SingleMessagebazaarGuruBot();
   bot.start();
 }
 
-module.exports = SingleMessageZabardooBot;
+module.exports = SingleMessagebazaarGuruBot;

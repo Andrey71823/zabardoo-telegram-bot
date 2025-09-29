@@ -68,7 +68,7 @@ const dataIntegration = new MockBotDataIntegration();
 const replyKeyboard = {
   keyboard: [
     ['🔍 Find Deals', '🎮 My Profile', '📖 Guide'],
-    ['💰 Cashback', '🎲 Random Deal', '💬 Ask Zabardoo'],
+    ['💰 Cashback', '🎲 Random Deal', '💬 Ask bazaarGuru'],
     ['⚙️ Settings', '🌐 Language', '🆘 Help']
   ],
   resize_keyboard: true,
@@ -80,7 +80,7 @@ bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const firstName = msg.from.first_name || 'Friend';
   
-  const welcomeMessage = `🎉 Welcome to Zabardoo Enhanced Bot, ${firstName}! 🌟
+  const welcomeMessage = `🎉 Welcome to bazaarGuru Enhanced Bot, ${firstName}! 🌟
 
 🚀 I'm your AI-powered deal discovery assistant!
 
@@ -138,8 +138,8 @@ bot.on('message', async (msg) => {
         await handleRandomDeal(chatId);
         break;
       
-      case '💬 Ask Zabardoo':
-        await handleAskZabardoo(chatId);
+      case '💬 Ask bazaarGuru':
+        await handleAskbazaarGuru(chatId);
         break;
       
       case '⚙️ Settings':
@@ -247,7 +247,7 @@ Keep shopping to unlock more rewards! 🌟`;
 }
 
 async function handleGuide(chatId) {
-  const guideMessage = `📖 *Zabardoo Shopping Guide*
+  const guideMessage = `📖 *bazaarGuru Shopping Guide*
 
 🛍️ *How to Shop Smart:*
 
@@ -265,7 +265,7 @@ async function handleGuide(chatId) {
 
 3️⃣ *Use Features:*
    • 🎲 Random Deal - discover surprise offers
-   • 💬 Ask Zabardoo - get shopping advice
+   • 💬 Ask bazaarGuru - get shopping advice
    • 💰 Cashback - track your earnings
    • 🎮 My Profile - view your stats
 
@@ -358,8 +358,8 @@ async function handleRandomDeal(chatId) {
   }
 }
 
-async function handleAskZabardoo(chatId) {
-  const askMessage = `💬 *Ask Zabardoo*
+async function handleAskbazaarGuru(chatId) {
+  const askMessage = `💬 *Ask bazaarGuru*
 
 🤖 I'm here to help you with:
 
@@ -492,7 +492,7 @@ async function handleHelp(chatId) {
 🛍️ **Shopping Help:**
 • 🔍 Find Deals - search any product
 • 🎲 Random Deal - discover surprise offers
-• 💬 Ask Zabardoo - get shopping advice
+• 💬 Ask bazaarGuru - get shopping advice
 • 💰 Cashback - track your earnings
 
 👤 **Account Help:**
@@ -517,12 +517,12 @@ async function handleHelp(chatId) {
 • How to earn cashback? → Use 💰 Cashback
 • How to find deals? → Use 🔍 Find Deals
 • How to see my stats? → Use 🎮 My Profile
-• How to get advice? → Use 💬 Ask Zabardoo
+• How to get advice? → Use 💬 Ask bazaarGuru
 
 📧 **Contact Us:**
-• Email: support@zabardoo.com
-• Telegram: @ZabardooSupport
-• Website: www.zabardoo.com
+• Email: support@bazaarGuru.com
+• Telegram: @bazaarGuruSupport
+• Website: www.bazaarGuru.com
 
 Need more help? Just ask! 😊`;
 
@@ -581,7 +581,7 @@ console.log('🎮 My Profile → User profile and stats');
 console.log('📖 Guide → Shopping guide');
 console.log('💰 Cashback → Cashback information');
 console.log('🎲 Random Deal → Random offers');
-console.log('💬 Ask Zabardoo → Shopping assistant');
+console.log('💬 Ask bazaarGuru → Shopping assistant');
 console.log('⚙️ Settings → Bot settings');
 console.log('🌐 Language → Language selection');
 console.log('🆘 Help → Help and support');

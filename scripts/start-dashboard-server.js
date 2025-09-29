@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Simple Dashboard Server for Zabardoo Admin Panels
+// Simple Dashboard Server for bazaarGuru Admin Panels
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -18,7 +18,7 @@ class DashboardServer {
     });
 
     server.listen(this.port, () => {
-      console.log('\n🚀 ZABARDOO DASHBOARD SERVER STARTED!');
+      console.log('\n🚀 bazaarGuru DASHBOARD SERVER STARTED!');
       console.log('=' .repeat(50));
       console.log(`📊 Server running at: http://localhost:${this.port}`);
       console.log('\n🎯 UNIFIED ADMIN DASHBOARD:');
@@ -109,7 +109,7 @@ class DashboardServer {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zabardoo Admin Dashboard</title>
+    <title>bazaarGuru Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -168,7 +168,7 @@ class DashboardServer {
 </head>
 <body>
     <div class="container">
-        <h1><i class="fas fa-robot me-3"></i>Zabardoo Admin Dashboard</h1>
+        <h1><i class="fas fa-robot me-3"></i>bazaarGuru Admin Dashboard</h1>
         
         <div class="row">
             <div class="col-md-4">

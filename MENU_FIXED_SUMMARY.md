@@ -19,7 +19,7 @@
 ### ✅ Новое английское меню:
 ```
 🔍 Find Deals      🎮 My Profile      📖 Guide
-💰 Cashback        🎲 Random Deal     🧠 Ask Zabardoo
+💰 Cashback        🎲 Random Deal     🧠 Ask bazaarGuru
 ⚙️ Settings        🌐 Language        🆘 Help
 ```
 
@@ -94,7 +94,7 @@ node scripts/fix-all-menus.js
     [
       { text: '💰 Cashback', callback_data: 'cashback' },
       { text: '🎲 Random Deal', callback_data: 'random_deal' },
-      { text: '🧠 Ask Zabardoo', callback_data: 'ask_zabardoo' }
+      { text: '🧠 Ask bazaarGuru', callback_data: 'ask_bazaarGuru' }
     ],
     [
       { text: '⚙️ Settings', callback_data: 'settings' },
@@ -110,7 +110,7 @@ node scripts/fix-all-menus.js
 {
   keyboard: [
     ['🔍 Find Deals', '🎮 My Profile', '📖 Guide'],
-    ['💰 Cashback', '🎲 Random Deal', '🧠 Ask Zabardoo'],
+    ['💰 Cashback', '🎲 Random Deal', '🧠 Ask bazaarGuru'],
     ['⚙️ Settings', '🌐 Language', '🆘 Help']
   ],
   resize_keyboard: true,
@@ -139,8 +139,8 @@ switch (text) {
   case '🎲 Random Deal':
     await this.handleRandomDeal(chatId);
     break;
-  case '🧠 Ask Zabardoo':
-    await this.handleAskZabardoo(chatId, userName);
+  case '🧠 Ask bazaarGuru':
+    await this.handleAskbazaarGuru(chatId, userName);
     break;
   case '⚙️ Settings':
     await this.handleSettings(chatId);

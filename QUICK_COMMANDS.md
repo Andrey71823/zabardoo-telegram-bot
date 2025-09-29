@@ -1,4 +1,4 @@
-# ⚡ Quick Commands - Zabardoo Enhanced Bot
+# ⚡ Quick Commands - bazaarGuru Enhanced Bot
 
 ## 🚀 Essential Commands
 

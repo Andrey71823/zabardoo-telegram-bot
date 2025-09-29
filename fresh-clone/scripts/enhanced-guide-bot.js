@@ -117,7 +117,7 @@ class EnhancedGuideTelegramBot {
         [
           { text: '💰 Cashback', callback_data: 'cashback' },
           { text: '🎲 Random Deal', callback_data: 'random_deal' },
-          { text: '🧠 Ask Zabardoo', callback_data: 'ask_zabardoo' }
+          { text: '🧠 Ask bazaarGuru', callback_data: 'ask_bazaarGuru' }
         ],
         [
           { text: '⚙️ Settings', callback_data: 'settings' },
@@ -225,7 +225,7 @@ class EnhancedGuideTelegramBot {
     const chatId = message.chat.id;
     const userName = message.from.first_name || 'Friend';
     
-    const welcomeMessage = `🎉 Welcome to Zabardoo Enhanced Bot, ${userName}! 🌟
+    const welcomeMessage = `🎉 Welcome to bazaarGuru Enhanced Bot, ${userName}! 🌟
 
 🚀 I'm your AI-powered deal discovery assistant!
 
@@ -322,7 +322,7 @@ Ready to save some serious money? Let's go! 🚀
   async handleHelp(message) {
     const chatId = message.chat.id;
     
-    const helpMessage = `🆘 <b>Zabardoo Bot Quick Help</b>
+    const helpMessage = `🆘 <b>bazaarGuru Bot Quick Help</b>
 
 <b>🎯 Main Functions:</b>
 • Find deals and get cashback
@@ -363,7 +363,7 @@ Need more help? Use /guide for detailed explanations!`;
     const chatId = message.chat.id;
     const user = this.getUser(message.from.id);
     
-    const profileMessage = `👤 <b>Your Zabardoo Profile</b>
+    const profileMessage = `👤 <b>Your bazaarGuru Profile</b>
 
 🌟 ${user.firstName} ${user.lastName || ''}
 💎 Level ${user.level} 🛍️
@@ -893,7 +893,7 @@ Choose a category below for more specific deals:`;
 
       case 'profile':
         const user = this.getUser(callbackQuery.from.id);
-        responseText = `👤 <b>Your Zabardoo Profile</b>
+        responseText = `👤 <b>Your bazaarGuru Profile</b>
 
 🌟 ${user.firstName} ${user.lastName || ''}
 💎 Level ${user.level} 🛍️
@@ -1034,7 +1034,7 @@ Current Settings:
         break;
 
       case 'help':
-        responseText = `🆘 <b>Zabardoo Bot Quick Help</b>
+        responseText = `🆘 <b>bazaarGuru Bot Quick Help</b>
 
 <b>🎯 Main Functions:</b>
 • Find deals and get cashback
@@ -1449,8 +1449,8 @@ Select your preferred language for the bot interface:
         this.awardXP(callbackQuery.from.id, 5, 'language_selector');
         break;
 
-      case 'ask_zabardoo':
-        responseText = `🧠 <b>Ask Zabardoo AI Assistant</b>
+      case 'ask_bazaarGuru':
+        responseText = `🧠 <b>Ask bazaarGuru AI Assistant</b>
 
 💬 <b>I'm your personal shopping AI!</b>
 
@@ -1477,7 +1477,7 @@ Select your preferred language for the bot interface:
 
 🚀 <b>Just send me a message to start chatting!</b>`;
         
-        this.awardXP(callbackQuery.from.id, 8, 'ask_zabardoo');
+        this.awardXP(callbackQuery.from.id, 8, 'ask_bazaarGuru');
         break;
 
       // Language selection handlers
@@ -1654,7 +1654,7 @@ Choose any option below to continue your shopping journey:`;
   }
 
   async start() {
-    console.log('🚀 Starting ENHANCED GUIDE Zabardoo Telegram Bot!');
+    console.log('🚀 Starting ENHANCED GUIDE bazaarGuru Telegram Bot!');
     console.log('=' .repeat(60));
     
     const token = process.env.TELEGRAM_BOT_TOKEN || '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
@@ -1672,7 +1672,7 @@ Choose any option below to continue your shopping journey:`;
       this.isRunning = true;
       
       console.log('');
-      console.log('🎉 ZABARDOO ENHANCED GUIDE BOT IS NOW LIVE! 🎉');
+      console.log('🎉 bazaarGuru ENHANCED GUIDE BOT IS NOW LIVE! 🎉');
       console.log('');
       console.log('🌟 Enhanced Features Active:');
       console.log('   📖 Complete Guide Button');

@@ -1,4 +1,4 @@
-# 🚀 Zabardoo Enhanced Telegram Bot System
+# 🚀 bazaarGuru Enhanced Telegram Bot System
 
 **The Most Advanced AI-Powered Deal Discovery Bot for the Indian Market**
 
@@ -159,7 +159,7 @@ npm run test:cashback   # Cashback system
 ## 📁 Project Structure
 
 ```
-zabardoo-telegram-bot/
+bazaarGuru-telegram-bot/
 ├── src/
 │   ├── services/           # Core business services
 │   │   ├── telegram/       # Telegram bot logic
@@ -243,7 +243,7 @@ TELEGRAM_BOT_TOKEN=your_bot_token
 TELEGRAM_GROUP_ID=your_group_id
 
 # Database
-DATABASE_URL=postgresql://user:pass@localhost:5432/zabardoo
+DATABASE_URL=postgresql://user:pass@localhost:5432/bazaarGuru
 REDIS_URL=redis://localhost:6379
 
 # External APIs

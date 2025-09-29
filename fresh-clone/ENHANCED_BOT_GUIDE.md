@@ -1,4 +1,4 @@
-# 🚀 Zabardoo Enhanced Telegram Bot - Complete Guide
+# 🚀 bazaarGuru Enhanced Telegram Bot - Complete Guide
 
 ## 🌟 What Makes This Bot Revolutionary
 
@@ -65,7 +65,7 @@ npm run demo:all
 ```bash
 # Clone and install
 git clone <repository-url>
-cd zabardoo-telegram-bot
+cd bazaarGuru-telegram-bot
 npm install
 
 # Setup environment

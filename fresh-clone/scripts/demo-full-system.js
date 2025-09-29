@@ -1,4 +1,4 @@
-const { ZabardooTelegramBot } = require('../src/main');
+const { bazaarGuruTelegramBot } = require('../src/main');
 
 class FullSystemDemo {
   constructor() {
@@ -16,7 +16,7 @@ class FullSystemDemo {
   }
 
   async startDemo() {
-    console.log('🚀 ZABARDOO ENHANCED TELEGRAM BOT - FULL SYSTEM DEMO');
+    console.log('🚀 bazaarGuru ENHANCED TELEGRAM BOT - FULL SYSTEM DEMO');
     console.log('=' .repeat(70));
     console.log('');
     
@@ -299,7 +299,7 @@ class FullSystemDemo {
     console.log('\\n🤖 Starting Production Bot...');
     
     try {
-      this.bot = new ZabardooTelegramBot();
+      this.bot = new bazaarGuruTelegramBot();
       await this.bot.start();
       
       console.log('\\n✅ Production bot started successfully!');

@@ -8,7 +8,7 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-console.log('🤖 ZABARDOO BOT TOKEN SETUP');
+console.log('🤖 bazaarGuru BOT TOKEN SETUP');
 console.log('=' .repeat(40));
 console.log('');
 console.log('📋 Instructions:');

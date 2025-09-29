@@ -69,7 +69,7 @@ class TestEnglishMenuBot {
     return {
       keyboard: [
         ['🔍 Find Deals', '🎮 My Profile', '📖 Guide'],
-        ['💰 Cashback', '🎲 Random Deal', '🧠 Ask Zabardoo'],
+        ['💰 Cashback', '🎲 Random Deal', '🧠 Ask bazaarGuru'],
         ['⚙️ Settings', '🌐 Language', '🆘 Help']
       ],
       resize_keyboard: true,
@@ -89,7 +89,7 @@ class TestEnglishMenuBot {
         [
           { text: '💰 Cashback', callback_data: 'cashback' },
           { text: '🎲 Random Deal', callback_data: 'random_deal' },
-          { text: '🧠 Ask Zabardoo', callback_data: 'ask_zabardoo' }
+          { text: '🧠 Ask bazaarGuru', callback_data: 'ask_bazaarGuru' }
         ],
         [
           { text: '⚙️ Settings', callback_data: 'settings' },
@@ -151,7 +151,7 @@ This bot tests the CORRECT English menu structure:
 
 <b>🔝 Top Menu (Inline):</b>
 🔍 Find Deals | 🎮 My Profile | 📖 Guide
-💰 Cashback | 🎲 Random Deal | 🧠 Ask Zabardoo  
+💰 Cashback | 🎲 Random Deal | 🧠 Ask bazaarGuru  
 ⚙️ Settings | 🌐 Language | 🆘 Help
 
 <b>📱 Bottom Menu (ReplyKeyboard):</b>
@@ -213,8 +213,8 @@ Ready to test! 🚀`;
         isEnglishButton = true;
         break;
 
-      case '🧠 Ask Zabardoo':
-        responseText = `✅ <b>CORRECT!</b> English button: Ask Zabardoo\n\n🎁 +8 XP for AI assistant!`;
+      case '🧠 Ask bazaarGuru':
+        responseText = `✅ <b>CORRECT!</b> English button: Ask bazaarGuru\n\n🎁 +8 XP for AI assistant!`;
         isEnglishButton = true;
         break;
 
@@ -297,7 +297,7 @@ Both inline and bottom menus are working in English! 🎉`;
 }
 
 // Start the test bot
-const token = process.env.TELEGRAM_BOT_TOKEN || '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
+const token = process.env.TELEGRAM_BOT_TOKEN || '8381471660:AAEK_I4XHl3emmH1s5K_hwuzMeNQbjtqsB0';
 
 console.log('🧪 English Menu Test Bot');
 console.log('========================');
@@ -309,7 +309,7 @@ console.log('   🎮 My Profile');
 console.log('   📖 Guide');
 console.log('   💰 Cashback');
 console.log('   🎲 Random Deal');
-console.log('   🧠 Ask Zabardoo');
+console.log('   🧠 Ask bazaarGuru');
 console.log('   ⚙️ Settings');
 console.log('   🌐 Language');
 console.log('   🆘 Help');

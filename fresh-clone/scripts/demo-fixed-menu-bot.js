@@ -6,7 +6,7 @@ const colors = require('colors');
 // Telegram bot token
 const token = '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
 
-class FixedMenuZabardooBot {
+class FixedMenubazaarGuruBot {
   constructor() {
     this.bot = new TelegramBot(token, { polling: true });
     this.users = new Map();
@@ -226,7 +226,7 @@ class FixedMenuZabardooBot {
       this.handleCallbackQuery(callbackQuery);
     });
 
-    console.log('🤖 Fixed Menu Zabardoo Bot is running...');
+    console.log('🤖 Fixed Menu bazaarGuru Bot is running...');
     console.log('Menu will always stay at the bottom!');
   }
 
@@ -244,7 +244,7 @@ class FixedMenuZabardooBot {
       });
     }
 
-    const welcomeMessage = `🎉 Welcome to Zabardoo, ${userName}!
+    const welcomeMessage = `🎉 Welcome to bazaarGuru, ${userName}!
 
 I'm your AI-powered coupon assistant for India! 
 
@@ -412,7 +412,7 @@ Just tap any option to get started.`;
   }
 
   async handleSettings(chatId) {
-    const settingsMessage = `⚙️ **Settings & Preferences**\n\nCustomize your Zabardoo experience:`;
+    const settingsMessage = `⚙️ **Settings & Preferences**\n\nCustomize your bazaarGuru experience:`;
 
     const settingsKeyboard = {
       inline_keyboard: [
@@ -486,7 +486,7 @@ ${coupon.title}
     const keyboard = {
       inline_keyboard: [
         [
-          { text: '🛒 Get This Deal', url: 'https://zabardoo.com' },
+          { text: '🛒 Get This Deal', url: 'https://bazaarGuru.com' },
           { text: '📋 Copy Code', callback_data: `copy_code_${coupon.id}` }
         ],
         [
@@ -634,7 +634,7 @@ Choose your favorite store to see exclusive deals:
   }
 
   async handleSettings(chatId) {
-    const settingsMessage = `⚙️ **Settings & Preferences**\n\nCustomize your Zabardoo experience:`;
+    const settingsMessage = `⚙️ **Settings & Preferences**\n\nCustomize your bazaarGuru experience:`;
 
     const settingsKeyboard = {
       inline_keyboard: [
@@ -831,8 +831,8 @@ Choose any store to see their latest deals and offers!`;
   }
 
   start() {
-    console.log('🚀 Starting Fixed Menu Zabardoo Bot...');
-    console.log('📱 Bot Username: @zabardoo_deals_bot');
+    console.log('🚀 Starting Fixed Menu bazaarGuru Bot...');
+    console.log('📱 Bot Username: @bazaarGuru_deals_bot');
     console.log('✅ Bot is ready with fixed menu at bottom!');
     
     // Keep the process running
@@ -846,8 +846,8 @@ Choose any store to see their latest deals and offers!`;
 
 // Start the bot if run directly
 if (require.main === module) {
-  const zabardooBot = new FixedMenuZabardooBot();
-  zabardooBot.start();
+  const bazaarGuruBot = new FixedMenubazaarGuruBot();
+  bazaarGuruBot.start();
 }
 
-module.exports = FixedMenuZabardooBot;
+module.exports = FixedMenubazaarGuruBot;

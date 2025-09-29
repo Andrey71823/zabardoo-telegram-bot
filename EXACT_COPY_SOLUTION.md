@@ -29,7 +29,7 @@ bot.on('callback_query', async (callbackQuery) => {
 ### ✅ Функция handleGuide (работает правильно):
 ```javascript
 async function handleGuide(chatId) {
-  const guideMessage = `📖 *Zabardoo Shopping Guide*
+  const guideMessage = `📖 *bazaarGuru Shopping Guide*
 
 🛍️ *How to Shop Smart:*
 
@@ -102,7 +102,7 @@ bot.on('message', async (msg) => {
 | 💰 **Cashback** | `callback_data: 'cashback'` | `text: '💰 Cashback'` | `handleCashback()` |
 | 🎮 **My Profile** | `callback_data: 'my_profile'` | `text: '🎮 My Profile'` | `handleMyProfile()` |
 | 🔍 **Find Deals** | `callback_data: 'find_deals'` | `text: '🔍 Find Deals'` | `handleFindDeals()` |
-| 💬 **Ask Zabardoo** | `callback_data: 'ask_zabardoo'` | `text: '💬 Ask Zabardoo'` | `handleAskZabardoo()` |
+| 💬 **Ask bazaarGuru** | `callback_data: 'ask_bazaarGuru'` | `text: '💬 Ask bazaarGuru'` | `handleAskbazaarGuru()` |
 | 🎲 **Random Deal** | `callback_data: 'random_deal'` | `text: '🎲 Random Deal'` | `handleRandomDeal()` |
 | ⚙️ **Settings** | `callback_data: 'settings'` | `text: '⚙️ Settings'` | `handleSettings()` |
 | 🌐 **Language** | `callback_data: 'language'` | `text: '🌐 Language'` | `handleLanguage()` |
@@ -160,7 +160,7 @@ node scripts/working-copy-bot.js
 - ☐ 💰 **Cashback** - верхняя и нижняя показывают кэшбек
 - ☐ 🎮 **My Profile** - верхняя и нижняя показывают профиль
 - ☐ 🔍 **Find Deals** - верхняя и нижняя показывают поиск
-- ☐ 💬 **Ask Zabardoo** - верхняя и нижняя показывают помощника
+- ☐ 💬 **Ask bazaarGuru** - верхняя и нижняя показывают помощника
 - ☐ 🎲 **Random Deal** - верхняя и нижняя показывают предложения
 - ☐ ⚙️ **Settings** - верхняя и нижняя показывают настройки
 - ☐ 🌐 **Language** - верхняя и нижняя показывают языки

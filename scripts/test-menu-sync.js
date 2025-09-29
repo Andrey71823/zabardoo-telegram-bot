@@ -32,7 +32,7 @@ const buttonMapping = [
   { button: '📖 Guide', inline: 'guide', reply: '📖 Guide', func: 'handleGuide()' },
   { button: '💰 Cashback', inline: 'cashback', reply: '💰 Cashback', func: 'handleCashback()' },
   { button: '🎲 Random Deal', inline: 'random_deal', reply: '🎲 Random Deal', func: 'handleRandomDeal()' },
-  { button: '💬 Ask Zabardoo', inline: 'ask_zabardoo', reply: '💬 Ask Zabardoo', func: 'handleAskZabardoo()' },
+  { button: '💬 Ask bazaarGuru', inline: 'ask_bazaarGuru', reply: '💬 Ask bazaarGuru', func: 'handleAskbazaarGuru()' },
   { button: '⚙️ Settings', inline: 'settings', reply: '⚙️ Settings', func: 'handleSettings()' },
   { button: '🌐 Language', inline: 'language', reply: '🌐 Language', func: 'handleLanguage()' },
   { button: '🆘 Help', inline: 'help', reply: '🆘 Help', func: 'handleHelp()' }

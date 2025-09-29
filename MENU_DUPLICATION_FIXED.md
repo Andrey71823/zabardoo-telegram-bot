@@ -31,7 +31,7 @@
 | 📖 Guide | `callback_data: 'guide'` | `text: '📖 Guide'` | `handleGuide()` |
 | 💰 Cashback | `callback_data: 'cashback'` | `text: '💰 Cashback'` | `handleCashback()` |
 | 🎲 Random Deal | `callback_data: 'random_deal'` | `text: '🎲 Random Deal'` | `handleRandomDeal()` |
-| 💬 Ask Zabardoo | `callback_data: 'ask_zabardoo'` | `text: '💬 Ask Zabardoo'` | `handleAskZabardoo()` |
+| 💬 Ask bazaarGuru | `callback_data: 'ask_bazaarGuru'` | `text: '💬 Ask bazaarGuru'` | `handleAskbazaarGuru()` |
 | ⚙️ Settings | `callback_data: 'settings'` | `text: '⚙️ Settings'` | `handleSettings()` |
 | 🌐 Language | `callback_data: 'language'` | `text: '🌐 Language'` | `handleLanguage()` |
 | 🆘 Help | `callback_data: 'help'` | `text: '🆘 Help'` | `handleHelp()` |
@@ -85,7 +85,7 @@ bot.on('message', async (msg) => {
 - Нажатие ВЕРХНЕЙ кнопки → Показ помощи и поддержки
 - Нажатие НИЖНЕЙ кнопки → ТА ЖЕ помощь и поддержка
 
-**Пример 3: Кнопка "💬 Ask Zabardoo"**
+**Пример 3: Кнопка "💬 Ask bazaarGuru"**
 - Нажатие ВЕРХНЕЙ кнопки → Показ помощника для вопросов
 - Нажатие НИЖНЕЙ кнопки → ТОТ ЖЕ помощник для вопросов
 
@@ -119,7 +119,7 @@ node scripts/synchronized-menus-bot.js
 - ☐ 📖 **Guide** - верхняя и нижняя показывают одинаково
 - ☐ 💰 **Cashback** - верхняя и нижняя показывают одинаково
 - ☐ 🎲 **Random Deal** - верхняя и нижняя показывают одинаково
-- ☐ 💬 **Ask Zabardoo** - верхняя и нижняя показывают одинаково
+- ☐ 💬 **Ask bazaarGuru** - верхняя и нижняя показывают одинаково
 - ☐ ⚙️ **Settings** - верхняя и нижняя показывают одинаково
 - ☐ 🌐 **Language** - верхняя и нижняя показывают одинаково
 - ☐ 🆘 **Help** - верхняя и нижняя показывают одинаково
@@ -149,7 +149,7 @@ node scripts/synchronized-menus-bot.js
 
 ### 🔧 Основные файлы:
 - **`scripts/synchronized-menus-bot.js`** ⭐ **ГЛАВНЫЙ** - оба меню работают одинаково
-- **`scripts/inline-menu-zabardoo-bot.js`** - исправленный оригинальный
+- **`scripts/inline-menu-bazaarGuru-bot.js`** - исправленный оригинальный
 - **`scripts/test-menu-sync.js`** - тест синхронизации
 
 ### 📱 Для отладки:

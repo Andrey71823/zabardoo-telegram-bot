@@ -1,4 +1,4 @@
-# 🛡️ Защита от спама - Zabardoo Enhanced Bot
+# 🛡️ Защита от спама - bazaarGuru Enhanced Bot
 
 ## 🎯 Главное: НЕТ СПАМУ!
 

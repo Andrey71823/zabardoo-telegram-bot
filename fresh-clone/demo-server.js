@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
   res.send(`
     <html>
       <head>
-        <title>Zabardoo Bot System - Demo</title>
+        <title>bazaarGuru Bot System - Demo</title>
         <style>
           body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
           .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
       </head>
       <body>
         <div class="container">
-          <h1>🤖 Zabardoo Telegram Bot System</h1>
+          <h1>🤖 bazaarGuru Telegram Bot System</h1>
           <div class="status">
             ✅ Система запущена и работает! Порт: ${PORT}
           </div>
@@ -507,7 +507,7 @@ app.get('/analytics', (req, res) => {
 app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
-    service: 'zabardoo-demo-server',
+    service: 'bazaarGuru-demo-server',
     timestamp: new Date().toISOString(),
     uptime: Math.floor(process.uptime()),
     port: PORT
@@ -531,7 +531,7 @@ app.use('*', (req, res) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`
-🚀 Zabardoo Bot System Demo запущен!
+🚀 bazaarGuru Bot System Demo запущен!
 
 📍 Главная страница: http://localhost:${PORT}
 🔧 Админ панель: http://localhost:${PORT}/admin/coupons

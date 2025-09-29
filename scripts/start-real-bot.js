@@ -4,9 +4,9 @@ const https = require('https');
 const querystring = require('querystring');
 
 // Токен бота (в продакшене должен быть в .env файле)
-const BOT_TOKEN = '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
+const BOT_TOKEN = '8381471660:AAEK_I4XHl3emmH1s5K_hwuzMeNQbjtqsB0';
 
-class ZabardooRealBot {
+class BazaarGuruRealBot {
   constructor() {
     this.baseUrl = `https://api.telegram.org/bot${BOT_TOKEN}`;
     this.users = new Map(); // Хранилище пользователей
@@ -18,7 +18,7 @@ class ZabardooRealBot {
   setupCommands() {
     // Установка команд бота
     this.bot.setMyCommands([
-      { command: 'start', description: '🚀 Start using Zabardoo bot' },
+      { command: 'start', description: '🚀 Start using bazaarGuru bot' },
       { command: 'deals', description: '🔥 View hot deals' },
       { command: 'search', description: '🔍 Search for deals' },
       { command: 'categories', description: '📂 Browse categories' },
@@ -70,7 +70,7 @@ class ZabardooRealBot {
       joinedAt: new Date()
     });
 
-    const welcomeMessage = `🎉 Welcome to Zabardoo, ${user.first_name}! 🌱
+    const welcomeMessage = `🎉 Welcome to BazaarGuru, ${user.first_name}! 🌱
 
 I'm your AI-powered coupon assistant for India!
 
@@ -318,7 +318,7 @@ ${categoryDeals.map(deal => `• ${deal}`).join('\\n')}
 
     const message = `⚙️ **Settings & Preferences**
 
-Customize your Zabardoo experience:
+Customize your bazaarGuru experience:
 
 🔔 **Notifications** - Control when you get deal alerts
 ❤️ **Favorites** - Manage your favorite products
@@ -347,7 +347,7 @@ Choose an option below:`;
   }
 
   async sendHelpMessage(chatId) {
-    const message = `❓ **How to use Zabardoo Bot**
+    const message = `❓ **How to use bazaarGuru Bot**
 
 🎯 **Main Features:**
 • AI Recommendations - Personalized deals just for you
@@ -401,7 +401,7 @@ Need more help? Just ask me anything!`;
   }
 
   start() {
-    console.log('🚀 ZABARDOO REAL TELEGRAM BOT STARTED!');
+    console.log('🚀 bazaarGuru REAL TELEGRAM BOT STARTED!');
     console.log('=' .repeat(60));
     console.log('');
     console.log('🤖 Bot is now running and ready to serve users!');
@@ -431,5 +431,5 @@ Need more help? Just ask me anything!`;
 }
 
 // Запуск бота
-const zabardooBot = new ZabardooRealBot();
-zabardooBot.start();
+const bazaarGuruBot = new bazaarGuruRealBot();
+bazaarGuruBot.start();

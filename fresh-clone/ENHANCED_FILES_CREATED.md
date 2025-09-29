@@ -1,4 +1,4 @@
-# 🚀 Zabardoo Enhanced Telegram Bot - Created Files
+# 🚀 bazaarGuru Enhanced Telegram Bot - Created Files
 
 ## 📋 Complete List of Enhanced Bot Files
 
@@ -57,9 +57,9 @@ This document lists all the files created for the revolutionary Enhanced Telegra
 - `ENHANCED_FILES_CREATED.md` - This file listing all created files
 
 ### Specification Updates
-- `.kiro/specs/zabardoo-telegram-bot/tasks.md` - Updated with enhanced bot phases
-- `.kiro/specs/zabardoo-telegram-bot/requirements.md` - Enhanced requirements
-- `.kiro/specs/zabardoo-telegram-bot/design.md` - Updated system design
+- `.kiro/specs/bazaarGuru-telegram-bot/tasks.md` - Updated with enhanced bot phases
+- `.kiro/specs/bazaarGuru-telegram-bot/requirements.md` - Enhanced requirements
+- `.kiro/specs/bazaarGuru-telegram-bot/design.md` - Updated system design
 
 ## 🔧 Configuration Updates
 

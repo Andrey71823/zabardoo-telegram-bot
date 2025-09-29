@@ -1,4 +1,4 @@
-# 🚀 Zabardoo Enhanced Telegram Bot - Project Overview
+# 🚀 bazaarGuru Enhanced Telegram Bot - Project Overview
 
 ## 🌟 What We've Built
 

@@ -22,7 +22,7 @@
   - Лучшие предложения дня
 
 #### 3. 🤖 Real Data Bot - Бот с реальными данными
-- **Файл**: `scripts/real-data-zabardoo-bot.js`
+- **Файл**: `scripts/real-data-bazaarGuru-bot.js`
 - **Функции**:
   - Поиск товаров с реальными ценами
   - Рабочие промокоды
@@ -157,7 +157,7 @@
 ## 📞 Техническая поддержка
 
 ### 🔧 Файлы для запуска:
-- **Основной бот**: `scripts/real-data-zabardoo-bot.js`
+- **Основной бот**: `scripts/real-data-bazaarGuru-bot.js`
 - **Тестирование**: `scripts/test-real-data-integration.js`
 - **Сервисы**: `src/services/data/RealDataService.ts`
 - **Интеграция**: `src/services/integration/BotDataIntegration.ts`
@@ -168,7 +168,7 @@
 node scripts/test-real-data-integration.js
 
 # Запуск бота с реальными данными
-node scripts/real-data-zabardoo-bot.js
+node scripts/real-data-bazaarGuru-bot.js
 ```
 
 ### 🔑 Переменные окружения:
@@ -181,4 +181,4 @@ NYKAA_AFFILIATE_ID=your_nykaa_id
 AJIO_AFFILIATE_ID=your_ajio_id
 ```
 
-**🎉 Zabardoo Bot с реальными данными готов к работе!** 🛍️
+**🎉 bazaarGuru Bot с реальными данными готов к работе!** 🛍️

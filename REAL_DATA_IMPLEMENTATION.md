@@ -1,4 +1,4 @@
-# 🛍️ Real Data Implementation - Zabardoo Bot
+# 🛍️ Real Data Implementation - bazaarGuru Bot
 
 ## 📊 Overview
 
@@ -21,7 +21,7 @@ Successfully implemented **RealDataService** with integration to Indian e-commer
 - **Trending Products**: AI-curated product recommendations
 - **Deals of the Day**: High-discount product filtering
 
-#### 3. Real Data Bot (`scripts/real-data-zabardoo-bot.js`)
+#### 3. Real Data Bot (`scripts/real-data-bazaarGuru-bot.js`)
 - **Live Product Search**: Real prices from Indian stores
 - **Working Coupons**: Verified discount codes
 - **Cashback Rates**: Actual cashback percentages

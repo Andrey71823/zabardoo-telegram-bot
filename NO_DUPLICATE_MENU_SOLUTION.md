@@ -30,7 +30,7 @@ Row 5: [💰 Cashback] [🆘 Help]
 - Никаких inline кнопок
 - Идеальный пользовательский опыт
 
-### 2. `scripts/real-data-zabardoo-bot.js` (исправлен)
+### 2. `scripts/real-data-bazaarGuru-bot.js` (исправлен)
 - Обновлен для устранения дублирования
 - Убраны inline кнопки из welcome сообщения
 - Оставлено только reply keyboard
@@ -58,7 +58,7 @@ const fixedMainMenu = {
 };
 
 // ЧИСТОЕ WELCOME СООБЩЕНИЕ - БЕЗ INLINE КНОПОК
-const welcomeMessage = `🎉 Welcome to Zabardoo, ${firstName}! 🛍️
+const welcomeMessage = `🎉 Welcome to bazaarGuru, ${firstName}! 🛍️
 ...
 💡 *Use the menu buttons below to get started!*
 ...`;
@@ -87,7 +87,7 @@ node scripts/clean-fixed-menu-bot.js
 ### 3. Ожидаемый результат:
 ```
 ┌─────────────────────────────────┐
-│ Welcome to Zabardoo, Friend! 🛍️ │
+│ Welcome to bazaarGuru, Friend! 🛍️ │
 │                                 │
 │ 🇮🇳 Your ultimate shopping...   │
 │ (обычный текст БЕЗ кнопок)      │

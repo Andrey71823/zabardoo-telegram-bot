@@ -95,7 +95,7 @@ bot.onText(/\/start/, async (msg) => {
   const firstName = msg.from.first_name || 'Friend';
   
   // CLEAN WELCOME MESSAGE - NO INLINE BUTTONS
-  const welcomeMessage = `🎉 Welcome to Zabardoo, ${firstName}! 🛍️
+  const welcomeMessage = `🎉 Welcome to bazaarGuru, ${firstName}! 🛍️
 
 🇮🇳 Your ultimate shopping companion for the best deals from top Indian stores!
 
@@ -267,7 +267,7 @@ async function handleHotDeals(chatId) {
 }
 
 async function handleGuide(chatId) {
-  const guideMessage = `📖 *Zabardoo Shopping Guide*
+  const guideMessage = `📖 *bazaarGuru Shopping Guide*
 
 🛍️ *How to Shop Smart:*
 
@@ -629,7 +629,7 @@ bot.on('polling_error', (error) => {
   console.error('Polling error:', error);
 });
 
-console.log('🚀 Zabardoo Clean Fixed Menu Bot is running!');
+console.log('🚀 bazaarGuru Clean Fixed Menu Bot is running!');
 console.log('📱 Features: ONLY fixed menu - NO duplicates');
 console.log('🎯 Menu Structure:');
 console.log('Row 1: [🤖 AI Recommendations] [🔥 Hot Deals] [📖 Guide]');

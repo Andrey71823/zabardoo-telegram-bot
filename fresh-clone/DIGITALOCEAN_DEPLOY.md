@@ -4,7 +4,7 @@
 
 1. Создайте новый репозиторий на GitHub:
    - Зайдите на https://github.com/new
-   - Название: `zabardoo-telegram-bot`
+   - Название: `bazaarGuru-telegram-bot`
    - Описание: `Telegram bot for coupon recommendations with AI assistant`
    - Сделайте репозиторий публичным или приватным (на ваш выбор)
 
@@ -12,9 +12,9 @@
 ```bash
 git init
 git add .
-git commit -m "Initial commit: Zabardoo Telegram Bot with AI features"
+git commit -m "Initial commit: bazaarGuru Telegram Bot with AI features"
 git branch -M main
-git remote add origin https://github.com/Andrey7823/zabardoo-telegram-bot.git
+git remote add origin https://github.com/Andrey7823/bazaarGuru-telegram-bot.git
 git push -u origin main
 ```
 
@@ -24,13 +24,13 @@ git push -u origin main
 2. Перейдите в раздел "Apps"
 3. Нажмите "Create App"
 4. Выберите "GitHub" как источник
-5. Выберите ваш репозиторий `zabardoo-telegram-bot`
+5. Выберите ваш репозиторий `bazaarGuru-telegram-bot`
 6. Выберите ветку `main`
 
 ## Шаг 3: Конфигурация приложения
 
 ### Основные настройки:
-- **Name**: zabardoo-bot
+- **Name**: bazaarGuru-bot
 - **Region**: Frankfurt (ближе к России)
 - **Plan**: Basic ($5/месяц для начала)
 

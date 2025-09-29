@@ -292,7 +292,7 @@ class EnhancedGuideTelegramBot {
         [
           { text: '💰 Cashback' },
           { text: '🎲 Random Deal' },
-          { text: '🧠 Ask Zabardoo' }
+          { text: '🧠 Ask BazaarGuru' }
         ],
         [
           { text: '⚙️ Settings' },
@@ -573,7 +573,7 @@ class EnhancedGuideTelegramBot {
     const chatId = message.chat.id;
     const userName = message.from.first_name || 'Friend';
     
-    const welcomeMessage = `🎉 Welcome to Zabardoo Enhanced Bot, ${userName}! 🌟
+    const welcomeMessage = `🎉 Welcome to BazaarGuru Enhanced Bot, ${userName}! 🌟
 
 🚀 I'm your AI-powered deal discovery assistant!
 
@@ -672,7 +672,7 @@ Ready to save some serious money? Let's go! 🚀
   async handleHelp(message) {
     const chatId = message.chat.id;
     
-    const helpMessage = `🆘 <b>Zabardoo Bot Quick Help</b>
+    const helpMessage = `🆘 <b>BazaarGuru Bot Quick Help</b>
 
 <b>🎯 Main Functions:</b>
 • Find deals and get cashback
@@ -713,7 +713,7 @@ Need more help? Use /guide for detailed explanations!`;
     const chatId = message.chat.id;
     const user = this.getUser(message.from.id);
     
-    const profileMessage = `👤 <b>Your Zabardoo Profile</b>
+    const profileMessage = `👤 <b>Your BazaarGuru Profile</b>
 
 🌟 ${user.firstName} ${user.lastName || ''}
 💎 Level ${user.level} 🛍️
@@ -1171,7 +1171,7 @@ ${real.length === 0 ? '⚠️ No exact match found. Showing similar items.' : ''
       
       switch (text) {
         case '🆘 Help':
-          response = `🆘 <b>Zabardoo Bot Quick Help</b>
+          response = `🆘 <b>bazaarGuru Bot Quick Help</b>
 
 <b>🎯 Main Functions:</b>
 • Find deals and get cashback
@@ -1291,7 +1291,7 @@ Need more help? Use /guide for detailed explanations!`;
 
         case '🎮 My Profile': {
           const profileUser = this.getUser(message.from.id);
-          response = `👤 <b>Your Zabardoo Profile</b>
+          response = `👤 <b>Your bazaarGuru Profile</b>
 
 🌟 ${profileUser.firstName} ${profileUser.lastName || ''}
 💎 Level ${profileUser.level} 🛍️
@@ -1330,9 +1330,9 @@ Choose a category below for more specific deals:`;
           this.awardXP(message.from.id, 5, 'browse_deals');
           break;
           
-        case '🧠 Ask Zabardoo':
-        case '💬 Ask Zabardoo':
-          response = `🧠 <b>Ask Zabardoo AI Assistant</b>
+        case '🧠 Ask bazaarGuru':
+        case '💬 Ask bazaarGuru':
+          response = `🧠 <b>Ask bazaarGuru AI Assistant</b>
 
 💬 <b>I'm your personal shopping AI!</b>
 
@@ -1358,7 +1358,7 @@ Choose a category below for more specific deals:`;
 "Create a funny meme about online shopping"
 
 🚀 <b>Just send me a message to start chatting!</b>`;
-          this.awardXP(message.from.id, 8, 'ask_zabardoo');
+          this.awardXP(message.from.id, 8, 'ask_bazaarGuru');
           break;
           
         case '🎲 Random Deal': {
@@ -1684,7 +1684,7 @@ Choose a category below for more specific deals:`;
 
       case 'profile':
         const user = this.getUser(callbackQuery.from.id);
-        responseText = `👤 <b>Your Zabardoo Profile</b>
+        responseText = `👤 <b>Your bazaarGuru Profile</b>
 
 🌟 ${user.firstName} ${user.lastName || ''}
 💎 Level ${user.level} 🛍️
@@ -1825,7 +1825,7 @@ Current Settings:
         break;
 
       case 'help':
-        responseText = `🆘 <b>Zabardoo Bot Quick Help</b>
+        responseText = `🆘 <b>bazaarGuru Bot Quick Help</b>
 
 <b>🎯 Main Functions:</b>
 • Find deals and get cashback
@@ -2200,8 +2200,8 @@ Select your preferred language for the bot interface:
         this.awardXP(callbackQuery.from.id, 5, 'language_selector');
         break;
 
-      case 'ask_zabardoo':
-        responseText = `🧠 <b>Ask Zabardoo AI Assistant</b>
+      case 'ask_bazaarGuru':
+        responseText = `🧠 <b>Ask bazaarGuru AI Assistant</b>
 
 💬 <b>I'm your personal shopping AI!</b>
 
@@ -2228,7 +2228,7 @@ Select your preferred language for the bot interface:
 
 🚀 <b>Just send me a message to start chatting!</b>`;
         
-        this.awardXP(callbackQuery.from.id, 8, 'ask_zabardoo');
+        this.awardXP(callbackQuery.from.id, 8, 'ask_bazaarGuru');
         break;
 
       // Language selection handlers
@@ -2406,7 +2406,7 @@ Choose any option below to continue your shopping journey:`;
   }
 
   async start() {
-    console.log('🚀 Starting ENHANCED GUIDE Zabardoo Telegram Bot!');
+    console.log('🚀 Starting ENHANCED GUIDE bazaarGuru Telegram Bot!');
     console.log('=' .repeat(60));
     
     const token = process.env.TELEGRAM_BOT_TOKEN || '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
@@ -2424,7 +2424,7 @@ Choose any option below to continue your shopping journey:`;
       this.isRunning = true;
       
       console.log('');
-      console.log('🎉 ZABARDOO ENHANCED GUIDE BOT IS NOW LIVE! 🎉');
+      console.log('🎉 bazaarGuru ENHANCED GUIDE BOT IS NOW LIVE! 🎉');
       console.log('');
       console.log('🌟 Enhanced Features Active:');
       console.log('   📖 Complete Guide Button');

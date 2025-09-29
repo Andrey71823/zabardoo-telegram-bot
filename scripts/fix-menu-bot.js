@@ -76,7 +76,7 @@ class MenuFixBot {
         { command: 'guide', description: '📖 Complete guide for all functions' },
         { command: 'cashback', description: '💰 My cashback and balance' },
         { command: 'random', description: '🎲 Get random deal surprise' },
-        { command: 'ai', description: '🧠 Ask Zabardoo AI assistant' },
+        { command: 'ai', description: '🧠 Ask bazaarGuru AI assistant' },
         { command: 'settings', description: '⚙️ Notification settings' },
         { command: 'language', description: '🌐 Change language' },
         { command: 'help', description: '🆘 Show help and support' }
@@ -135,7 +135,7 @@ class MenuFixBot {
     console.log('   📖 /guide - Complete guide');
     console.log('   💰 /cashback - My cashback');
     console.log('   🎲 /random - Random deal');
-    console.log('   🧠 /ai - Ask Zabardoo AI');
+    console.log('   🧠 /ai - Ask bazaarGuru AI');
     console.log('   ⚙️ /settings - Settings');
     console.log('   🌐 /language - Language');
     console.log('   🆘 /help - Help');

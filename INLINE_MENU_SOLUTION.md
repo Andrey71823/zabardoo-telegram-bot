@@ -18,13 +18,13 @@ Row 5: [💰 Cashback] [🆘 Help]
 ### 🎯 REPLY KEYBOARD (внизу экрана - остается):
 ```
 Row 1: [🔍 Find Deals] [🎮 My Profile] [📖 Guide]
-Row 2: [💰 Cashback] [🎲 Random Deal] [💬 Ask Zabardoo]
+Row 2: [💰 Cashback] [🎲 Random Deal] [💬 Ask bazaarGuru]
 Row 3: [⚙️ Settings] [🌐 Language] [🆘 Help]
 ```
 
 ## 🔧 Созданные файлы
 
-### 1. `scripts/inline-menu-zabardoo-bot.js` ⭐ ГЛАВНЫЙ
+### 1. `scripts/inline-menu-bazaarGuru-bot.js` ⭐ ГЛАВНЫЙ
 - **Inline кнопки** в welcome сообщении (как на скриншоте)
 - **Reply keyboard** внизу экрана (остается как есть)
 - Обе системы работают независимо
@@ -40,7 +40,7 @@ Row 3: [⚙️ Settings] [🌐 Language] [🆘 Help]
 ### Как будет выглядеть:
 ```
 ┌─────────────────────────────────┐
-│ 🎉 Welcome to Zabardoo Enhanced │
+│ 🎉 Welcome to bazaarGuru Enhanced │
 │ Bot, Andre_web! 🌟              │
 │                                 │
 │ 🚀 I'm your AI-powered deal... │
@@ -54,7 +54,7 @@ Row 3: [⚙️ Settings] [🌐 Language] [🆘 Help]
                  ↓
 ┌─────────────────────────────────┐
 │ [🔍 Find Deals] [🎮 My Profile] [📖 Guide]       │ ← REPLY
-│ [💰 Cashback] [🎲 Random Deal] [💬 Ask Zabardoo] │
+│ [💰 Cashback] [🎲 Random Deal] [💬 Ask bazaarGuru] │
 │ [⚙️ Settings] [🌐 Language] [🆘 Help]            │
 └─────────────────────────────────┘
 ```
@@ -97,7 +97,7 @@ const inlineMainMenu = {
 const replyKeyboard = {
   keyboard: [
     ['🔍 Find Deals', '🎮 My Profile', '📖 Guide'],
-    ['💰 Cashback', '🎲 Random Deal', '💬 Ask Zabardoo'],
+    ['💰 Cashback', '🎲 Random Deal', '💬 Ask bazaarGuru'],
     ['⚙️ Settings', '🌐 Language', '🆘 Help']
   ],
   resize_keyboard: true,
@@ -144,7 +144,7 @@ node scripts/test-inline-menu.js
 
 ### Запуск бота:
 ```bash
-node scripts/inline-menu-zabardoo-bot.js
+node scripts/inline-menu-bazaarGuru-bot.js
 ```
 
 ### Проверка в Telegram:
@@ -186,7 +186,7 @@ Row 5: [💰 Cashback] [🆘 Help]
 - ✅ Готово к использованию
 
 ### 🚀 Рекомендация:
-**Используйте `scripts/inline-menu-zabardoo-bot.js`** - это именно то, что вы просили!
+**Используйте `scripts/inline-menu-bazaarGuru-bot.js`** - это именно то, что вы просили!
 
 ---
 

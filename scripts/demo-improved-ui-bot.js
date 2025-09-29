@@ -6,7 +6,7 @@ const colors = require('colors');
 // Telegram bot token
 const token = '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
 
-class ImprovedUIZabardooBot {
+class ImprovedUIbazaarGuruBot {
   constructor() {
     this.bot = new TelegramBot(token, { polling: true });
     this.users = new Map();
@@ -110,7 +110,7 @@ class ImprovedUIZabardooBot {
       this.handleCallbackQuery(callbackQuery);
     });
 
-    console.log('🤖 Improved UI Zabardoo Bot is running...'.green.bold);
+    console.log('🤖 Improved UI bazaarGuru Bot is running...'.green.bold);
     console.log('Try sending /start to the bot!'.yellow);
   }
 
@@ -141,7 +141,7 @@ class ImprovedUIZabardooBot {
       });
     }
 
-    const welcomeMessage = `🎉 Welcome to Zabardoo, ${userName}!
+    const welcomeMessage = `🎉 Welcome to bazaarGuru, ${userName}!
 
 I'm your AI-powered coupon assistant for India! 
 
@@ -291,7 +291,7 @@ ${coupon.title}
     const keyboard = {
       inline_keyboard: [
         [
-          { text: '🛒 Get Deal', url: 'https://zabardoo.com' },
+          { text: '🛒 Get Deal', url: 'https://bazaarGuru.com' },
           { text: '📋 Copy Code', callback_data: `copy_${coupon.id}` }
         ],
         [
@@ -428,7 +428,7 @@ Best offers from ${store}:`);
   async handleHelp(msg) {
     const chatId = msg.chat.id;
 
-    const helpMessage = `❓ Zabardoo Bot Help
+    const helpMessage = `❓ bazaarGuru Bot Help
 
 🤖 Commands:
 /menu - Show main menu
@@ -570,7 +570,7 @@ Most popular deals right now:`;
   async showSettings(chatId) {
     const settingsMessage = `⚙️ Settings
 
-Customize your Zabardoo experience:`;
+Customize your bazaarGuru experience:`;
 
     const keyboard = {
       inline_keyboard: [
@@ -664,7 +664,7 @@ Choose a specific store or browse all deals:`;
   }
 
   start() {
-    console.log('🚀 Starting Improved UI Zabardoo Bot...'.green.bold);
+    console.log('🚀 Starting Improved UI bazaarGuru Bot...'.green.bold);
     console.log('✅ Bot is ready with enhanced navigation!'.green);
     
     process.on('SIGINT', () => {
@@ -677,8 +677,8 @@ Choose a specific store or browse all deals:`;
 
 // Start the bot
 if (require.main === module) {
-  const bot = new ImprovedUIZabardooBot();
+  const bot = new ImprovedUIbazaarGuruBot();
   bot.start();
 }
 
-module.exports = ImprovedUIZabardooBot;
+module.exports = ImprovedUIbazaarGuruBot;

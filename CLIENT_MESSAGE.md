@@ -1,8 +1,8 @@
-# 📱 Zabardoo Telegram Bot - MVP Ready for Testing!
+# 📱 bazaarGuru Telegram Bot - MVP Ready for Testing!
 
 Привет! 🎉
 
-Рад сообщить, что **MVP Zabardoo Telegram Bot готов для тестирования**! 
+Рад сообщить, что **MVP bazaarGuru Telegram Bot готов для тестирования**! 
 
 ## 🚀 Что реализовано
 
@@ -27,8 +27,8 @@
 
 ## 🎯 **Как протестировать**
 
-### Telegram Bot: `@zabardoo_deals_bot`
-*(или используйте прямую ссылку: t.me/zabardoo_deals_bot)*
+### Telegram Bot: `@bazaarGuru_deals_bot`
+*(или используйте прямую ссылку: t.me/bazaarGuru_deals_bot)*
 
 **Быстрый тест (3-5 минут):**
 1. Отправьте `/start` боту

@@ -15,7 +15,7 @@ const inlineMainMenu = {
     [
       { text: '💰 Cashback', callback_data: 'cashback' },
       { text: '🎲 Random Deal', callback_data: 'random_deal' },
-      { text: '💬 Ask Zabardoo', callback_data: 'ask_zabardoo' }
+      { text: '💬 Ask BazaarGuru', callback_data: 'ask_bazaarguru' }
     ],
     [
       { text: '⚙️ Settings', callback_data: 'settings' },
@@ -29,7 +29,7 @@ const inlineMainMenu = {
 const replyKeyboard = {
   keyboard: [
     ['🔍 Find Deals', '🎮 My Profile', '📖 Guide'],
-    ['💰 Cashback', '🎲 Random Deal', '💬 Ask Zabardoo'],
+    ['💰 Cashback', '🎲 Random Deal', '💬 Ask BazaarGuru'],
     ['⚙️ Settings', '🌐 Language', '🆘 Help']
   ],
   resize_keyboard: true,
@@ -41,7 +41,7 @@ bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const firstName = msg.from.first_name || 'Friend';
   
-  const welcomeMessage = `🎉 Welcome to Zabardoo Enhanced Bot, ${firstName}! 🌟
+  const welcomeMessage = `🎉 Welcome to BazaarGuru Enhanced Bot, ${firstName}! 🌟
 
 🚀 I'm your AI-powered deal discovery assistant!
 
@@ -77,7 +77,7 @@ Ready to save some serious money? Let's go! 🚀
 // ФУНКЦИИ - СКОПИРОВАНЫ С ВЕРХНИХ КНОПОК
 
 async function handleGuide(chatId) {
-  const guideMessage = `📖 *Zabardoo Shopping Guide*
+  const guideMessage = `📖 *BazaarGuru Shopping Guide*
 
 🛍️ *How to Shop Smart:*
 
@@ -221,8 +221,8 @@ async function handleRandomDeal(chatId) {
   });
 }
 
-async function handleAskZabardoo(chatId) {
-  const askMessage = `💬 *Ask Zabardoo*
+async function handleAskBazaarGuru(chatId) {
+  const askMessage = `💬 *Ask BazaarGuru*
 
 🤖 I'm here to help you with:
 
@@ -317,7 +317,7 @@ async function handleHelp(chatId) {
 🛍️ **Shopping Help:**
 • 🔍 Find Deals - search any product
 • 🎲 Random Deal - discover surprise offers
-• 💬 Ask Zabardoo - get shopping advice
+• 💬 Ask BazaarGuru - get shopping advice
 • 💰 Cashback - track your earnings
 
 📞 **Contact Support:**
@@ -370,8 +370,8 @@ bot.on('callback_query', async (callbackQuery) => {
         await handleRandomDeal(chatId);
         break;
       
-      case 'ask_zabardoo':
-        await handleAskZabardoo(chatId);
+      case 'ask_bazaarguru':
+        await handleAskBazaarGuru(chatId);
         break;
       
       case 'settings':
@@ -432,9 +432,9 @@ bot.on('message', async (msg) => {
         await handleRandomDeal(chatId);
         break;
       
-      case '💬 Ask Zabardoo':
-        console.log('✅ Calling handleAskZabardoo for lower button');
-        await handleAskZabardoo(chatId);
+      case '💬 Ask BazaarGuru':
+        console.log('✅ Calling handleAskBazaarGuru for lower button');
+        await handleAskBazaarGuru(chatId);
         break;
       
       case '⚙️ Settings':

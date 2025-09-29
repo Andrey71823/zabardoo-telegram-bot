@@ -451,7 +451,7 @@ class PerformanceTestSuite {
   }
 
   generateTextSummary() {
-    let summary = 'ZABARDOO TELEGRAM BOT - PERFORMANCE TEST SUMMARY\n';
+    let summary = 'bazaarGuru TELEGRAM BOT - PERFORMANCE TEST SUMMARY\n';
     summary += '=' .repeat(60) + '\n\n';
     
     summary += `Test Date: ${this.results.timestamp}\n`;

@@ -1,10 +1,10 @@
 # DigitalOcean App Platform Configuration
-name: zabardoo-telegram-bot
+name: bazaarGuru-telegram-bot
 services:
 - name: web
   source_dir: /
   github:
-    repo: Andrey7823/zabardoo-telegram-bot
+    repo: Andrey7823/bazaarGuru-telegram-bot
     branch: main
     deploy_on_push: true
   run_command: npm start
@@ -43,10 +43,10 @@ services:
     value: YOUR_JWT_SECRET_HERE
     type: SECRET
   - key: WEBHOOK_URL
-    value: https://zabardoo-telegram-bot-xxxxx.ondigitalocean.app/webhook
+    value: https://bazaarGuru-telegram-bot-xxxxx.ondigitalocean.app/webhook
 
 databases:
-- name: zabardoo-db
+- name: bazaarGuru-db
   engine: PG
   version: "15"
   size: db-s-1vcpu-1gb

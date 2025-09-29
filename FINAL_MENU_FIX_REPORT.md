@@ -24,7 +24,7 @@
 {
   keyboard: [
     ['🔍 Find Deals', '🎮 My Profile', '📖 Guide'],
-    ['💰 Cashback', '🎲 Random Deal', '🧠 Ask Zabardoo'],
+    ['💰 Cashback', '🎲 Random Deal', '🧠 Ask bazaarGuru'],
     ['⚙️ Settings', '🌐 Language', '🆘 Help']
   ],
   resize_keyboard: true,
@@ -38,7 +38,7 @@
 - `📖 Guide` → `handleGuide()`
 - `💰 Cashback` → `handleCashback()`
 - `🎲 Random Deal` → `handleRandomDeal()`
-- `🧠 Ask Zabardoo` → `handleAskZabardoo()`
+- `🧠 Ask bazaarGuru` → `handleAskbazaarGuru()`
 - `⚙️ Settings` → `handleSettings()`
 - `🌐 Language` → `handleLanguage()`
 - `🆘 Help` → `handleHelp()`
@@ -88,14 +88,14 @@ npm run fix:all-menus
 ### Нижнее меню (ReplyKeyboard):
 ```
 Ряд 1: 🔍 Find Deals | 🎮 My Profile | 📖 Guide
-Ряд 2: 💰 Cashback | 🎲 Random Deal | 🧠 Ask Zabardoo  
+Ряд 2: 💰 Cashback | 🎲 Random Deal | 🧠 Ask bazaarGuru  
 Ряд 3: ⚙️ Settings | 🌐 Language | 🆘 Help
 ```
 
 ### Верхнее меню (InlineKeyboard) - осталось как было:
 ```
 Ряд 1: 🔍 Find Deals | 🎮 My Profile | 📖 Guide
-Ряд 2: 💰 Cashback | 🎲 Random Deal | 🧠 Ask Zabardoo
+Ряд 2: 💰 Cashback | 🎲 Random Deal | 🧠 Ask bazaarGuru
 Ряд 3: ⚙️ Settings | 🌐 Language | 🆘 Help
 ```
 

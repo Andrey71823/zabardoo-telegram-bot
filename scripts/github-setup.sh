@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# GitHub Setup Script for Zabardoo Telegram Bot
+# GitHub Setup Script for bazaarGuru Telegram Bot
 
-echo "🚀 Настройка GitHub репозитория для Zabardoo Telegram Bot"
+echo "🚀 Настройка GitHub репозитория для bazaarGuru Telegram Bot"
 
 # Проверяем, установлен ли git
 if ! command -v git &> /dev/null; then
@@ -20,7 +20,7 @@ git add .
 
 # Создаем первый коммит
 echo "💾 Создание первого коммита..."
-git commit -m "Initial commit: Zabardoo Telegram Bot with AI features
+git commit -m "Initial commit: bazaarGuru Telegram Bot with AI features
 
 Features:
 - Telegram Bot with menu system
@@ -40,7 +40,7 @@ git branch -M main
 
 # Добавляем remote origin
 echo "🔗 Добавление remote origin..."
-echo "Введите URL вашего GitHub репозитория (например: https://github.com/Andrey7823/zabardoo-telegram-bot.git):"
+echo "Введите URL вашего GitHub репозитория (например: https://github.com/Andrey7823/bazaarGuru-telegram-bot.git):"
 read REPO_URL
 
 if [ -z "$REPO_URL" ]; then

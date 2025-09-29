@@ -5,7 +5,7 @@ const TelegramBot = require('node-telegram-bot-api');
 // Telegram bot token
 const token = '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
 
-class FixedMenuZabardooBot {
+class FixedMenubazaarGuruBot {
   constructor() {
     this.bot = new TelegramBot(token, { polling: true });
     this.users = new Map();
@@ -170,7 +170,7 @@ class FixedMenuZabardooBot {
     // Set bot commands
     this.setBotCommands();
 
-    console.log('🤖 Fixed Menu Zabardoo Bot is running...');
+    console.log('🤖 Fixed Menu bazaarGuru Bot is running...');
     console.log('📋 Main keyboard: 2 rows with Guide button');
     console.log('📋 Category keyboard: 5 rows with AI Recommendations and Hot Deals');
   }
@@ -210,7 +210,7 @@ class FixedMenuZabardooBot {
       });
     }
 
-    const welcomeMessage = `🎉 Welcome to Zabardoo, ${userName}!
+    const welcomeMessage = `🎉 Welcome to bazaarGuru, ${userName}!
 
 I'm your AI-powered coupon assistant for India! 
 
@@ -342,7 +342,7 @@ Just tap any option to get started.`;
   }
 
   async handleMyProfile(chatId, userName) {
-    const profileMessage = `🎮 **Your Zabardoo Profile**
+    const profileMessage = `🎮 **Your bazaarGuru Profile**
 
 👤 **User:** ${userName}
 💎 **Level:** 5
@@ -482,8 +482,8 @@ Keep exploring to unlock more rewards!`;
     await this.bot.sendMessage(chatId, dealMessage, { parse_mode: 'Markdown' });
   }
 
-  async handleAskZabardoo(chatId, userName) {
-    const aiMessage = `🧠 **Ask Zabardoo AI Assistant**
+  async handleAskbazaarGuru(chatId, userName) {
+    const aiMessage = `🧠 **Ask bazaarGuru AI Assistant**
 
 � **Hi ${userName}! I'm your personal shopping AI!**
 
@@ -571,7 +571,7 @@ Available languages:`;
   }
 
   async handleHelp(chatId) {
-    const helpMessage = `🆘 **Zabardoo Bot Quick Help**
+    const helpMessage = `🆘 **bazaarGuru Bot Quick Help**
 
 🎯 **Main Functions:**
 • Find deals and get cashback
@@ -639,7 +639,7 @@ ${coupon.title}
     const keyboard = {
       inline_keyboard: [
         [
-          { text: '🛒 Get This Deal', url: 'https://zabardoo.com' },
+          { text: '🛒 Get This Deal', url: 'https://bazaarGuru.com' },
           { text: '📋 Copy Code', callback_data: `copy_code_${coupon.id}` }
         ],
         [
@@ -687,7 +687,7 @@ Choose a category below for more specific deals:`;
         break;
 
       case 'profile':
-        responseText = `🎮 **Your Zabardoo Profile**
+        responseText = `🎮 **Your bazaarGuru Profile**
 
 👤 **User:** ${userName}
 💎 **Level:** 5
@@ -790,7 +790,7 @@ Current Settings:
         break;
 
       case 'help':
-        responseText = `🆘 **Zabardoo Bot Quick Help**
+        responseText = `🆘 **bazaarGuru Bot Quick Help**
 
 🎯 **Main Functions:**
 • Find deals and get cashback
@@ -1086,8 +1086,8 @@ Example: "Please add more electronics deals from Xiaomi"
   }
 
   start() {
-    console.log('🚀 Starting Fixed Menu Zabardoo Bot...');
-    console.log('📱 Bot Username: @zabardoo_deals_bot');
+    console.log('🚀 Starting Fixed Menu bazaarGuru Bot...');
+    console.log('📱 Bot Username: @bazaarGuru_deals_bot');
     console.log('✅ Bot is ready with CORRECT keyboard structure!');
     console.log('');
     console.log('📋 Main Keyboard Structure:');
@@ -1116,8 +1116,8 @@ Example: "Please add more electronics deals from Xiaomi"
 
 // Start the bot if run directly
 if (require.main === module) {
-  const zabardooBot = new FixedMenuZabardooBot();
-  zabardooBot.start();
+  const bazaarGuruBot = new FixedMenubazaarGuruBot();
+  bazaarGuruBot.start();
 }
 
-module.exports = FixedMenuZabardooBot;
+module.exports = FixedMenubazaarGuruBot;

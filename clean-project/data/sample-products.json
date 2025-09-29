@@ -1,0 +1,937 @@
+[
+    {
+        "storeSlug":  "flipkart",
+        "id":  "flipkart-iphone15-pro-256",
+        "minOrder":  120000,
+        "price":  134990,
+        "couponCode":  "IPHONE15000",
+        "lastChecked":  "2025-09-24T10:00:00.000Z",
+        "couponType":  "amount",
+        "store":  "Flipkart",
+        "originalPrice":  149900,
+        "couponValue":  15000,
+        "storePrices":  [
+                            {
+                                "price":  134990,
+                                "store":  "Flipkart"
+                            },
+                            {
+                                "price":  136999,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  139990,
+                                "store":  "Croma"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.flipkart.com/apple-iphone-15-pro-256gb/p/itm-15pro",
+        "discountPercent":  10,
+        "cashbackPercent":  3,
+        "name":  "Apple iPhone 15 Pro 256GB",
+        "category":  "electronics",
+        "brand":  "Apple",
+        "highlights":  [
+                           "A17 Pro chip",
+                           "USB-C charging",
+                           "Exchange bonus up to ?6,000"
+                       ]
+    },
+    {
+        "storeSlug":  "amazon",
+        "id":  "amazon-oneplus-12-5g",
+        "minOrder":  50000,
+        "price":  62999,
+        "couponCode":  "OP12SAVE4000",
+        "lastChecked":  "2025-09-24T10:05:00.000Z",
+        "couponType":  "amount",
+        "store":  "Amazon",
+        "originalPrice":  69999,
+        "couponValue":  4000,
+        "storePrices":  [
+                            {
+                                "price":  62999,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  63999,
+                                "store":  "Flipkart"
+                            },
+                            {
+                                "price":  64999,
+                                "store":  "Croma"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.amazon.in/dp/B0CPDS3RFM",
+        "discountPercent":  10,
+        "cashbackPercent":  2,
+        "name":  "OnePlus 12 5G 12/256",
+        "category":  "electronics",
+        "brand":  "OnePlus",
+        "highlights":  [
+                           "Snapdragon 8 Gen 3",
+                           "100W SuperVOOC",
+                           "Bank offer extra ?4,000"
+                       ]
+    },
+    {
+        "storeSlug":  "croma",
+        "id":  "croma-macbook-air-m3",
+        "minOrder":  110000,
+        "price":  124990,
+        "couponCode":  "MACAIR5000",
+        "lastChecked":  "2025-09-24T10:10:00.000Z",
+        "couponType":  "amount",
+        "store":  "Croma",
+        "originalPrice":  139900,
+        "couponValue":  5000,
+        "storePrices":  [
+                            {
+                                "price":  124990,
+                                "store":  "Croma"
+                            },
+                            {
+                                "price":  126990,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  128990,
+                                "store":  "Flipkart"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.croma.com/apple-macbook-air-m3/p/air-m3",
+        "discountPercent":  11,
+        "cashbackPercent":  4,
+        "name":  "Apple MacBook Air M3 16/512",
+        "category":  "electronics",
+        "brand":  "Apple",
+        "highlights":  [
+                           "Liquid Retina display",
+                           "18-hour battery",
+                           "Student plan extra 5%"
+                       ]
+    },
+    {
+        "storeSlug":  "flipkart",
+        "id":  "flipkart-sony-wh1000xm5",
+        "minOrder":  20000,
+        "price":  25990,
+        "couponCode":  "SONY1500",
+        "lastChecked":  "2025-09-24T10:12:00.000Z",
+        "couponType":  "amount",
+        "store":  "Flipkart",
+        "originalPrice":  34990,
+        "couponValue":  1500,
+        "storePrices":  [
+                            {
+                                "price":  25990,
+                                "store":  "Flipkart"
+                            },
+                            {
+                                "price":  26990,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  27490,
+                                "store":  "Croma"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.flipkart.com/sony-wh-1000xm5/p/sony-m5",
+        "discountPercent":  26,
+        "cashbackPercent":  4,
+        "name":  "Sony WH-1000XM5 ANC Headphones",
+        "category":  "electronics",
+        "brand":  "Sony",
+        "highlights":  [
+                           "Top-rated noise cancelling",
+                           "30-hour playback",
+                           "Travel case included"
+                       ]
+    },
+    {
+        "storeSlug":  "amazon",
+        "id":  "amazon-samsung-qled-55",
+        "minOrder":  60000,
+        "price":  95999,
+        "couponCode":  "TV2000",
+        "lastChecked":  "2025-09-24T10:15:00.000Z",
+        "couponType":  "amount",
+        "store":  "Amazon",
+        "originalPrice":  129999,
+        "couponValue":  2000,
+        "storePrices":  [
+                            {
+                                "price":  95999,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  97999,
+                                "store":  "Flipkart"
+                            },
+                            {
+                                "price":  98999,
+                                "store":  "Croma"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.amazon.in/dp/B0BQLED55",
+        "discountPercent":  26,
+        "cashbackPercent":  3,
+        "name":  "Samsung Neo QLED 55-inch 4K Smart TV",
+        "category":  "electronics",
+        "brand":  "Samsung",
+        "highlights":  [
+                           "Mini LED backlight",
+                           "Dolby Atmos",
+                           "Free installation"
+                       ]
+    },
+    {
+        "storeSlug":  "flipkart",
+        "id":  "flipkart-ps5-slim",
+        "minOrder":  40000,
+        "price":  47990,
+        "couponCode":  "GAME5000",
+        "lastChecked":  "2025-09-24T10:18:00.000Z",
+        "couponType":  "amount",
+        "store":  "Flipkart",
+        "originalPrice":  54990,
+        "couponValue":  5000,
+        "storePrices":  [
+                            {
+                                "price":  47990,
+                                "store":  "Flipkart"
+                            },
+                            {
+                                "price":  48990,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  49990,
+                                "store":  "Croma"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.flipkart.com/sony-ps5-slim/p/ps5slim",
+        "discountPercent":  13,
+        "cashbackPercent":  5,
+        "name":  "Sony PlayStation 5 Slim Bundle",
+        "category":  "electronics",
+        "brand":  "Sony",
+        "highlights":  [
+                           "Includes Spider-Man 2 voucher",
+                           "DualSense controller bundled"
+                       ]
+    },
+    {
+        "storeSlug":  "croma",
+        "id":  "croma-dyson-v15",
+        "minOrder":  45000,
+        "price":  56900,
+        "couponCode":  "DYSON4000",
+        "lastChecked":  "2025-09-24T10:20:00.000Z",
+        "couponType":  "amount",
+        "store":  "Croma",
+        "originalPrice":  65900,
+        "couponValue":  4000,
+        "storePrices":  [
+                            {
+                                "price":  56900,
+                                "store":  "Croma"
+                            },
+                            {
+                                "price":  57900,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  58900,
+                                "store":  "Flipkart"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.croma.com/dyson-v15-detect/p/dyson-v15",
+        "discountPercent":  14,
+        "cashbackPercent":  5,
+        "name":  "Dyson V15 Detect Absolute Vacuum",
+        "category":  "home",
+        "brand":  "Dyson",
+        "highlights":  [
+                           "Laser dust detection",
+                           "10 attachments",
+                           "Doorstep demo"
+                       ]
+    },
+    {
+        "storeSlug":  "amazon",
+        "id":  "amazon-samsung-ecobubble",
+        "minOrder":  40000,
+        "price":  47999,
+        "couponCode":  "WASH2500",
+        "lastChecked":  "2025-09-24T10:22:00.000Z",
+        "couponType":  "amount",
+        "store":  "Amazon",
+        "originalPrice":  58999,
+        "couponValue":  2500,
+        "storePrices":  [
+                            {
+                                "price":  47999,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  48999,
+                                "store":  "Flipkart"
+                            },
+                            {
+                                "price":  49999,
+                                "store":  "Croma"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.amazon.in/dp/B0C8J8WASH",
+        "discountPercent":  19,
+        "cashbackPercent":  3,
+        "name":  "Samsung Ecobubble 8kg Washer Dryer",
+        "category":  "home",
+        "brand":  "Samsung",
+        "highlights":  [
+                           "AI wash programmes",
+                           "5-year motor warranty",
+                           "Installation within 24h"
+                       ]
+    },
+    {
+        "storeSlug":  "ajio",
+        "id":  "ajio-apple-watch-se",
+        "minOrder":  20000,
+        "price":  23999,
+        "couponCode":  "WATCH1000",
+        "lastChecked":  "2025-09-24T10:24:00.000Z",
+        "couponType":  "amount",
+        "store":  "Ajio",
+        "originalPrice":  29990,
+        "couponValue":  1000,
+        "storePrices":  [
+                            {
+                                "price":  23999,
+                                "store":  "Ajio"
+                            },
+                            {
+                                "price":  24499,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  24999,
+                                "store":  "Flipkart"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.ajio.com/apple-watch-se/p/watch-se",
+        "discountPercent":  20,
+        "cashbackPercent":  3,
+        "name":  "Apple Watch SE GPS 44mm",
+        "category":  "electronics",
+        "brand":  "Apple",
+        "highlights":  [
+                           "Crash detection",
+                           "Swimproof design",
+                           "Fitness+ 3 months"
+                       ]
+    },
+    {
+        "storeSlug":  "nykaa",
+        "id":  "nykaa-lakme-vitc-kit",
+        "minOrder":  1500,
+        "price":  1899,
+        "couponCode":  "NYKAAFLASH",
+        "lastChecked":  "2025-09-24T10:26:00.000Z",
+        "couponType":  "amount",
+        "store":  "Nykaa",
+        "originalPrice":  2899,
+        "couponValue":  250,
+        "storePrices":  [
+                            {
+                                "price":  1899,
+                                "store":  "Nykaa"
+                            },
+                            {
+                                "price":  1999,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  2049,
+                                "store":  "Flipkart"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.nykaa.com/lakme-vitamin-c-kit/p/112233",
+        "discountPercent":  34,
+        "cashbackPercent":  6,
+        "name":  "Lakme Vitamin C Skincare Kit",
+        "category":  "beauty",
+        "brand":  "Lakme",
+        "highlights":  [
+                           "Serum + day cream + night gel",
+                           "Dermatologist tested"
+                       ]
+    },
+    {
+        "storeSlug":  "myntra",
+        "id":  "myntra-puma-hoodie",
+        "minOrder":  1999,
+        "price":  2799,
+        "couponCode":  "PUMAEXTRA",
+        "lastChecked":  "2025-09-24T10:28:00.000Z",
+        "couponType":  "percent",
+        "store":  "Myntra",
+        "originalPrice":  4599,
+        "couponValue":  8,
+        "storePrices":  [
+                            {
+                                "price":  2799,
+                                "store":  "Myntra"
+                            },
+                            {
+                                "price":  2899,
+                                "store":  "Ajio"
+                            },
+                            {
+                                "price":  2999,
+                                "store":  "Amazon"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.myntra.com/hoodies/puma/power-colourblock/998877",
+        "discountPercent":  39,
+        "cashbackPercent":  4,
+        "name":  "Puma Power Colourblock Hoodie",
+        "category":  "fashion",
+        "brand":  "Puma",
+        "highlights":  [
+                           "French terry fabric",
+                           "Easy returns",
+                           "Trending pick"
+                       ]
+    },
+    {
+        "storeSlug":  "myntra",
+        "id":  "myntra-levis-541-jeans",
+        "minOrder":  2499,
+        "price":  3299,
+        "couponCode":  "MYNTRA300",
+        "lastChecked":  "2025-09-24T10:30:00.000Z",
+        "couponType":  "amount",
+        "store":  "Myntra",
+        "originalPrice":  5499,
+        "couponValue":  300,
+        "storePrices":  [
+                            {
+                                "price":  3299,
+                                "store":  "Myntra"
+                            },
+                            {
+                                "price":  3399,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  3499,
+                                "store":  "Flipkart"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.myntra.com/jeans/levis/541-athletic-taper/12345678",
+        "discountPercent":  40,
+        "cashbackPercent":  5,
+        "name":  "Levi\u0027s 541 Athletic Taper Jeans",
+        "category":  "fashion",
+        "brand":  "Levi\u0027s",
+        "highlights":  [
+                           "Stretch denim",
+                           "Free tailoring",
+                           "30-day return"
+                       ]
+    },
+    {
+        "storeSlug":  "ajio",
+        "id":  "ajio-zara-dress",
+        "minOrder":  1499,
+        "price":  1999,
+        "couponCode":  "ZARA300",
+        "lastChecked":  "2025-09-24T10:32:00.000Z",
+        "couponType":  "amount",
+        "store":  "Ajio",
+        "originalPrice":  3999,
+        "couponValue":  300,
+        "storePrices":  [
+                            {
+                                "price":  1999,
+                                "store":  "Ajio"
+                            },
+                            {
+                                "price":  2099,
+                                "store":  "Myntra"
+                            },
+                            {
+                                "price":  2199,
+                                "store":  "Amazon"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.ajio.com/zara-satin-wrap-dress/p/zara-dress",
+        "discountPercent":  50,
+        "cashbackPercent":  3,
+        "name":  "Zara Satin Wrap Dress",
+        "category":  "fashion",
+        "brand":  "Zara",
+        "highlights":  [
+                           "Event-ready satin",
+                           "Free express shipping"
+                       ]
+    },
+    {
+        "storeSlug":  "myntra",
+        "id":  "myntra-nike-air-max",
+        "minOrder":  3999,
+        "price":  4999,
+        "couponCode":  "NIKE1000",
+        "lastChecked":  "2025-09-24T10:34:00.000Z",
+        "couponType":  "amount",
+        "store":  "Myntra",
+        "originalPrice":  12999,
+        "couponValue":  1000,
+        "storePrices":  [
+                            {
+                                "price":  4999,
+                                "store":  "Myntra"
+                            },
+                            {
+                                "price":  5299,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  5499,
+                                "store":  "Ajio"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.myntra.com/shoes/nike/air-max-270/112200",
+        "discountPercent":  61,
+        "cashbackPercent":  4,
+        "name":  "Nike Air Max 270 Sneakers",
+        "category":  "fashion",
+        "brand":  "Nike",
+        "highlights":  [
+                           "Air cushioning",
+                           "Next-day delivery"
+                       ]
+    },
+    {
+        "storeSlug":  "flipkart",
+        "id":  "flipkart-adidas-kids-hoodie",
+        "minOrder":  1499,
+        "price":  1899,
+        "couponCode":  "KIDS200",
+        "lastChecked":  "2025-09-24T10:36:00.000Z",
+        "couponType":  "amount",
+        "store":  "Flipkart",
+        "originalPrice":  2999,
+        "couponValue":  200,
+        "storePrices":  [
+                            {
+                                "price":  1899,
+                                "store":  "Flipkart"
+                            },
+                            {
+                                "price":  1999,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  2049,
+                                "store":  "Myntra"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.flipkart.com/adidas-kids-hoodie/p/adidas-kids",
+        "discountPercent":  37,
+        "cashbackPercent":  3,
+        "name":  "Adidas Kids Hoodie Set",
+        "category":  "fashion",
+        "brand":  "Adidas",
+        "highlights":  [
+                           "Soft cotton blend",
+                           "Free size exchange"
+                       ]
+    },
+    {
+        "storeSlug":  "nykaa",
+        "id":  "nykaa-maybelline-matte-ink",
+        "minOrder":  399,
+        "price":  499,
+        "couponCode":  "BEAUTY50",
+        "lastChecked":  "2025-09-24T10:38:00.000Z",
+        "couponType":  "amount",
+        "store":  "Nykaa",
+        "originalPrice":  799,
+        "couponValue":  50,
+        "storePrices":  [
+                            {
+                                "price":  499,
+                                "store":  "Nykaa"
+                            },
+                            {
+                                "price":  529,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  549,
+                                "store":  "Flipkart"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.nykaa.com/maybelline-superstay/p/lipstick",
+        "discountPercent":  38,
+        "cashbackPercent":  5,
+        "name":  "Maybelline SuperStay Matte Ink",
+        "category":  "beauty",
+        "brand":  "Maybelline",
+        "highlights":  [
+                           "16-hour stay",
+                           "Best-selling shade"
+                       ]
+    },
+    {
+        "storeSlug":  "nykaa",
+        "id":  "nykaa-forest-essentials-kit",
+        "minOrder":  2999,
+        "price":  3499,
+        "couponCode":  "FE300",
+        "lastChecked":  "2025-09-24T10:40:00.000Z",
+        "couponType":  "amount",
+        "store":  "Nykaa",
+        "originalPrice":  4499,
+        "couponValue":  300,
+        "storePrices":  [
+                            {
+                                "price":  3499,
+                                "store":  "Nykaa"
+                            },
+                            {
+                                "price":  3599,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  3699,
+                                "store":  "Sephora"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.nykaa.com/forest-essentials-glow-kit/p/glowkit",
+        "discountPercent":  22,
+        "cashbackPercent":  4,
+        "name":  "Forest Essentials Glow Ritual Kit",
+        "category":  "beauty",
+        "brand":  "Forest Essentials",
+        "highlights":  [
+                           "Ayurvedic trio",
+                           "Gift-ready box"
+                       ]
+    },
+    {
+        "storeSlug":  "amazon",
+        "id":  "amazon-philips-hairdryer",
+        "minOrder":  2499,
+        "price":  3299,
+        "couponCode":  "STYLE400",
+        "lastChecked":  "2025-09-24T10:42:00.000Z",
+        "couponType":  "amount",
+        "store":  "Amazon",
+        "originalPrice":  4899,
+        "couponValue":  400,
+        "storePrices":  [
+                            {
+                                "price":  3299,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  3399,
+                                "store":  "Nykaa"
+                            },
+                            {
+                                "price":  3499,
+                                "store":  "Flipkart"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.amazon.in/dp/B0BPHILIPS",
+        "discountPercent":  33,
+        "cashbackPercent":  3,
+        "name":  "Philips MoistureProtect Hair Dryer",
+        "category":  "beauty",
+        "brand":  "Philips",
+        "highlights":  [
+                           "Ionic care",
+                           "Cool shot button"
+                       ]
+    },
+    {
+        "storeSlug":  "ajio",
+        "id":  "ajio-nike-run-fast",
+        "minOrder":  4999,
+        "price":  5999,
+        "couponCode":  "RUN800",
+        "lastChecked":  "2025-09-24T10:44:00.000Z",
+        "couponType":  "amount",
+        "store":  "Ajio",
+        "originalPrice":  8995,
+        "couponValue":  800,
+        "storePrices":  [
+                            {
+                                "price":  5999,
+                                "store":  "Ajio"
+                            },
+                            {
+                                "price":  6199,
+                                "store":  "Myntra"
+                            },
+                            {
+                                "price":  6399,
+                                "store":  "Amazon"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.ajio.com/nike-run-fast-3/p/778899",
+        "discountPercent":  33,
+        "cashbackPercent":  5,
+        "name":  "Nike Run Fast 3 Running Shoes",
+        "category":  "sports",
+        "brand":  "Nike",
+        "highlights":  [
+                           "ZoomX cushioning",
+                           "7-day trial"
+                       ]
+    },
+    {
+        "storeSlug":  "amazon",
+        "id":  "amazon-fitbit-charge6",
+        "minOrder":  14999,
+        "price":  15999,
+        "couponCode":  "FIT500",
+        "lastChecked":  "2025-09-24T10:46:00.000Z",
+        "couponType":  "amount",
+        "store":  "Amazon",
+        "originalPrice":  18999,
+        "couponValue":  500,
+        "storePrices":  [
+                            {
+                                "price":  15999,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  16499,
+                                "store":  "Flipkart"
+                            },
+                            {
+                                "price":  16999,
+                                "store":  "Croma"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.amazon.in/dp/B0CFITBIT",
+        "discountPercent":  16,
+        "cashbackPercent":  3,
+        "name":  "Fitbit Charge 6 Fitness Band",
+        "category":  "sports",
+        "brand":  "Fitbit",
+        "highlights":  [
+                           "Google Maps on wrist",
+                           "6-day battery life"
+                       ]
+    },
+    {
+        "storeSlug":  "flipkart",
+        "id":  "flipkart-yonex-nanoray",
+        "minOrder":  2999,
+        "price":  3499,
+        "couponCode":  "SPORT250",
+        "lastChecked":  "2025-09-24T10:48:00.000Z",
+        "couponType":  "amount",
+        "store":  "Flipkart",
+        "originalPrice":  4999,
+        "couponValue":  250,
+        "storePrices":  [
+                            {
+                                "price":  3499,
+                                "store":  "Flipkart"
+                            },
+                            {
+                                "price":  3599,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  3799,
+                                "store":  "Decathlon"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.flipkart.com/yonex-nanoray/p/yonex-nr",
+        "discountPercent":  30,
+        "cashbackPercent":  4,
+        "name":  "Yonex Nanoray Badminton Racket",
+        "category":  "sports",
+        "brand":  "Yonex",
+        "highlights":  [
+                           "Graphite shaft",
+                           "2-year warranty"
+                       ]
+    },
+    {
+        "storeSlug":  "amazon",
+        "id":  "amazon-reebok-yoga-mat",
+        "minOrder":  999,
+        "price":  1499,
+        "couponCode":  "YOGA150",
+        "lastChecked":  "2025-09-24T10:50:00.000Z",
+        "couponType":  "amount",
+        "store":  "Amazon",
+        "originalPrice":  2199,
+        "couponValue":  150,
+        "storePrices":  [
+                            {
+                                "price":  1499,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  1599,
+                                "store":  "Decathlon"
+                            },
+                            {
+                                "price":  1649,
+                                "store":  "Flipkart"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.amazon.in/dp/B0CYOGAMAT",
+        "discountPercent":  32,
+        "cashbackPercent":  2,
+        "name":  "Reebok Core Yoga Mat 8mm",
+        "category":  "sports",
+        "brand":  "Reebok",
+        "highlights":  [
+                           "Anti-slip surface",
+                           "Carry strap included"
+                       ]
+    },
+    {
+        "storeSlug":  "flipkart",
+        "id":  "flipkart-nutribullet-pro",
+        "minOrder":  5999,
+        "price":  6999,
+        "couponCode":  "BLEND500",
+        "lastChecked":  "2025-09-24T10:52:00.000Z",
+        "couponType":  "amount",
+        "store":  "Flipkart",
+        "originalPrice":  9999,
+        "couponValue":  500,
+        "storePrices":  [
+                            {
+                                "price":  6999,
+                                "store":  "Flipkart"
+                            },
+                            {
+                                "price":  7199,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  7399,
+                                "store":  "Croma"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.flipkart.com/nutribullet-pro/p/blender900",
+        "discountPercent":  30,
+        "cashbackPercent":  3,
+        "name":  "NutriBullet Pro 900W Blender",
+        "category":  "home",
+        "brand":  "NutriBullet",
+        "highlights":  [
+                           "900W motor",
+                           "Includes 5 jars"
+                       ]
+    },
+    {
+        "storeSlug":  "croma",
+        "id":  "croma-delonghi-ec685",
+        "minOrder":  20000,
+        "price":  25990,
+        "couponCode":  "CAFE1500",
+        "lastChecked":  "2025-09-24T10:54:00.000Z",
+        "couponType":  "amount",
+        "store":  "Croma",
+        "originalPrice":  32990,
+        "couponValue":  1500,
+        "storePrices":  [
+                            {
+                                "price":  25990,
+                                "store":  "Croma"
+                            },
+                            {
+                                "price":  26990,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  27499,
+                                "store":  "Flipkart"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.croma.com/delonghi-ec685/p/ec685",
+        "discountPercent":  21,
+        "cashbackPercent":  4,
+        "name":  "DeLonghi Espresso Coffee Maker EC685",
+        "category":  "home",
+        "brand":  "DeLonghi",
+        "highlights":  [
+                           "Professional frother",
+                           "Compact metal body"
+                       ]
+    },
+    {
+        "storeSlug":  "amazon",
+        "id":  "amazon-philips-airfryer-xl",
+        "minOrder":  7499,
+        "price":  8999,
+        "couponCode":  "AIRFRY300",
+        "lastChecked":  "2025-09-24T10:56:00.000Z",
+        "couponType":  "amount",
+        "store":  "Amazon",
+        "originalPrice":  12999,
+        "couponValue":  300,
+        "storePrices":  [
+                            {
+                                "price":  8999,
+                                "store":  "Amazon"
+                            },
+                            {
+                                "price":  9299,
+                                "store":  "Flipkart"
+                            },
+                            {
+                                "price":  9499,
+                                "store":  "Croma"
+                            }
+                        ],
+        "currency":  "INR",
+        "link":  "https://www.amazon.in/dp/B0CPHILAF",
+        "discountPercent":  31,
+        "cashbackPercent":  3,
+        "name":  "Philips Digital Air Fryer XL",
+        "category":  "home",
+        "brand":  "Philips",
+        "highlights":  [
+                           "RapidAir technology",
+                           "App recipes access"
+                       ]
+    }
+]

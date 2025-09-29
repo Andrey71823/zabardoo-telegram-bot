@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-// Exact Zabardoo Telegram Bot - Based on Screenshot
+// Exact bazaarGuru Telegram Bot - Based on Screenshot
 const https = require('https');
 const querystring = require('querystring');
 
-class ExactZabardooBot {
+class ExactbazaarGuruBot {
   constructor(token) {
     this.token = token;
     this.baseUrl = `https://api.telegram.org/bot${token}`;
@@ -117,7 +117,7 @@ class ExactZabardooBot {
   }
 
   async start() {
-    console.log('🚀 Starting Exact Zabardoo Telegram Bot...');
+    console.log('🚀 Starting Exact bazaarGuru Telegram Bot...');
     
     // Set bot commands
     await this.setMyCommands();
@@ -493,7 +493,7 @@ Choose a category below for more specific deals:`;
 • 🔔 Enable notifications for best deals
 
 🆘 <b>Need Help?</b>
-• 📧 Email: support@zabardoo.com
+• 📧 Email: support@bazaarGuru.com
 • 💬 Live Chat: Available 24/7
 • 📞 Phone: +91-XXXX-XXXX-XX
 
@@ -582,7 +582,7 @@ if (!token) {
   process.exit(1);
 }
 
-const bot = new ExactZabardooBot(token);
+const bot = new ExactbazaarGuruBot(token);
 bot.start().catch(console.error);
 
 // Graceful shutdown

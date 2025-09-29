@@ -14,7 +14,7 @@ class StressTestRunner {
   }
 
   async runStressTest() {
-    console.log('💥 Starting Stress Test for Zabardoo Telegram Bot');
+    console.log('💥 Starting Stress Test for bazaarGuru Telegram Bot');
     console.log('=' .repeat(60));
     console.log(`Base URL: ${this.baseUrl}`);
     console.log(`Max Concurrency: ${this.maxConcurrency} users`);

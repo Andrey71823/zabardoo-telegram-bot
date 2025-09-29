@@ -309,7 +309,7 @@ class UserManagementTester {
           title: 'Test Notification',
           message: 'This is a test notification from the admin panel.',
           type: 'info',
-          actionUrl: 'https://zabardoo.com/test'
+          actionUrl: 'https://bazaarGuru.com/test'
         }
       };
 

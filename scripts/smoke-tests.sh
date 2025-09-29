@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Zabardoo Telegram Bot Smoke Tests
+# bazaarGuru Telegram Bot Smoke Tests
 # This script runs basic smoke tests to verify deployment health
 
 set -e
@@ -180,7 +180,7 @@ test_response_time() {
 
 # Main execution
 main() {
-    echo "🧪 Starting Smoke Tests for Zabardoo Telegram Bot"
+    echo "🧪 Starting Smoke Tests for bazaarGuru Telegram Bot"
     echo "Base URL: $BASE_URL"
     echo "Timeout: ${TIMEOUT}s"
     echo "Max Retries: $MAX_RETRIES"
@@ -253,7 +253,7 @@ check_dependencies() {
 # Help function
 show_help() {
     cat << EOF
-Zabardoo Smoke Tests
+bazaarGuru Smoke Tests
 
 Usage: $0 [BASE_URL]
 
@@ -266,8 +266,8 @@ Environment Variables:
 
 Examples:
     $0                                    # Test local development server
-    $0 https://staging.zabardoo.com      # Test staging environment
-    $0 https://zabardoo.com              # Test production environment
+    $0 https://staging.bazaarGuru.com      # Test staging environment
+    $0 https://bazaarGuru.com              # Test production environment
 
 EOF
 }

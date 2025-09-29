@@ -105,7 +105,7 @@ CREATE TRIGGER update_sync_configuration_updated_at
 INSERT INTO sync_configuration (name, endpoint, sync_interval, sync_filters) 
 VALUES (
     'Main Website API',
-    'https://api.zabardoo.com/v1/coupons',
+    'https://api.bazaarGuru.com/v1/coupons',
     30, -- синхронизация каждые 30 минут
     '{
         "categories": ["electronics", "fashion", "beauty", "food"],

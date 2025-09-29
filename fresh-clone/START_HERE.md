@@ -1,4 +1,4 @@
-# 🚀 START HERE - Zabardoo Enhanced Telegram Bot
+# 🚀 START HERE - bazaarGuru Enhanced Telegram Bot
 
 ## 🌟 Welcome to the Future of Deal Discovery!
 

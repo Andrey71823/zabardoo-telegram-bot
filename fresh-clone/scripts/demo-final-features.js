@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Demo script for final features: AI Content Tools, Loot Mode, Admin Moderation
-console.log('🎉 ДЕМОНСТРАЦИЯ ФИНАЛЬНЫХ ВОЗМОЖНОСТЕЙ ZABARDOO BOT');
+console.log('🎉 ДЕМОНСТРАЦИЯ ФИНАЛЬНЫХ ВОЗМОЖНОСТЕЙ bazaarGuru BOT');
 console.log('=' .repeat(60));
 
 // Import services
@@ -202,7 +202,7 @@ async function demoLanguageIntegration() {
   console.log('\n🎯 Новые кнопки в боте:');
   console.log('🎲 Random Deal - случайные предложения');
   console.log('🌐 Language Selector - выбор языка');
-  console.log('🧠 Ask Zabardoo - ИИ помощник');
+  console.log('🧠 Ask bazaarGuru - ИИ помощник');
   
   console.log('\n✨ Интеграция завершена в enhanced-guide-bot.js');
 }

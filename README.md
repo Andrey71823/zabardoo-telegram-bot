@@ -1,4 +1,4 @@
-Zabardoo Bot & Dashboards - Quick Start
+BazaarGuru Bot & Dashboards - Quick Start
 
 1) Local run
 - Install Node 18+
@@ -30,7 +30,7 @@ Zabardoo Bot & Dashboards - Quick Start
 - Run: `node scripts/enhanced-guide-bot.js`
 - Set REAL_DATA_MODE=true and Flipkart keys to enable live product results
 
-# 🚀 Zabardoo Enhanced Telegram Bot System
+# 🚀 BazaarGuru Enhanced Telegram Bot System
 
 **The Most Advanced AI-Powered Deal Discovery Bot for the Indian Market**
 
@@ -191,7 +191,7 @@ npm run test:cashback   # Cashback system
 ## 📁 Project Structure
 
 ```
-zabardoo-telegram-bot/
+bazaarguru-telegram-bot/
 ├── src/
 │   ├── services/           # Core business services
 │   │   ├── telegram/       # Telegram bot logic
@@ -275,7 +275,7 @@ TELEGRAM_BOT_TOKEN=your_bot_token
 TELEGRAM_GROUP_ID=your_group_id
 
 # Database
-DATABASE_URL=postgresql://user:pass@localhost:5432/zabardoo
+DATABASE_URL=postgresql://user:pass@localhost:5432/bazaarGuru
 REDIS_URL=redis://localhost:6379
 
 # External APIs
