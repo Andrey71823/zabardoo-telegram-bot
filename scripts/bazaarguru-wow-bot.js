@@ -43,6 +43,7 @@ class BazaarGuruWowBot {
         'buttons.top_products': '⭐ Топ товаров',
         'buttons.electronics': '📱 Электроника',
         'buttons.fashion': '👗 Одежда',
+        'buttons.beauty': '💄 Косметика',
         'buttons.search': '🔍 Найти товар',
         'buttons.language': '🌐 Язык',
         'buttons.notifications': '🔔 Уведомления',
@@ -111,6 +112,7 @@ class BazaarGuruWowBot {
         'buttons.top_products': '⭐ Top Products',
         'buttons.electronics': '📱 Electronics',
         'buttons.fashion': '👗 Fashion',
+        'buttons.beauty': '💄 Beauty',
         'buttons.search': '🔍 Search',
         'buttons.language': '🌐 Language',
         'buttons.notifications': '🔔 Notifications',
@@ -176,6 +178,7 @@ class BazaarGuruWowBot {
         'buttons.top_products': '⭐ Top Products',
         'buttons.electronics': '📱 Electronics',
         'buttons.fashion': '👗 Fashion',
+        'buttons.beauty': '💄 Beauty',
         'buttons.search': '🔍 Search',
         'buttons.language': '🌐 Bhasha',
         'buttons.notifications': '🔔 Alerts',
@@ -243,8 +246,8 @@ class BazaarGuruWowBot {
   }
 
   t(chatId, key, fallback = '') {
-    const lang = (this.users.get(chatId)?.lang) || 'ru';
-    const pack = this.translations[lang] || this.translations['ru'];
+    const lang = (this.users.get(chatId)?.lang) || 'en';
+    const pack = this.translations[lang] || this.translations['en'];
     return pack[key] || (this.translations['en'][key] || fallback || key);
   }
 
@@ -355,10 +358,13 @@ class BazaarGuruWowBot {
     return this.makeRequest('sendPhoto', params);
   }
 
-  // Map Russian button labels to translation keys and localize
+  // Map button labels to translation keys and localize
   localizeKeyboard(chatId, replyMarkup) {
     if (!replyMarkup || !replyMarkup.inline_keyboard) return replyMarkup;
+    
+    // Comprehensive mapping for all languages
     const map = new Map([
+      // Russian buttons
       ['🔥 Скидки дня', 'buttons.hot_deals'],
       ['⭐ Топ товаров', 'buttons.top_products'],
       ['📱 Электроника', 'buttons.electronics'],
@@ -372,29 +378,42 @@ class BazaarGuruWowBot {
       ['📋 Показать ещё 5', 'buttons.show_more_5'],
       ['📋 Показать еще 5', 'buttons.show_more_5'],
       ['🔙 Назад', 'buttons.back'],
-      ['🔥 Все скидки', 'buttons.hot_deals'],
-      ['🔎 Поиск по бренду/магазину', 'buttons.brand_search'],
       ['🔎 Показать все', 'buttons.show_all'],
       ['💰 Только скидки', 'buttons.only_discounts'],
-      ['📱 Популярные телефоны', 'search.popular_phones'],
-      ['👟 Популярная обувь', 'search.popular_shoes'],
-      ['👗 Популярная одежда', 'search.popular_fashion'],
-      ['📱 Смартфоны', 'electronics.smartphones'],
-      ['💻 Ноутбуки', 'electronics.laptops'],
-      ['🎧 Аудио', 'electronics.audio'],
-      ['📺 ТВ', 'electronics.tv'],
-      ['⌚ Гаджеты', 'electronics.wearables'],
-      ['👗 Женская', 'fashion.women'],
-      ['👔 Мужская', 'fashion.men'],
-      ['🧒 Детская', 'fashion.kids'],
-      ['🏠 Главная', 'buttons.main_menu'],
-      ['🔙 Назад к электронике', 'buttons.back'],
-      ['🔙 Назад к моде', 'buttons.back'],
-      ['🔙 Назад к ТВ', 'buttons.back'],
-      ['📱 Показать еще 5 смартфонов', 'buttons.show_more_5'],
-      ['💻 Показать еще 5 ноутбуков', 'buttons.show_more_5'],
-      ['🎧 Показать еще 5 товаров', 'buttons.show_more_5'],
-      ['📺 Показать еще 5 товаров', 'buttons.show_more_5']
+      
+      // English buttons
+      ['🔥 Hot Deals', 'buttons.hot_deals'],
+      ['⭐ Top Products', 'buttons.top_products'],
+      ['📱 Electronics', 'buttons.electronics'],
+      ['👗 Fashion', 'buttons.fashion'],
+      ['🔍 Search', 'buttons.search'],
+      ['🌐 Language', 'buttons.language'],
+      ['🏠 Main Menu', 'buttons.main_menu'],
+      ['🔎 Brand Search', 'buttons.brand_search'],
+      ['⚙️ Filters', 'buttons.filters'],
+      ['📋 Show more 10', 'buttons.show_more_5'],
+      ['🔙 Back', 'buttons.back'],
+      ['🔎 Show all', 'buttons.show_all'],
+      ['💰 Only discounts', 'buttons.only_discounts'],
+      
+      // Hinglish buttons
+      ['🔥 Aaj Ki Deals', 'buttons.hot_deals'],
+      ['⭐ Top Products', 'buttons.top_products'],
+      ['📱 Electronics', 'buttons.electronics'],
+      ['👗 Fashion', 'buttons.fashion'],
+      ['🔍 Search', 'buttons.search'],
+      ['🌐 Bhasha', 'buttons.language'],
+      ['🏠 Main Menu', 'buttons.main_menu'],
+      ['🔎 Brand Search', 'buttons.brand_search'],
+      ['⚙️ Filters', 'buttons.filters'],
+      ['📋 Aur 10 dikhao', 'buttons.show_more_5'],
+      ['🔙 Wapas', 'buttons.back'],
+      ['🔎 Show all', 'buttons.show_all'],
+      ['💰 Only discounts', 'buttons.only_discounts'],
+      
+      // Main menu variations
+      ['🏠 Главное меню', 'buttons.main_menu'],
+      ['🏠 Main Menu', 'buttons.main_menu']
     ]);
 
     const clone = { inline_keyboard: replyMarkup.inline_keyboard.map(row => row.map(btn => {
@@ -3864,9 +3883,9 @@ ${randomPrize.emoji} ${randomPrize.name}
     const message = `${this.t(chatId,'language.choose')}`;
     const keyboard = {
       inline_keyboard: [
-        [ { text: '🇮🇳 Hinglish', callback_data: 'set_lang_hi' }, { text: '🇬🇧 English', callback_data: 'set_lang_en' } ],
+        [ { text: '🇬🇧 English', callback_data: 'set_lang_en' }, { text: '🇮🇳 Hinglish', callback_data: 'set_lang_hi' } ],
         [ { text: '🇷🇺 Русский', callback_data: 'set_lang_ru' } ],
-        [ { text: '🏠 Главное меню', callback_data: 'main_menu' } ]
+        [ { text: this.t(chatId,'buttons.main_menu','🏠 Main Menu'), callback_data: 'main_menu' } ]
       ]
     };
     await this.sendMessage(chatId, message, keyboard);
@@ -3945,7 +3964,7 @@ ${randomPrize.emoji} ${randomPrize.name}
 
   async handleSettings(chatId) {
     const user = this.users.get(chatId) || {};
-    const lang = user.lang || 'ru';
+    const lang = user.lang || 'en';
     const region = user.region || 'IN';
     const message = `🌐 <b>НАСТРОЙКИ</b>
 
