@@ -23,6 +23,10 @@ function loadDotEnv(envPath) {
 
 (function bootstrap() {
   loadDotEnv(path.resolve(__dirname, '..', '.env'));
+  const gcKey = process.env.GOOGLE_CLOUD_KEY_PATH;
+  if (gcKey && gcKey.startsWith('./')) {
+    process.env.GOOGLE_CLOUD_KEY_PATH = path.resolve(__dirname, '..', gcKey);
+  }
 })();
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN;
