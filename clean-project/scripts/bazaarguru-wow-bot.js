@@ -1,6 +1,9 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 
 require('dotenv').config();
+// Smart search (text + voice + image)
+const SmartSearchService = require('../../services/smart-search-service');
+const smartSearch = new SmartSearchService();
 const TelegramBot = require('node-telegram-bot-api');
 const {
   DEFAULT_LANG,
@@ -46,7 +49,7 @@ const unique = (items) => Array.from(new Set((items || []).filter(Boolean)));
 
 const withIcon = (product) => ({
   ...product,
-  icon: getCategoryById(product.category)?.icon || 'рџ›ЌпёЏ'
+  icon: getCategoryById(product.category)?.icon || 'СЂСџвЂєРЊРїС‘РЏ'
 });
 
 class BazaarGuruAggregatorBot {
@@ -65,7 +68,7 @@ class BazaarGuruAggregatorBot {
     this.registerHandlers();
     this.setupCommands();
     this.startNotificationLoop();
-    console.log('рџљЂ BazaarGuru Aggregator Bot is running.');
+    console.log('СЂСџС™Р‚ BazaarGuru Aggregator Bot is running.');
   }
 
   setupCommands() {
@@ -73,8 +76,8 @@ class BazaarGuruAggregatorBot {
       { command: 'start', description: 'Open the main menu' },
       { command: 'deal', description: 'Hot deals (10+ cards)' },
       { command: 'search', description: 'Smart search with tips' },
-      { command: 'profile', description: 'Profile вЂ” coming soon' },
-      { command: 'cashback', description: 'Cashback вЂ” coming soon' },
+      { command: 'profile', description: 'Profile РІР‚вЂќ coming soon' },
+      { command: 'cashback', description: 'Cashback РІР‚вЂќ coming soon' },
       { command: 'language', description: 'Switch language' },
       { command: 'help', description: 'FAQ and contacts' }
     ];
@@ -159,7 +162,7 @@ class BazaarGuruAggregatorBot {
     const text = msg.text ? msg.text.trim() : '';
 
     if (text.startsWith('/start')) {
-      return this.handleStart(chatId, user, msg.from?.first_name || msg.chat.first_name || 'пїЅпїЅпїЅпїЅ');
+      return this.handleStart(chatId, user, msg.from?.first_name || msg.chat.first_name || 'РїС—Р…РїС—Р…РїС—Р…РїС—Р…');
     }
 
     if (text.startsWith('/help')) {
@@ -198,7 +201,7 @@ class BazaarGuruAggregatorBot {
 
         if (msg.voice && this.smartSearch && this.smartSearch.enableVoiceSearch) {
       try {
-        await this.bot.sendMessage(chatId, '🎤 Распознаю голос...', { parse_mode: 'HTML' });
+        await this.bot.sendMessage(chatId, 'рџЋ¤ Р Р°СЃРїРѕР·РЅР°СЋ РіРѕР»РѕСЃ...', { parse_mode: 'HTML' });
         const fileId = msg.voice.file_id;
         const fileUrl = await this.bot.getFileLink(fileId);
         const https = require('https'); const fs = require('fs'); const path = require('path');
@@ -209,7 +212,7 @@ class BazaarGuruAggregatorBot {
         try { text = await this.smartSearch.recognizeVoice(buf); } catch (e) { console.error('recognizeVoice failed:', e.message); }
         try { fs.unlinkSync(tmp); } catch {}
         if (text) {
-          await this.bot.sendMessage(chatId, Распознано: <b></b>, { parse_mode: 'HTML' });
+          await this.bot.sendMessage(chatId, Р Р°СЃРїРѕР·РЅР°РЅРѕ: <b></b>, { parse_mode: 'HTML' });
           user.state = 'awaiting_search';
           return this.processSearch(chatId, user, text);
         }
@@ -221,7 +224,7 @@ class BazaarGuruAggregatorBot {
 
         if (msg.photo && this.smartSearch && this.smartSearch.enableImageSearch) {
       try {
-        await this.bot.sendMessage(chatId, '📸 Анализирую изображение...', { parse_mode: 'HTML' });
+        await this.bot.sendMessage(chatId, 'рџ“ё РђРЅР°Р»РёР·РёСЂСѓСЋ РёР·РѕР±СЂР°Р¶РµРЅРёРµ...', { parse_mode: 'HTML' });
         const photo = msg.photo[msg.photo.length - 1];
         const fileId = photo.file_id; const fileUrl = await this.bot.getFileLink(fileId);
         const https = require('https'); const fs = require('fs'); const path = require('path');
@@ -233,7 +236,7 @@ class BazaarGuruAggregatorBot {
         try { fs.unlinkSync(tmp); } catch {}
         if (info && info.query) {
           const short = (info.description || '').slice(0, 150);
-          await this.bot.sendMessage(chatId, Распознано: <b>...</b>, { parse_mode: 'HTML' });
+          await this.bot.sendMessage(chatId, Р Р°СЃРїРѕР·РЅР°РЅРѕ: <b>...</b>, { parse_mode: 'HTML' });
           user.state = 'awaiting_search';
           return this.processSearch(chatId, user, info.query);
         }
@@ -320,7 +323,7 @@ class BazaarGuruAggregatorBot {
     const rows = chunk(
       SUPPORTED_LANGS.map((lang) => {
         const languageName = TEXTS[lang]?.languageName || lang;
-        const suffix = user.language === lang ? ' вњ…' : '';
+        const suffix = user.language === lang ? ' РІСљвЂ¦' : '';
         return { text: `${languageName}${suffix}`, callback_data: `set_language_${lang}` };
       }),
       2
@@ -370,7 +373,7 @@ class BazaarGuruAggregatorBot {
 
     const listLines = STORES.map((store) => {
       const tagline = store.tagline[user.language] || store.tagline[DEFAULT_LANG];
-      return `${store.icon} <a href="${store.url}">${store.name}</a> пїЅ ${tagline}`;
+      return `${store.icon} <a href="${store.url}">${store.name}</a> РїС—Р… ${tagline}`;
     });
 
     const message = [
@@ -463,15 +466,15 @@ class BazaarGuruAggregatorBot {
       this.t(user, 'searchSummary.statsTitle', { duration }),
       this.t(user, 'searchSummary.count', { count: total }),
       this.t(user, 'searchSummary.bestPrice', {
-        bestPrice: bestPrice !== null ? formatCurrency(bestPrice, user.language) : 'пїЅ'
+        bestPrice: bestPrice !== null ? formatCurrency(bestPrice, user.language) : 'РїС—Р…'
       }),
       this.t(user, 'searchSummary.bestDiscount', {
-        bestDiscount: bestDiscount !== null ? formatPercent(bestDiscount) : 'пїЅ'
+        bestDiscount: bestDiscount !== null ? formatPercent(bestDiscount) : 'РїС—Р…'
       }),
       this.t(user, 'searchSummary.bestCashback', {
-        cashback: bestCashback !== null ? formatPercent(bestCashback) : 'пїЅ'
+        cashback: bestCashback !== null ? formatPercent(bestCashback) : 'РїС—Р…'
       }),
-      this.t(user, 'searchSummary.stores', { stores: storeList || 'пїЅ' }),
+      this.t(user, 'searchSummary.stores', { stores: storeList || 'РїС—Р…' }),
       ''
     ];
 
@@ -651,7 +654,7 @@ class BazaarGuruAggregatorBot {
       return null;
     }
 
-    return this.t(user, 'filters.active', { details: parts.join(' В· ') });
+    return this.t(user, 'filters.active', { details: parts.join(' Р’В· ') });
   }
 
   saveListContext(user, contextId, context) {
@@ -684,7 +687,7 @@ class BazaarGuruAggregatorBot {
           .map((id) => getCategoryById(id))
           .filter(Boolean)
           .map((category) => category.labels[user.language] || category.labels[DEFAULT_LANG])
-          .join(' пїЅ ')
+          .join(' РїС—Р… ')
       : null;
 
     const notifications = NOTIFICATION_TYPES.filter((type) => user.preferences.notifications[type.id]);
@@ -715,7 +718,7 @@ class BazaarGuruAggregatorBot {
         ? this.t(user, 'personal.notificationsLine', {
             list: notifications
               .map((type) => this.t(user, `personal.notificationLabels.${type.id}`))
-              .join(' пїЅ ')
+              .join(' РїС—Р… ')
           })
         : this.t(user, 'personal.notificationsEmpty')
     );
@@ -744,7 +747,7 @@ class BazaarGuruAggregatorBot {
     const favorites = user.preferences.favorites || new Set();
     const buttons = CATEGORIES.map((category) => {
       const isSelected = favorites.has(category.id);
-      const label = `${isSelected ? 'вњ… ' : ''}${category.icon} ${category.labels[user.language] || category.labels[DEFAULT_LANG]}`;
+      const label = `${isSelected ? 'РІСљвЂ¦ ' : ''}${category.icon} ${category.labels[user.language] || category.labels[DEFAULT_LANG]}`;
       return { text: label, callback_data: `toggle_category_${category.id}` };
     });
 
@@ -778,7 +781,7 @@ class BazaarGuruAggregatorBot {
   async sendNotificationsMenu(chatId, user) {
     const buttons = NOTIFICATION_TYPES.map((type) => {
       const enabled = user.preferences.notifications[type.id];
-      const label = `${enabled ? 'вњ…' : 'рџ””'} ${this.t(user, `personal.notificationLabels.${type.id}`)}`;
+      const label = `${enabled ? 'РІСљвЂ¦' : 'СЂСџвЂќвЂќ'} ${this.t(user, `personal.notificationLabels.${type.id}`)}`;
       return { text: label, callback_data: `toggle_notification_${type.id}` };
     });
 
@@ -976,7 +979,7 @@ class BazaarGuruAggregatorBot {
     if (body && body !== bodyKey) {
       lines.push(body);
     } else {
-      lines.push(`${params.product} вЂ” ${params.price}`);
+      lines.push(`${params.product} РІР‚вЂќ ${params.price}`);
     }
     if (footer && footer !== 'notificationsAuto.footer') {
       lines.push(footer);
