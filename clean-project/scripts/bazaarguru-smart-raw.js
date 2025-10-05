@@ -139,6 +139,23 @@ async function handlePhoto(chatId, photos) {
   return tg('sendMessage', { chat_id: chatId, text: 'Image smart search is not available right now.' });
 }
 
+async function handleCommand(chatId, cmd) {
+  const c = (cmd || '').trim().split(/\s+/)[0];
+  switch (c) {
+    case '/start':
+      return tg('sendMessage', {
+        chat_id: chatId,
+        text: 'Привет! Я умный поиск BazaarGuru.\n— Введите запрос текстом\n— Отправьте фото товара\n— Или пришлите голосовое сообщение',
+      });
+    case '/help':
+      return tg('sendMessage', {
+        chat_id: chatId,
+        text: 'Помощь:\nТекст — поиск по товарам\nФото — распознаю и подберу\nГолос — распознаю речь и найду',
+      });
+    default:
+      return tg('sendMessage', { chat_id: chatId, text: 'Неизвестная команда. Напишите запрос, пришлите фото или голос.' });
+  }
+}
 async function poll() {
   let offset = 0;
   for (;;) {
@@ -172,7 +189,11 @@ async function poll() {
         const msg = u.message || u.edited_message;
         if (!msg || !msg.chat) continue;
         const chatId = msg.chat.id;
-        if (msg.text) await handleText(chatId, msg.text.trim());
+        if (msg.text) {
+  const t = msg.text.trim();
+  if (t.startsWith('/')) await handleCommand(chatId, t);
+  else await handleText(chatId, t);
+}
         else if (msg.voice) await handleVoice(chatId, msg.voice);
         else if (Array.isArray(msg.photo) && msg.photo.length) await handlePhoto(chatId, msg.photo);
       }
