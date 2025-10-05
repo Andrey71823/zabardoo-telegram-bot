@@ -1,40 +1,6 @@
 #!/usr/bin/env node
 
-require('dotenv').config();\n// Smart search integration (non-destructive)\nconst SmartSearchService = require('../../services/smart-search-service');\n
-
-// Р В Р’В Р РЋРЎСџР В Р Р‹Р В РІР‚С™Р В Р’В Р РЋРІР‚СћР В Р Р‹Р В РЎвЂњР В Р Р‹Р Р†Р вЂљРЎв„ўР В Р’В Р РЋРІР‚СћР В Р’В Р Р†РІР‚С›РІР‚вЂњ Р В Р Р‹Р РЋРІР‚СљР В Р’В Р РЋР’ВР В Р’В Р В РІР‚В¦Р В Р Р‹Р Р†Р вЂљРІвЂћвЂ“Р В Р’В Р Р†РІР‚С›РІР‚вЂњ Р В Р’В Р РЋРІР‚вЂќР В Р’В Р РЋРІР‚СћР В Р’В Р РЋРІР‚ВР В Р Р‹Р В РЎвЂњР В Р’В Р РЋРІР‚Сњ (Р В Р’В Р вЂ™Р’В±Р В Р’В Р вЂ™Р’ВµР В Р’В Р вЂ™Р’В· Google APIs)
-class SimpleSmartSearch {
-  search(query, products) {
-    if (!query || !products) return { type: 'none', message: 'No results' };
-    
-    const q = query.toLowerCase().trim();
-    
-    // Р В Р’В Р РЋРЎвЂєР В Р’В Р РЋРІР‚СћР В Р Р‹Р Р†Р вЂљР Р‹Р В Р’В Р В РІР‚В¦Р В Р Р‹Р Р†Р вЂљРІвЂћвЂ“Р В Р’В Р Р†РІР‚С›РІР‚вЂњ Р В Р’В Р РЋРІР‚вЂќР В Р’В Р РЋРІР‚СћР В Р’В Р РЋРІР‚ВР В Р Р‹Р В РЎвЂњР В Р’В Р РЋРІР‚Сњ
-    const exact = products.filter(p => {
-      const title = (p.title || '').toLowerCase();
-      const brand = (p.brand || '').toLowerCase();
-      return title.includes(q) || brand.includes(q);
-    });
-    
-    if (exact.length > 0) {
-      return { type: 'exact', exact, message: `Found ${exact.length} products` };
-    }
-    
-    // Р В Р’В Р РЋРЎСџР В Р Р‹Р В РІР‚С™Р В Р’В Р РЋРІР‚ВР В Р’В Р вЂ™Р’В±Р В Р’В Р вЂ™Р’В»Р В Р’В Р РЋРІР‚ВР В Р’В Р вЂ™Р’В·Р В Р’В Р РЋРІР‚ВР В Р Р‹Р Р†Р вЂљРЎв„ўР В Р’В Р вЂ™Р’ВµР В Р’В Р вЂ™Р’В»Р В Р Р‹Р В Р вЂ°Р В Р’В Р В РІР‚В¦Р В Р Р‹Р Р†Р вЂљРІвЂћвЂ“Р В Р’В Р Р†РІР‚С›РІР‚вЂњ Р В Р’В Р РЋРІР‚вЂќР В Р’В Р РЋРІР‚СћР В Р’В Р РЋРІР‚ВР В Р Р‹Р В РЎвЂњР В Р’В Р РЋРІР‚Сњ
-    const fuzzy = products.filter(p => {
-      const title = (p.title || '').toLowerCase();
-      const words = q.split(' ');
-      return words.some(word => word.length > 2 && title.includes(word));
-    });
-    
-    if (fuzzy.length > 0) {
-      return { type: 'fuzzy', fuzzy, message: `Found ${fuzzy.length} similar products` };
-    }
-    
-    return { type: 'none', message: 'No products found' };
-  }
-}
-
+require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const {
   DEFAULT_LANG,
@@ -80,11 +46,11 @@ const unique = (items) => Array.from(new Set((items || []).filter(Boolean)));
 
 const withIcon = (product) => ({
   ...product,
-  icon: getCategoryById(product.category)?.icon || 'Р РЋР вЂљР РЋРЎСџР Р†Р вЂљРЎвЂќР В Р Р‰Р В РЎвЂ”Р РЋРІР‚ВР В Р РЏ'
+  icon: getCategoryById(product.category)?.icon || 'рџ›ЌпёЏ'
 });
 
 class BazaarGuruAggregatorBot {
-  constructor(token) {\n    this.smartSearch = new SmartSearchService();\n    console.log('[SmartSearch] initialized');\n
+  constructor(token) {
     if (!token) {
       throw new Error('Bot token is required. Set TELEGRAM_BOT_TOKEN in your environment.');
     }
@@ -92,7 +58,6 @@ class BazaarGuruAggregatorBot {
     this.bot = new TelegramBot(token, { polling: true });
     this.products = loadProducts();
     this.users = new Map();
-    this.simpleSearch = new SimpleSmartSearch();
     this.notificationIntervalMinutes = Number(process.env.NOTIFICATION_INTERVAL_MINUTES || 30);
     this.notificationMinGapMinutes = Number(process.env.NOTIFICATION_MIN_GAP_MINUTES || 180);
     this.notificationMaxPerTick = Number(process.env.NOTIFICATION_MAX_PER_TICK || 1);
@@ -100,7 +65,7 @@ class BazaarGuruAggregatorBot {
     this.registerHandlers();
     this.setupCommands();
     this.startNotificationLoop();
-    console.log('Р РЋР вЂљР РЋРЎСџР РЋРІвЂћСћР В РІР‚С™ BazaarGuru Aggregator Bot is running.');
+    console.log('рџљЂ BazaarGuru Aggregator Bot is running.');
   }
 
   setupCommands() {
@@ -108,8 +73,8 @@ class BazaarGuruAggregatorBot {
       { command: 'start', description: 'Open the main menu' },
       { command: 'deal', description: 'Hot deals (10+ cards)' },
       { command: 'search', description: 'Smart search with tips' },
-      { command: 'profile', description: 'Profile Р В Р вЂ Р В РІР‚С™Р Р†Р вЂљРЎСљ coming soon' },
-      { command: 'cashback', description: 'Cashback Р В Р вЂ Р В РІР‚С™Р Р†Р вЂљРЎСљ coming soon' },
+      { command: 'profile', description: 'Profile вЂ” coming soon' },
+      { command: 'cashback', description: 'Cashback вЂ” coming soon' },
       { command: 'language', description: 'Switch language' },
       { command: 'help', description: 'FAQ and contacts' }
     ];
@@ -194,7 +159,7 @@ class BazaarGuruAggregatorBot {
     const text = msg.text ? msg.text.trim() : '';
 
     if (text.startsWith('/start')) {
-      return this.handleStart(chatId, user, msg.from?.first_name || msg.chat.first_name || 'Р В РЎвЂ”Р РЋРІР‚вЂќР В РІР‚В¦Р В РЎвЂ”Р РЋРІР‚вЂќР В РІР‚В¦Р В РЎвЂ”Р РЋРІР‚вЂќР В РІР‚В¦Р В РЎвЂ”Р РЋРІР‚вЂќР В РІР‚В¦');
+      return this.handleStart(chatId, user, msg.from?.first_name || msg.chat.first_name || 'пїЅпїЅпїЅпїЅ');
     }
 
     if (text.startsWith('/help')) {
@@ -231,50 +196,50 @@ class BazaarGuruAggregatorBot {
       return this.bot.sendMessage(chatId, this.t(user, 'extras.cashbackSoon'), { parse_mode: 'HTML' });
     }
 
-        if (msg.voice) {
+        if (msg.voice && this.smartSearch && this.smartSearch.enableVoiceSearch) {
       try {
-        if (this.smartSearch && this.smartSearch.enableVoiceSearch) {
-          await this.bot.sendMessage(chatId, 'рџЋ¤ Р Р°СЃРїРѕР·РЅР°СЋ РіРѕР»РѕСЃ...', { parse_mode: 'HTML' });
-          const fileId = msg.voice.file_id;
-          const fileUrl = await this.bot.getFileLink(fileId);
-          const https = require('https'); const fs = require('fs'); const path = require('path');
-          const tmp = path.join(__dirname, oice_.ogg);
-          await new Promise((resolve, reject) => { https.get(fileUrl, (res) => { const s = fs.createWriteStream(tmp); res.pipe(s); s.on('finish', () => { s.close(); resolve(); });}).on('error', reject); });
-          const buf = fs.readFileSync(tmp);
-          let text;
-          try { text = await this.smartSearch.recognizeVoice(buf); } catch (e) { console.error('recognizeVoice failed:', e.message); }
-          try { fs.unlinkSync(tmp); } catch {}
-          if (text) {
-            await this.bot.sendMessage(chatId, Р Р°СЃРїРѕР·РЅР°РЅРѕ: <b></b>, { parse_mode: 'HTML' });
-            user.state = 'awaiting_search';
-            return this.processSearch(chatId, user, text);
-          }
+        await this.bot.sendMessage(chatId, '🎤 Распознаю голос...', { parse_mode: 'HTML' });
+        const fileId = msg.voice.file_id;
+        const fileUrl = await this.bot.getFileLink(fileId);
+        const https = require('https'); const fs = require('fs'); const path = require('path');
+        const tmp = path.join(__dirname, oice_.ogg);
+        await new Promise((resolve, reject) => { https.get(fileUrl, (res) => { const s = fs.createWriteStream(tmp); res.pipe(s); s.on('finish', () => { s.close(); resolve(); });}).on('error', reject); });
+        const buf = fs.readFileSync(tmp);
+        let text;
+        try { text = await this.smartSearch.recognizeVoice(buf); } catch (e) { console.error('recognizeVoice failed:', e.message); }
+        try { fs.unlinkSync(tmp); } catch {}
+        if (text) {
+          await this.bot.sendMessage(chatId, Распознано: <b></b>, { parse_mode: 'HTML' });
+          user.state = 'awaiting_search';
+          return this.processSearch(chatId, user, text);
         }
       } catch (e) { console.error('voice handler error', e); }
+      // fall through to fallback
+    }if (msg.voice) {
       return this.bot.sendMessage(chatId, this.t(user, 'search.fallbackVoice'), { parse_mode: 'HTML' });
     }
 
-        if (msg.photo) {
+        if (msg.photo && this.smartSearch && this.smartSearch.enableImageSearch) {
       try {
-        if (this.smartSearch && this.smartSearch.enableImageSearch) {
-          await this.bot.sendMessage(chatId, '📸 Анализирую изображение...', { parse_mode: 'HTML' });
-          const photo = msg.photo[msg.photo.length - 1];
-          const fileId = photo.file_id; const fileUrl = await this.bot.getFileLink(fileId);
-          const https = require('https'); const fs = require('fs'); const path = require('path');
-          const tmp = path.join(__dirname, photo_.jpg);
-          await new Promise((resolve, reject) => { https.get(fileUrl, (res) => { const s = fs.createWriteStream(tmp); res.pipe(s); s.on('finish', () => { s.close(); resolve(); });}).on('error', reject); });
-          const buf = fs.readFileSync(tmp);
-          let info;
-          try { info = await this.smartSearch.recognizeImage(buf); } catch (e) { console.error('recognizeImage failed:', e.message); }
-          try { fs.unlinkSync(tmp); } catch {}
-          if (info && info.query) {
-            const short = (info.description || '').slice(0, 150);
-            await this.bot.sendMessage(chatId, Распознано: <b>...</b>, { parse_mode: 'HTML' });
-            user.state = 'awaiting_search';
-            return this.processSearch(chatId, user, info.query);
-          }
+        await this.bot.sendMessage(chatId, '📸 Анализирую изображение...', { parse_mode: 'HTML' });
+        const photo = msg.photo[msg.photo.length - 1];
+        const fileId = photo.file_id; const fileUrl = await this.bot.getFileLink(fileId);
+        const https = require('https'); const fs = require('fs'); const path = require('path');
+        const tmp = path.join(__dirname, photo_.jpg);
+        await new Promise((resolve, reject) => { https.get(fileUrl, (res) => { const s = fs.createWriteStream(tmp); res.pipe(s); s.on('finish', () => { s.close(); resolve(); });}).on('error', reject); });
+        const buf = fs.readFileSync(tmp);
+        let info;
+        try { info = await this.smartSearch.recognizeImage(buf); } catch (e) { console.error('recognizeImage failed:', e.message); }
+        try { fs.unlinkSync(tmp); } catch {}
+        if (info && info.query) {
+          const short = (info.description || '').slice(0, 150);
+          await this.bot.sendMessage(chatId, Распознано: <b>...</b>, { parse_mode: 'HTML' });
+          user.state = 'awaiting_search';
+          return this.processSearch(chatId, user, info.query);
         }
       } catch (e) { console.error('photo handler error', e); }
+      // fall through to fallback
+    }if (msg.photo) {
       return this.bot.sendMessage(chatId, this.t(user, 'search.fallbackPhoto'), { parse_mode: 'HTML' });
     }
 
@@ -355,7 +320,7 @@ class BazaarGuruAggregatorBot {
     const rows = chunk(
       SUPPORTED_LANGS.map((lang) => {
         const languageName = TEXTS[lang]?.languageName || lang;
-        const suffix = user.language === lang ? ' Р В Р вЂ Р РЋРЎв„ўР Р†Р вЂљР’В¦' : '';
+        const suffix = user.language === lang ? ' вњ…' : '';
         return { text: `${languageName}${suffix}`, callback_data: `set_language_${lang}` };
       }),
       2
@@ -405,7 +370,7 @@ class BazaarGuruAggregatorBot {
 
     const listLines = STORES.map((store) => {
       const tagline = store.tagline[user.language] || store.tagline[DEFAULT_LANG];
-      return `${store.icon} <a href="${store.url}">${store.name}</a> Р В РЎвЂ”Р РЋРІР‚вЂќР В РІР‚В¦ ${tagline}`;
+      return `${store.icon} <a href="${store.url}">${store.name}</a> пїЅ ${tagline}`;
     });
 
     const message = [
@@ -498,15 +463,15 @@ class BazaarGuruAggregatorBot {
       this.t(user, 'searchSummary.statsTitle', { duration }),
       this.t(user, 'searchSummary.count', { count: total }),
       this.t(user, 'searchSummary.bestPrice', {
-        bestPrice: bestPrice !== null ? formatCurrency(bestPrice, user.language) : 'Р В РЎвЂ”Р РЋРІР‚вЂќР В РІР‚В¦'
+        bestPrice: bestPrice !== null ? formatCurrency(bestPrice, user.language) : 'пїЅ'
       }),
       this.t(user, 'searchSummary.bestDiscount', {
-        bestDiscount: bestDiscount !== null ? formatPercent(bestDiscount) : 'Р В РЎвЂ”Р РЋРІР‚вЂќР В РІР‚В¦'
+        bestDiscount: bestDiscount !== null ? formatPercent(bestDiscount) : 'пїЅ'
       }),
       this.t(user, 'searchSummary.bestCashback', {
-        cashback: bestCashback !== null ? formatPercent(bestCashback) : 'Р В РЎвЂ”Р РЋРІР‚вЂќР В РІР‚В¦'
+        cashback: bestCashback !== null ? formatPercent(bestCashback) : 'пїЅ'
       }),
-      this.t(user, 'searchSummary.stores', { stores: storeList || 'Р В РЎвЂ”Р РЋРІР‚вЂќР В РІР‚В¦' }),
+      this.t(user, 'searchSummary.stores', { stores: storeList || 'пїЅ' }),
       ''
     ];
 
@@ -686,7 +651,7 @@ class BazaarGuruAggregatorBot {
       return null;
     }
 
-    return this.t(user, 'filters.active', { details: parts.join(' Р В РІР‚в„ўР вЂ™Р’В· ') });
+    return this.t(user, 'filters.active', { details: parts.join(' В· ') });
   }
 
   saveListContext(user, contextId, context) {
@@ -719,7 +684,7 @@ class BazaarGuruAggregatorBot {
           .map((id) => getCategoryById(id))
           .filter(Boolean)
           .map((category) => category.labels[user.language] || category.labels[DEFAULT_LANG])
-          .join(' Р В РЎвЂ”Р РЋРІР‚вЂќР В РІР‚В¦ ')
+          .join(' пїЅ ')
       : null;
 
     const notifications = NOTIFICATION_TYPES.filter((type) => user.preferences.notifications[type.id]);
@@ -750,7 +715,7 @@ class BazaarGuruAggregatorBot {
         ? this.t(user, 'personal.notificationsLine', {
             list: notifications
               .map((type) => this.t(user, `personal.notificationLabels.${type.id}`))
-              .join(' Р В РЎвЂ”Р РЋРІР‚вЂќР В РІР‚В¦ ')
+              .join(' пїЅ ')
           })
         : this.t(user, 'personal.notificationsEmpty')
     );
@@ -779,7 +744,7 @@ class BazaarGuruAggregatorBot {
     const favorites = user.preferences.favorites || new Set();
     const buttons = CATEGORIES.map((category) => {
       const isSelected = favorites.has(category.id);
-      const label = `${isSelected ? 'Р В Р вЂ Р РЋРЎв„ўР Р†Р вЂљР’В¦ ' : ''}${category.icon} ${category.labels[user.language] || category.labels[DEFAULT_LANG]}`;
+      const label = `${isSelected ? 'вњ… ' : ''}${category.icon} ${category.labels[user.language] || category.labels[DEFAULT_LANG]}`;
       return { text: label, callback_data: `toggle_category_${category.id}` };
     });
 
@@ -813,7 +778,7 @@ class BazaarGuruAggregatorBot {
   async sendNotificationsMenu(chatId, user) {
     const buttons = NOTIFICATION_TYPES.map((type) => {
       const enabled = user.preferences.notifications[type.id];
-      const label = `${enabled ? 'Р В Р вЂ Р РЋРЎв„ўР Р†Р вЂљР’В¦' : 'Р РЋР вЂљР РЋРЎСџР Р†Р вЂљРЎСљР Р†Р вЂљРЎСљ'} ${this.t(user, `personal.notificationLabels.${type.id}`)}`;
+      const label = `${enabled ? 'вњ…' : 'рџ””'} ${this.t(user, `personal.notificationLabels.${type.id}`)}`;
       return { text: label, callback_data: `toggle_notification_${type.id}` };
     });
 
@@ -1011,7 +976,7 @@ class BazaarGuruAggregatorBot {
     if (body && body !== bodyKey) {
       lines.push(body);
     } else {
-      lines.push(`${params.product} Р В Р вЂ Р В РІР‚С™Р Р†Р вЂљРЎСљ ${params.price}`);
+      lines.push(`${params.product} вЂ” ${params.price}`);
     }
     if (footer && footer !== 'notificationsAuto.footer') {
       lines.push(footer);
