@@ -6,7 +6,7 @@ const { Pool } = require('pg');
 const pool = new Pool({
   user: process.env.DB_USER || 'postgres',
   host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'zabardoo_bot',
+  database: process.env.DB_NAME || 'bazaarGuru_bot',
   password: process.env.DB_PASSWORD || 'password',
   port: process.env.DB_PORT || 5432,
 });
@@ -145,8 +145,8 @@ async function testTrafficAnalytics() {
       }),
       'pdf',
       JSON.stringify([
-        'analytics@zabardoo.com',
-        'management@zabardoo.com'
+        'analytics@bazaarguru.com',
+        'management@bazaarguru.com'
       ])
     ]);
     console.log('✅ Traffic report created:', reportResult.rows[0].id);
@@ -588,7 +588,7 @@ async function testTrafficAnalytics() {
           configuration: {
             smtpServer: 'smtp.gmail.com',
             port: 587,
-            username: 'alerts@zabardoo.com',
+            username: 'alerts@bazaarGuru.com',
             template: 'conversion_drop_alert'
           },
           isActive: true
@@ -611,9 +611,9 @@ async function testTrafficAnalytics() {
         }
       ]),
       JSON.stringify([
-        'analytics@zabardoo.com',
-        'management@zabardoo.com',
-        'operations@zabardoo.com'
+        'analytics@bazaarGuru.com',
+        'management@bazaarGuru.com',
+        'operations@bazaarGuru.com'
       ]),
       'immediate'
     ]);
@@ -737,7 +737,7 @@ async function testTrafficAnalytics() {
       JSON.stringify({
         type: 'email',
         configuration: {
-          recipients: ['bi-team@zabardoo.com', 'analytics@zabardoo.com'],
+          recipients: ['bi-team@bazaarGuru.com', 'analytics@bazaarGuru.com'],
           subject: 'Daily Revenue Data Export - {{date}}',
           attachmentName: 'revenue_data_{{date}}.csv'
         }

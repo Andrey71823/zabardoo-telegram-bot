@@ -276,7 +276,7 @@ export class LootModeService extends EventEmitter {
   }
 
   private selectReward(userData: UserLootData, spinType: string): LootReward {
-    let availableRewards = Array.from(this.rewards.values());
+    const availableRewards = Array.from(this.rewards.values());
     
     // Apply seasonal multiplier
     const adjustedProbabilities = availableRewards.map(reward => ({

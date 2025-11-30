@@ -124,7 +124,7 @@ class SimpleTelegramBot {
     const chatId = message.chat.id;
     const userName = message.from.first_name || 'Friend';
     
-    const welcomeMessage = `🎉 Welcome to Zabardoo Enhanced Bot, ${userName}! 🌟
+    const welcomeMessage = `🎉 Welcome to bazaarGuru Enhanced Bot, ${userName}! 🌟
 
 🚀 I'm your AI-powered deal discovery assistant!
 
@@ -165,7 +165,7 @@ Commands:
   async handleHelp(message) {
     const chatId = message.chat.id;
     
-    const helpMessage = `🆘 Zabardoo Enhanced Bot Help
+    const helpMessage = `🆘 bazaarGuru Enhanced Bot Help
 
 🎤 <b>Voice Search:</b>
    Send me a voice message describing what you want!
@@ -205,7 +205,7 @@ Commands:
     const chatId = message.chat.id;
     const user = this.getUser(message.from.id);
     
-    const profileMessage = `👤 <b>Your Zabardoo Profile</b>
+    const profileMessage = `👤 <b>Your bazaarGuru Profile</b>
 
 🌟 ${user.firstName} ${user.lastName || ''}
 💎 Level ${user.level} 🛍️
@@ -319,7 +319,7 @@ Current Settings:
 
       case 'profile':
         const user = this.getUser(callbackQuery.from.id);
-        await this.sendMessage(chatId, `👤 <b>Your Zabardoo Profile</b>
+        await this.sendMessage(chatId, `👤 <b>Your bazaarGuru Profile</b>
 
 🌟 ${user.firstName} ${user.lastName || ''}
 💎 Level ${user.level} 🛍️
@@ -443,7 +443,7 @@ Current Settings:
   }
 
   async start() {
-    console.log('🚀 Starting REAL Zabardoo Enhanced Telegram Bot!');
+    console.log('🚀 Starting REAL bazaarGuru Enhanced Telegram Bot!');
     console.log('=' .repeat(60));
     
     // Use your bot token
@@ -460,7 +460,7 @@ Current Settings:
       this.isRunning = true;
       
       console.log('');
-      console.log('🎉 ZABARDOO ENHANCED BOT IS NOW LIVE! 🎉');
+      console.log('🎉 bazaarGuru ENHANCED BOT IS NOW LIVE! 🎉');
       console.log('');
       console.log('🌟 Enhanced Features Active:');
       console.log('   🎤 Voice Search & AI Processing');

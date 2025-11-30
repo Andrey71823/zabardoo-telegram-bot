@@ -125,27 +125,27 @@ CREATE TRIGGER update_traffic_attribution_updated_at
 INSERT INTO affiliate_stores (name, domain, affiliate_network, tracking_template, sub_id_parameter, commission_rate, cookie_duration, supported_countries, link_formats, custom_parameters) VALUES
 ('Flipkart', 'flipkart.com', 'Commission Junction', 'https://www.flipkart.com/affiliate-link?url={original_url}&subid={sub_id}', 'subid', 3.50, 30, '["IN"]', 
  '{"coupon": "https://www.flipkart.com/coupon/{coupon_id}?subid={sub_id}", "offer": "https://www.flipkart.com/offer/{offer_id}?subid={sub_id}", "direct": "{original_url}?subid={sub_id}"}',
- '{"affid": "zabardoo", "source": "telegram"}'),
+ '{"affid": "bazaarGuru", "source": "telegram"}'),
 
-('Amazon India', 'amazon.in', 'Amazon Associates', 'https://www.amazon.in/gp/product/{product_id}?tag=zabardoo-21&linkCode=as2&subid={sub_id}', 'subid', 4.00, 24, '["IN"]',
- '{"coupon": "https://www.amazon.in/coupon/{coupon_id}?tag=zabardoo-21&subid={sub_id}", "offer": "https://www.amazon.in/deal/{deal_id}?tag=zabardoo-21&subid={sub_id}", "direct": "{original_url}?tag=zabardoo-21&subid={sub_id}"}',
- '{"tag": "zabardoo-21", "linkCode": "as2"}'),
+('Amazon India', 'amazon.in', 'Amazon Associates', 'https://www.amazon.in/gp/product/{product_id}?tag=bazaarGuru-21&linkCode=as2&subid={sub_id}', 'subid', 4.00, 24, '["IN"]',
+ '{"coupon": "https://www.amazon.in/coupon/{coupon_id}?tag=bazaarGuru-21&subid={sub_id}", "offer": "https://www.amazon.in/deal/{deal_id}?tag=bazaarGuru-21&subid={sub_id}", "direct": "{original_url}?tag=bazaarGuru-21&subid={sub_id}"}',
+ '{"tag": "bazaarGuru-21", "linkCode": "as2"}'),
 
-('Myntra', 'myntra.com', 'Myntra Affiliate', 'https://www.myntra.com/affiliate?url={original_url}&partner=zabardoo&subid={sub_id}', 'subid', 5.50, 15, '["IN"]',
- '{"coupon": "https://www.myntra.com/coupon/{coupon_id}?partner=zabardoo&subid={sub_id}", "offer": "https://www.myntra.com/offer/{offer_id}?partner=zabardoo&subid={sub_id}", "direct": "{original_url}?partner=zabardoo&subid={sub_id}"}',
- '{"partner": "zabardoo", "source": "telegram"}'),
+('Myntra', 'myntra.com', 'Myntra Affiliate', 'https://www.myntra.com/affiliate?url={original_url}&partner=bazaarGuru&subid={sub_id}', 'subid', 5.50, 15, '["IN"]',
+ '{"coupon": "https://www.myntra.com/coupon/{coupon_id}?partner=bazaarGuru&subid={sub_id}", "offer": "https://www.myntra.com/offer/{offer_id}?partner=bazaarGuru&subid={sub_id}", "direct": "{original_url}?partner=bazaarGuru&subid={sub_id}"}',
+ '{"partner": "bazaarGuru", "source": "telegram"}'),
 
-('Nykaa', 'nykaa.com', 'Nykaa Affiliate', 'https://www.nykaa.com/affiliate-link?url={original_url}&affiliate=zabardoo&subid={sub_id}', 'subid', 6.00, 20, '["IN"]',
- '{"coupon": "https://www.nykaa.com/coupon/{coupon_id}?affiliate=zabardoo&subid={sub_id}", "offer": "https://www.nykaa.com/offer/{offer_id}?affiliate=zabardoo&subid={sub_id}", "direct": "{original_url}?affiliate=zabardoo&subid={sub_id}"}',
- '{"affiliate": "zabardoo", "source": "telegram"}'),
+('Nykaa', 'nykaa.com', 'Nykaa Affiliate', 'https://www.nykaa.com/affiliate-link?url={original_url}&affiliate=bazaarGuru&subid={sub_id}', 'subid', 6.00, 20, '["IN"]',
+ '{"coupon": "https://www.nykaa.com/coupon/{coupon_id}?affiliate=bazaarGuru&subid={sub_id}", "offer": "https://www.nykaa.com/offer/{offer_id}?affiliate=bazaarGuru&subid={sub_id}", "direct": "{original_url}?affiliate=bazaarGuru&subid={sub_id}"}',
+ '{"affiliate": "bazaarGuru", "source": "telegram"}'),
 
-('Swiggy', 'swiggy.com', 'Swiggy Partners', 'https://www.swiggy.com/partner-link?url={original_url}&partner_id=zabardoo&subid={sub_id}', 'subid', 3.00, 7, '["IN"]',
- '{"coupon": "https://www.swiggy.com/coupon/{coupon_id}?partner_id=zabardoo&subid={sub_id}", "offer": "https://www.swiggy.com/offer/{offer_id}?partner_id=zabardoo&subid={sub_id}", "direct": "{original_url}?partner_id=zabardoo&subid={sub_id}"}',
- '{"partner_id": "zabardoo", "source": "telegram"}'),
+('Swiggy', 'swiggy.com', 'Swiggy Partners', 'https://www.swiggy.com/partner-link?url={original_url}&partner_id=bazaarGuru&subid={sub_id}', 'subid', 3.00, 7, '["IN"]',
+ '{"coupon": "https://www.swiggy.com/coupon/{coupon_id}?partner_id=bazaarGuru&subid={sub_id}", "offer": "https://www.swiggy.com/offer/{offer_id}?partner_id=bazaarGuru&subid={sub_id}", "direct": "{original_url}?partner_id=bazaarGuru&subid={sub_id}"}',
+ '{"partner_id": "bazaarGuru", "source": "telegram"}'),
 
-('MakeMyTrip', 'makemytrip.com', 'MakeMyTrip Affiliate', 'https://www.makemytrip.com/affiliate?url={original_url}&affid=zabardoo&subid={sub_id}', 'subid', 5.00, 45, '["IN"]',
- '{"coupon": "https://www.makemytrip.com/coupon/{coupon_id}?affid=zabardoo&subid={sub_id}", "offer": "https://www.makemytrip.com/offer/{offer_id}?affid=zabardoo&subid={sub_id}", "direct": "{original_url}?affid=zabardoo&subid={sub_id}"}',
- '{"affid": "zabardoo", "source": "telegram"}')
+('MakeMyTrip', 'makemytrip.com', 'MakeMyTrip Affiliate', 'https://www.makemytrip.com/affiliate?url={original_url}&affid=bazaarGuru&subid={sub_id}', 'subid', 5.00, 45, '["IN"]',
+ '{"coupon": "https://www.makemytrip.com/coupon/{coupon_id}?affid=bazaarGuru&subid={sub_id}", "offer": "https://www.makemytrip.com/offer/{offer_id}?affid=bazaarGuru&subid={sub_id}", "direct": "{original_url}?affid=bazaarGuru&subid={sub_id}"}',
+ '{"affid": "bazaarGuru", "source": "telegram"}')
 
 ON CONFLICT (domain) DO NOTHING;
 

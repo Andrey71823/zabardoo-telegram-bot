@@ -156,7 +156,7 @@ class FixedMenuTelegramBot {
     const chatId = message.chat.id;
     const userName = message.from.first_name || 'Friend';
     
-    const welcomeMessage = `🎉 Welcome to Zabardoo Enhanced Bot, ${userName}! 🌟
+    const welcomeMessage = `🎉 Welcome to bazaarGuru Enhanced Bot, ${userName}! 🌟
 
 🚀 I'm your AI-powered deal discovery assistant!
 
@@ -185,7 +185,7 @@ Commands:
   async handleHelp(message) {
     const chatId = message.chat.id;
     
-    const helpMessage = `🆘 Zabardoo Enhanced Bot Help
+    const helpMessage = `🆘 bazaarGuru Enhanced Bot Help
 
 🎤 <b>Voice Search:</b>
    Send me a voice message describing what you want!
@@ -226,7 +226,7 @@ Commands:
     const chatId = message.chat.id;
     const user = this.getUser(message.from.id);
     
-    const profileMessage = `👤 <b>Your Zabardoo Profile</b>
+    const profileMessage = `👤 <b>Your bazaarGuru Profile</b>
 
 🌟 ${user.firstName} ${user.lastName || ''}
 💎 Level ${user.level} 🛍️
@@ -356,7 +356,7 @@ Current Settings:
 
       case 'profile':
         const user = this.getUser(callbackQuery.from.id);
-        responseText = `👤 <b>Your Zabardoo Profile</b>
+        responseText = `👤 <b>Your bazaarGuru Profile</b>
 
 🌟 ${user.firstName} ${user.lastName || ''}
 💎 Level ${user.level} 🛍️
@@ -553,7 +553,7 @@ You can unpause anytime in settings.
   }
 
   async start() {
-    console.log('🚀 Starting FIXED MENU Zabardoo Enhanced Telegram Bot!');
+    console.log('🚀 Starting FIXED MENU bazaarGuru Enhanced Telegram Bot!');
     console.log('=' .repeat(60));
     
     // Use your bot token
@@ -570,7 +570,7 @@ You can unpause anytime in settings.
       this.isRunning = true;
       
       console.log('');
-      console.log('🎉 ZABARDOO FIXED MENU BOT IS NOW LIVE! 🎉');
+      console.log('🎉 bazaarGuru FIXED MENU BOT IS NOW LIVE! 🎉');
       console.log('');
       console.log('🌟 Enhanced Features Active:');
       console.log('   📌 Fixed Menu - Buttons stay in place!');

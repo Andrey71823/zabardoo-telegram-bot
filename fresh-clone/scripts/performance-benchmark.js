@@ -16,7 +16,7 @@ class PerformanceBenchmark {
   }
 
   async runBenchmark() {
-    console.log('🏃 Starting Performance Benchmark for Zabardoo Telegram Bot');
+    console.log('🏃 Starting Performance Benchmark for bazaarGuru Telegram Bot');
     console.log('=' .repeat(60));
     console.log(`Base URL: ${this.baseUrl}`);
     console.log(`Warmup Requests: ${this.warmupRequests}`);

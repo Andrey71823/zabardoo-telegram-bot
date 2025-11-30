@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Zabardoo Telegram Bot Deployment Script
+# bazaarGuru Telegram Bot Deployment Script
 # This script handles deployment to staging and production environments
 
 set -e  # Exit on any error
@@ -37,7 +37,7 @@ log_error() {
 # Help function
 show_help() {
     cat << EOF
-Zabardoo Deployment Script
+bazaarGuru Deployment Script
 
 Usage: $0 [OPTIONS] ENVIRONMENT
 
@@ -138,16 +138,16 @@ fi
 # Set deployment configuration based on environment
 case $ENVIRONMENT in
     staging)
-        DEPLOY_HOST="${STAGING_HOST:-staging.zabardoo.com}"
+        DEPLOY_HOST="${STAGING_HOST:-staging.bazaarGuru.com}"
         DEPLOY_USER="${STAGING_USER:-deploy}"
-        DEPLOY_PATH="${STAGING_PATH:-/opt/zabardoo}"
-        DOCKER_REGISTRY="${STAGING_REGISTRY:-ghcr.io/zabardoo}"
+        DEPLOY_PATH="${STAGING_PATH:-/opt/bazaarGuru}"
+        DOCKER_REGISTRY="${STAGING_REGISTRY:-ghcr.io/bazaarGuru}"
         ;;
     production)
-        DEPLOY_HOST="${PRODUCTION_HOST:-zabardoo.com}"
+        DEPLOY_HOST="${PRODUCTION_HOST:-bazaarGuru.com}"
         DEPLOY_USER="${PRODUCTION_USER:-deploy}"
-        DEPLOY_PATH="${PRODUCTION_PATH:-/opt/zabardoo}"
-        DOCKER_REGISTRY="${PRODUCTION_REGISTRY:-ghcr.io/zabardoo}"
+        DEPLOY_PATH="${PRODUCTION_PATH:-/opt/bazaarGuru}"
+        DOCKER_REGISTRY="${PRODUCTION_REGISTRY:-ghcr.io/bazaarGuru}"
         ;;
 esac
 
@@ -162,7 +162,7 @@ log_info "  Registry: $DOCKER_REGISTRY"
 # Dry run mode
 if [[ "$DRY_RUN" == true ]]; then
     log_info "DRY RUN MODE - No actual deployment will occur"
-    log_info "Would deploy zabardoo/telegram-bot:$VERSION to $ENVIRONMENT"
+    log_info "Would deploy bazaarGuru/telegram-bot:$VERSION to $ENVIRONMENT"
     exit 0
 fi
 
@@ -219,7 +219,7 @@ fi
 if [[ "$BACKUP" == true || "$ENVIRONMENT" == "production" ]]; then
     log_info "Creating backup..."
     
-    BACKUP_NAME="zabardoo_backup_${ENVIRONMENT}_${TIMESTAMP}"
+    BACKUP_NAME="bazaarGuru_backup_${ENVIRONMENT}_${TIMESTAMP}"
     
     ssh "$DEPLOY_USER@$DEPLOY_HOST" << EOF
         cd $DEPLOY_PATH
@@ -250,7 +250,7 @@ if [[ "$ROLLBACK" == true ]]; then
         cd $DEPLOY_PATH
         
         # Get previous version from backup
-        PREVIOUS_VERSION=\$(docker images --format "table {{.Repository}}:{{.Tag}}" | grep zabardoo/telegram-bot | grep -v latest | head -n 1 | cut -d: -f2)
+        PREVIOUS_VERSION=\$(docker images --format "table {{.Repository}}:{{.Tag}}" | grep bazaarGuru/telegram-bot | grep -v latest | head -n 1 | cut -d: -f2)
         
         if [[ -z "\$PREVIOUS_VERSION" ]]; then
             echo "No previous version found for rollback"
@@ -260,7 +260,7 @@ if [[ "$ROLLBACK" == true ]]; then
         echo "Rolling back to version: \$PREVIOUS_VERSION"
         
         # Update docker-compose to use previous version
-        sed -i "s|image: zabardoo/telegram-bot:.*|image: zabardoo/telegram-bot:\$PREVIOUS_VERSION|g" docker-compose.prod.yml
+        sed -i "s|image: bazaarGuru/telegram-bot:.*|image: bazaarGuru/telegram-bot:\$PREVIOUS_VERSION|g" docker-compose.prod.yml
         
         # Restart services
         docker-compose -f docker-compose.prod.yml down
@@ -283,14 +283,14 @@ if [[ "$VERSION" == "latest" ]]; then
     cd "$PROJECT_ROOT"
     
     # Build image
-    docker build -t "zabardoo/telegram-bot:$VERSION" .
+    docker build -t "bazaarGuru/telegram-bot:$VERSION" .
     
     # Tag with timestamp for backup
-    docker tag "zabardoo/telegram-bot:$VERSION" "zabardoo/telegram-bot:$TIMESTAMP"
+    docker tag "bazaarGuru/telegram-bot:$VERSION" "bazaarGuru/telegram-bot:$TIMESTAMP"
     
     # Push to registry
-    docker push "zabardoo/telegram-bot:$VERSION"
-    docker push "zabardoo/telegram-bot:$TIMESTAMP"
+    docker push "bazaarGuru/telegram-bot:$VERSION"
+    docker push "bazaarGuru/telegram-bot:$TIMESTAMP"
     
     log_success "Docker image built and pushed"
 fi
@@ -363,7 +363,7 @@ fi
 # Send deployment notification
 if [[ -n "$SLACK_WEBHOOK_URL" ]]; then
     curl -X POST -H 'Content-type: application/json' \
-        --data "{\"text\":\"🚀 Deployment completed: zabardoo/telegram-bot:$VERSION to $ENVIRONMENT\"}" \
+        --data "{\"text\":\"🚀 Deployment completed: bazaarGuru/telegram-bot:$VERSION to $ENVIRONMENT\"}" \
         "$SLACK_WEBHOOK_URL" > /dev/null 2>&1 || true
 fi
 

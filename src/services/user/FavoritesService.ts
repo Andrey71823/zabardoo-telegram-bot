@@ -191,15 +191,13 @@ export class FavoritesService extends EventEmitter {
   getPersonalizedRecommendations(userId: string): any[] {
     const userHistoryList = this.userHistory.get(userId) || [];
     const userFavorites = this.favorites.get(userId) || [];
-    
-    // Analyze user preferences
+    type PreferenceSource = Pick<UserHistory, 'category' | 'store'>;
+    const preferenceSources: PreferenceSource[] = [...userHistoryList, ...userFavorites];
+
     const categoryPreferences = new Map<string, number>();
     const storePreferences = new Map<string, number>();
-    
-    [...userHistoryList, ...userFavorites].forEach(item => {
-      const category = 'category' in item ? item.category : item.category;
-      const store = 'store' in item ? item.store : item.store;
-      
+
+    preferenceSources.forEach(({ category, store }) => {
       categoryPreferences.set(category, (categoryPreferences.get(category) || 0) + 1);
       storePreferences.set(store, (storePreferences.get(store) || 0) + 1);
     });
@@ -235,9 +233,6 @@ export class FavoritesService extends EventEmitter {
 
   async getExpiringDeals(userId: string): Promise<FavoriteItem[]> {
     const userFavorites = this.favorites.get(userId) || [];
-    const now = new Date();
-    const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-    
     // Mock expiring deals (in production, check actual expiry dates)
     return userFavorites
       .filter(item => item.isActive)

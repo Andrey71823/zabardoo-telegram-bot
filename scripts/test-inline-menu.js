@@ -31,7 +31,7 @@ const inlineMenuStructure = [
 // REPLY KEYBOARD - ВНИЗУ (остается как есть)
 const replyMenuStructure = [
   ['🔍 Find Deals', '🎮 My Profile', '📖 Guide'],
-  ['💰 Cashback', '🎲 Random Deal', '💬 Ask Zabardoo'],
+  ['💰 Cashback', '🎲 Random Deal', '💬 Ask bazaarGuru'],
   ['⚙️ Settings', '🌐 Language', '🆘 Help']
 ];
 
@@ -68,7 +68,7 @@ console.log('✅ Reply keyboard for persistent navigation');
 console.log('\n📱 Visual Layout:');
 console.log('=' .repeat(70));
 console.log('┌─────────────────────────────────┐');
-console.log('│ Welcome to Zabardoo Enhanced... │');
+console.log('│ Welcome to bazaarGuru Enhanced... │');
 console.log('│                                 │');
 console.log('│ [🤖 AI] [🔥 Hot] [📖 Guide]    │ ← INLINE BUTTONS');
 console.log('│ [📱 Elec] [👗 Fash] [💄 Beauty] │');
@@ -98,7 +98,7 @@ console.log('   • Additional features like Random Deal');
 
 console.log('\n🚀 Test Commands:');
 console.log('=' .repeat(70));
-console.log('1. Run: node scripts/inline-menu-zabardoo-bot.js');
+console.log('1. Run: node scripts/inline-menu-bazaarGuru-bot.js');
 console.log('2. Send /start to bot');
 console.log('3. Verify inline buttons appear in message');
 console.log('4. Verify reply keyboard appears at bottom');

@@ -113,7 +113,7 @@ export class LanguageService extends EventEmitter {
     const commonTranslations = {
       // Welcome messages
       'welcome.title': {
-        en: 'Welcome to Zabardoo Enhanced Bot',
+        en: 'Welcome to bazaarGuru Enhanced Bot',
         hi: 'ज़बरदू एन्हांस्ड बॉट में आपका स्वागत है',
         bn: 'জাবারদু এনহান্সড বটে স্বাগতম',
         te: 'జబర్దూ ఎన్హాన్స్డ్ బాట్‌కు స్వాగతం',
@@ -161,8 +161,8 @@ export class LanguageService extends EventEmitter {
         mr: '💰 कॅशबॅक'
       },
 
-      'button.ask_zabardoo': {
-        en: '🧠 Ask Zabardoo',
+      'button.ask_bazaarGuru': {
+        en: '🧠 Ask bazaarGuru',
         hi: '🧠 ज़बरदू से पूछें',
         bn: '🧠 জাবারদুকে জিজ্ঞাসা করুন',
         te: '🧠 జబర్దూని అడగండి',
@@ -299,9 +299,10 @@ export class LanguageService extends EventEmitter {
 
   formatCurrency(amount: number, userId?: string): string {
     const userLang = userId ? this.getUserLanguage(userId) : 'en';
-    
+    const locale = userLang === 'en' ? 'en-IN' : userLang;
+
     // Indian Rupee formatting
-    const formatted = new Intl.NumberFormat('en-IN', {
+    const formatted = new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: 'INR',
       minimumFractionDigits: 0,

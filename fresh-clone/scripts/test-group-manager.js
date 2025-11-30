@@ -7,7 +7,7 @@ const BASE_URL = 'http://localhost:3007';
 // Test data
 const testGroup = {
   telegramGroupId: '-1001234567890',
-  name: 'Zabardoo Test Group',
+  name: 'bazaarGuru Test Group',
   description: 'Test group for coupon sharing and moderation',
   moderationLevel: 'medium',
   allowCouponCreation: true

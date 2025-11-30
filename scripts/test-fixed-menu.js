@@ -75,7 +75,7 @@ console.log('✅ No navigation confusion');
 console.log('\n🎉 Fixed Menu Implementation Complete!');
 console.log('\n📋 Files Created:');
 console.log('• scripts/fixed-main-menu-bot.js - New bot with fixed menu');
-console.log('• scripts/real-data-zabardoo-bot.js - Updated with fixed menu');
+console.log('• scripts/real-data-bazaarGuru-bot.js - Updated with fixed menu');
 
 console.log('\n🔧 To Test:');
 console.log('1. Run: node scripts/fixed-main-menu-bot.js');

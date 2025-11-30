@@ -155,7 +155,7 @@ c handleStart(message) {
     const chatId = message.chat.id;
     const userName = message.from.first_name || 'Friend';
     
-    const welcomeMessage = `🎉 Welcome to Zabardoo Enhanced Bot, ${userName}! 🌟
+    const welcomeMessage = `🎉 Welcome to bazaarGuru Enhanced Bot, ${userName}! 🌟
 
 🚀 I'm your AI-powered deal discovery assistant!
 

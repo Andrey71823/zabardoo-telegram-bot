@@ -33,7 +33,7 @@ class LoadTestRunner {
   }
 
   async runLoadTest() {
-    console.log('🚀 Starting Load Test for Zabardoo Telegram Bot');
+    console.log('🚀 Starting Load Test for bazaarGuru Telegram Bot');
     console.log('=' .repeat(60));
     console.log(`Base URL: ${this.baseUrl}`);
     console.log(`Concurrency: ${this.concurrency} users`);

@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bazaarGuru Admin – Home</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    /* Nexus Design System */
+    :root {
+      --nexus-primary: #6366f1;
+      --nexus-primary-dark: #4f46e5;
+      --nexus-secondary: #64748b;
+      --nexus-success: #10b981;
+      --nexus-warning: #f59e0b;
+      --nexus-danger: #ef4444;
+      --nexus-info: #3b82f6;
+      
+      --nexus-bg-primary: #ffffff;
+      --nexus-bg-secondary: #f8fafc;
+      --nexus-bg-tertiary: #f1f5f9;
+      
+      --nexus-text-primary: #0f172a;
+      --nexus-text-secondary: #475569;
+      --nexus-text-tertiary: #64748b;
+      
+      --nexus-border: #e2e8f0;
+      --nexus-border-light: #f1f5f9;
+      
+      --nexus-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --nexus-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --nexus-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --nexus-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --nexus-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      
+      --nexus-radius-sm: 0.375rem;
+      --nexus-radius: 0.5rem;
+      --nexus-radius-md: 0.75rem;
+      --nexus-radius-lg: 1rem;
+      --nexus-radius-xl: 1.5rem;
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--nexus-bg-secondary);
+      color: var(--nexus-text-primary);
+      line-height: 1.5;
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header */
+    .hero {
+      background: var(--nexus-bg-primary);
+      border: 1px solid var(--nexus-border);
+      border-radius: var(--nexus-radius-lg);
+      box-shadow: var(--nexus-shadow);
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .hero h1 { 
+      font-size: 2rem; 
+      margin: 0; 
+      font-weight: 700; 
+      color: var(--nexus-text-primary);
+      letter-spacing: -0.025em;
+    }
+    
+    .hero p { 
+      color: var(--nexus-text-secondary); 
+      margin: 0.5rem 0 0; 
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    /* Quick Actions */
+    .quick-actions { 
+      display: flex; 
+      gap: 1rem; 
+      flex-wrap: wrap; 
+    }
+    
+    .qa-btn {
+      display: inline-flex; 
+      align-items: center; 
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem; 
+      border: 1px solid var(--nexus-border); 
+      border-radius: var(--nexus-radius);
+      background: var(--nexus-bg-primary); 
+      color: var(--nexus-text-secondary); 
+      text-decoration: none; 
+      font-weight: 500; 
+      font-size: 0.875rem;
+      box-shadow: var(--nexus-shadow-sm);
+      transition: all 0.2s ease;
+    }
+    
+    .qa-btn:hover { 
+      background: var(--nexus-bg-tertiary);
+      border-color: var(--nexus-text-tertiary);
+      transform: translateY(-1px);
+      box-shadow: var(--nexus-shadow-md);
+    }
+
+    /* Layout */
+    .grid-2 { 
+      display: grid; 
+      grid-template-columns: 1.3fr 1fr; 
+      gap: 2rem; 
+    }
+
+    /* Cards */
+    .card { 
+      background: var(--nexus-bg-primary); 
+      border: 1px solid var(--nexus-border); 
+      border-radius: var(--nexus-radius-lg); 
+      box-shadow: var(--nexus-shadow);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideInUp 0.6s ease-out forwards;
+    }
+    
+    .card:hover {
+      box-shadow: var(--nexus-shadow-xl);
+      transform: translateY(-4px);
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--nexus-primary), var(--nexus-info));
+      opacity: 0.8;
+    }
+
+    @keyframes slideInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes countUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ЕДИНСТВЕННЫЕ СТИЛИ ДЛЯ МЕТРИК - БЕЗ КОНФЛИКТОВ */
+    .metrics-section {
+      height: 800px !important;
+    }
+
+    .metrics-section > .card-body {
+      height: 100% !important;
+      padding: 4rem !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    .metrics {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      grid-template-rows: repeat(2, auto) !important;
+      gap: 3rem !important;
+      width: 100% !important;
+      align-content: center !important;
+      justify-content: center !important;
+    }
+
+    .metrics .card {
+      height: 250px !important;
+      width: 100% !important;
+    }
+
+    .metrics .card > .card-body {
+      height: 100% !important;
+      padding: 2rem !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+    }
+
+    /* Остальные стили для card-body (не для метрик) */
+    .card-body {
+      padding: 2rem;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Dashboard cards */
+    .dashboard-card {
+      height: 800px !important;
+    }
+
+    .dashboard-card > .card-body {
+      height: 100% !important;
+      padding: 3rem !important;
+    }
+    
+    .card h3 { 
+      margin: 0 0 1.25rem; 
+      font-size: 0.875rem; 
+      color: var(--nexus-text-tertiary); 
+      font-weight: 600; 
+      text-transform: uppercase;
+      letter-spacing: 0.1em; 
+    }
+    
+    .metric-value { 
+      font-size: 2rem; 
+      font-weight: 700; 
+      color: var(--nexus-text-primary);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      animation: countUp 0.8s ease-out 0.3s both;
+    }
+    
+    .metric-sub { 
+      color: var(--nexus-text-tertiary); 
+      font-size: 0.875rem; 
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+    }
+
+    /* Metric Icons */
+    .metric-icon {
+      width: 3rem;
+      height: 3rem;
+      border-radius: var(--nexus-radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, var(--nexus-primary), var(--nexus-info));
+      color: white;
+      animation: countUp 0.6s ease-out 0.1s both;
+    }
+
+    .metric-icon.success {
+      background: linear-gradient(135deg, var(--nexus-success), #059669);
+    }
+
+    .metric-icon.warning {
+      background: linear-gradient(135deg, var(--nexus-warning), #d97706);
+    }
+
+    .metric-icon.info {
+      background: linear-gradient(135deg, var(--nexus-info), #2563eb);
+    }
+    
+    .delta-up { 
+      color: var(--nexus-success); 
+      font-weight: 500; 
+      font-size: 0.875rem; 
+    }
+    
+    .delta-down { 
+      color: var(--nexus-danger); 
+      font-weight: 500; 
+      font-size: 0.875rem; 
+    }
+
+    .chart-container {
+      height: 100% !important;
+      overflow: hidden !important;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Simple Charts */
+    .chart-title { 
+      font-size: 0.875rem; 
+      font-weight: 600; 
+      margin: 0 0 1.5rem; 
+      color: var(--nexus-text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .chart-subtitle {
+      font-size: 0.75rem;
+      color: var(--nexus-text-tertiary);
+      font-weight: 400;
+      margin-top: 0.25rem;
+    }
+
+    .chart-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--nexus-text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .chart-change {
+      font-size: 0.75rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .chart-change.positive {
+      color: var(--nexus-success);
+    }
+
+    /* Simple Donut Chart */
+    .donut-chart {
+      width: 120px !important;
+      height: 120px !important;
+      min-height: 120px !important;
+      max-height: 120px !important;
+      border-radius: 50%;
+      background: conic-gradient(
+        var(--nexus-primary) 0deg 208deg,
+        var(--nexus-info) 208deg 302deg,
+        var(--nexus-success) 302deg 360deg
+      );
+      margin: 0 auto 1rem;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .donut-chart::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70px;
+      height: 70px;
+      background: var(--nexus-bg-primary);
+      border-radius: 50%;
+    }
+
+    .donut-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    /* Simple Bar Chart */
+    .bar-chart {
+      height: 120px !important;
+      min-height: 120px !important;
+      max-height: 120px !important;
+      display: flex;
+      align-items: end;
+      gap: 2px;
+      margin-bottom: 1rem;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .bar {
+      flex: 1;
+      background: var(--nexus-primary);
+      border-radius: 2px 2px 0 0;
+      min-height: 10px;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+    }
+
+    .bar:hover {
+      opacity: 1;
+    }
+
+    /* Shortcuts */
+    .shortcuts { 
+      display: grid; 
+      grid-template-columns: repeat(6, 1fr); 
+      gap: 1rem; 
+      margin-top: 1rem; 
+    }
+    
+    .shortcut { 
+      padding: 1.5rem 1rem; 
+      text-align: center; 
+      border: 1px solid var(--nexus-border); 
+      border-radius: var(--nexus-radius-lg); 
+      background: var(--nexus-bg-primary); 
+      box-shadow: var(--nexus-shadow); 
+      text-decoration: none; 
+      color: var(--nexus-text-primary); 
+      font-weight: 500; 
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+    }
+    
+    .shortcut:hover {
+      background: var(--nexus-bg-tertiary);
+      transform: translateY(-2px);
+      box-shadow: var(--nexus-shadow-md);
+    }
+    
+    .shortcut i { 
+      display: block; 
+      font-size: 1.5rem; 
+      margin-bottom: 0.75rem; 
+      color: var(--nexus-primary);
+    }
+
+    /* Activity */
+    .activity { 
+      margin-top: 1rem; 
+    }
+    
+    .activity-item { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      border-bottom: 1px solid var(--nexus-border-light); 
+      padding: 1rem 0; 
+      font-size: 0.875rem;
+      transition: background-color 0.2s ease;
+    }
+    
+    .activity-item:hover {
+      background: var(--nexus-bg-tertiary);
+      margin: 0 -1.5rem;
+      padding: 1rem 1.5rem;
+      border-radius: var(--nexus-radius);
+    }
+    
+    .activity-item:last-child { 
+      border-bottom: 0; 
+    }
+    
+    .muted { 
+      color: var(--nexus-text-tertiary); 
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) { 
+      .metrics { grid-template-columns: repeat(2, 1fr) !important; } 
+      .grid-2 { grid-template-columns: 1fr; } 
+      .shortcuts { grid-template-columns: repeat(3, 1fr); } 
+      .container { padding: 1.5rem; }
+    }
+    
+    @media (max-width: 680px) { 
+      .metrics { grid-template-columns: 1fr !important; } 
+      .shortcuts { grid-template-columns: repeat(2, 1fr); }
+      .hero {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .quick-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      .container { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div>
+        <h1>Welcome to bazaarGuru Admin</h1>
+        <p>Compact overview with live-like mock data. Everything styled in Nexus-light.</p>
+      </div>
+      <div class="quick-actions">
+        <a class="qa-btn" href="/admin/user-management.html"><i class="fas fa-users"></i> Users</a>
+        <a class="qa-btn" href="/admin/coupon-management.html"><i class="fas fa-ticket-alt"></i> Coupons</a>
+        <a class="qa-btn" href="/admin/notification-campaigns.html"><i class="fas fa-bell"></i> Campaigns</a>
+        <a class="qa-btn" href="/monitoring-dashboard.html"><i class="fas fa-tachometer-alt"></i> Monitoring</a>
+        <a class="qa-btn" href="/admin/favorites-management.html"><i class="fas fa-heart"></i> Favorites</a>
+        <a class="qa-btn" href="/telegram-webapp/index.html"><i class="fab fa-telegram"></i> WebApp</a>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card metrics-section">
+        <div class="card-body">
+          <div class="metrics" id="metrics"></div>
+        </div>
+      </div>
+
+      <div class="card dashboard-card">
+        <div class="card-body">
+          <div class="chart-container">
+            <div class="chart-title">
+              <div>
+                <div>Revenue by Channel</div>
+                <div class="chart-subtitle">Last 30 days</div>
+              </div>
+              <div style="text-align: right;">
+                <div class="chart-value">₹42.7L</div>
+                <div class="chart-change positive">
+                  <i class="fas fa-arrow-up"></i>
+                  +4.3%
+                </div>
+              </div>
+            </div>
+            <div class="donut-chart"></div>
+            <div class="donut-legend">
+              <div class="legend-item">
+                <div class="legend-color" style="background: var(--nexus-primary);"></div>
+                <span>Personal Channels (58%)</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color" style="background: var(--nexus-info);"></div>
+                <span>Group (26%)</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color" style="background: var(--nexus-success);"></div>
+                <span>AI Recs (16%)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:12px;">
+      <div class="card dashboard-card">
+        <div class="card-body">
+          <div class="chart-container">
+            <div class="chart-title">
+              <div>
+                <div>User Growth</div>
+                <div class="chart-subtitle">Daily active users (30 days)</div>
+              </div>
+              <div style="text-align: right;">
+                <div class="chart-value">8,644</div>
+                <div class="chart-change positive">
+                  <i class="fas fa-arrow-up"></i>
+                  +1.2%
+                </div>
+              </div>
+            </div>
+            <div class="bar-chart" id="barChart"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body activity">
+          <div class="chart-title" style="margin-bottom:6px;">Recent Activity</div>
+          <div id="activity"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <div class="card-body">
+        <div class="chart-title" style="margin-bottom:8px;">Shortcuts</div>
+        <div class="shortcuts">
+          <a class="shortcut" href="/admin/gpt-chat-management-clean.html"><i class="fas fa-robot"></i> GPT Chat</a>
+          <a class="shortcut" href="/admin/favorites-management.html"><i class="fas fa-heart"></i> Favorites</a>
+          <a class="shortcut" href="/admin/user-management.html"><i class="fas fa-users"></i> Users</a>
+          <a class="shortcut" href="/admin/coupon-management.html"><i class="fas fa-ticket-alt"></i> Coupons</a>
+          <a class="shortcut" href="/admin/notification-campaigns.html"><i class="fas fa-bell"></i> Campaigns</a>
+          <a class="shortcut" href="/monitoring-dashboard.html"><i class="fas fa-tachometer-alt"></i> Monitoring</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const metricsEl = document.getElementById('metrics');
+    const activityEl = document.getElementById('activity');
+    const barChartEl = document.getElementById('barChart');
+
+    function mockData() {
+      return {
+        metrics: [
+          { label: 'Total Users', value: '1,24,567', delta: 3.8 },
+          { label: 'Active Today', value: '8,644', delta: 1.2 },
+          { label: 'Revenue (₹)', value: '₹42,75,600', delta: 4.3 },
+          { label: 'Conversion Rate', value: '4.2%', delta: 0.3 },
+          { label: 'Total Cashback', value: '₹2,14,560', delta: 2.1 },
+          { label: 'Uptime', value: '99.96%', delta: 0.01 }
+        ],
+        usersDaily: [52, 54, 58, 56, 60, 62, 59, 61, 64, 66, 65, 68, 70, 72, 71, 74, 76, 75, 78, 80, 79, 82, 84, 83, 86, 88, 87, 90, 92, 91],
+        activity: [
+          { text: 'New coupon approved: Flipkart Electronics', time: '2m' },
+          { text: 'Campaign sent to 12,400 users', time: '12m' },
+          { text: 'Top user redeemed cashback ₹450', time: '25m' },
+          { text: 'Myntra Fashion deals synced', time: '48m' },
+          { text: 'System health OK – CPU 32%', time: '1h' }
+        ]
+      };
+    }
+
+    function renderMetrics(data) {
+      if (!metricsEl) return;
+      
+      metricsEl.innerHTML = '';
+      const icons = ['fas fa-users', 'fas fa-user-check', 'fas fa-rupee-sign', 'fas fa-chart-line', 'fas fa-gift', 'fas fa-server'];
+      const iconClasses = ['primary', 'success', 'warning', 'info', 'success', 'info'];
+      
+      for (let i = 0; i < data.metrics.length; i++) {
+        const m = data.metrics[i];
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.style.animationDelay = (i * 0.1) + 's';
+        
+        const cardBody = document.createElement('div');
+        cardBody.className = 'card-body';
+        
+        const icon = document.createElement('div');
+        icon.className = 'metric-icon ' + iconClasses[i];
+        icon.innerHTML = '<i class="' + icons[i] + '"></i>';
+        
+        const title = document.createElement('h3');
+        title.textContent = m.label;
+        
+        const value = document.createElement('div');
+        value.className = 'metric-value';
+        value.textContent = m.value;
+        
+        const sub = document.createElement('div');
+        sub.className = 'metric-sub ' + (m.delta >= 0 ? 'delta-up' : 'delta-down');
+        sub.innerHTML = '<i class="fas fa-arrow-' + (m.delta >= 0 ? 'up' : 'down') + '"></i>' + Math.abs(m.delta).toFixed(1) + '% from last week';
+        
+        cardBody.appendChild(icon);
+        cardBody.appendChild(title);
+        cardBody.appendChild(value);
+        cardBody.appendChild(sub);
+        div.appendChild(cardBody);
+        metricsEl.appendChild(div);
+      }
+    }
+
+    function renderActivity(list) {
+      if (!activityEl) return;
+      
+      activityEl.innerHTML = '';
+      for (let i = 0; i < list.length; i++) {
+        const a = list[i];
+        const row = document.createElement('div');
+        row.className = 'activity-item';
+        
+        const textSpan = document.createElement('span');
+        textSpan.textContent = a.text;
+        
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'muted';
+        timeSpan.textContent = a.time + ' ago';
+        
+        row.appendChild(textSpan);
+        row.appendChild(timeSpan);
+        activityEl.appendChild(row);
+      }
+    }
+
+    function renderBarChart(data) {
+      if (!barChartEl) return;
+      
+      barChartEl.innerHTML = '';
+      const maxValue = Math.max(...data.usersDaily);
+      
+      for (let i = 0; i < data.usersDaily.length; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        const height = (data.usersDaily[i] / maxValue) * 100;
+        bar.style.height = height + '%';
+        barChartEl.appendChild(bar);
+      }
+    }
+
+    // Initialize dashboard
+    document.addEventListener('DOMContentLoaded', function () {
+      console.log('Dashboard loading...');
+      const data = mockData();
+      renderMetrics(data);
+      renderActivity(data.activity);
+      renderBarChart(data);
+      console.log('Dashboard loaded!');
+    });
+  </script>
+</body>
+</html>

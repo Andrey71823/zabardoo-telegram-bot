@@ -40,7 +40,7 @@ class DemoRunner {
   }
 
   async runAllDemos() {
-    console.log('🎉 ZABARDOO ENHANCED BOT - COMPLETE DEMO SUITE');
+    console.log('🎉 bazaarGuru ENHANCED BOT - COMPLETE DEMO SUITE');
     console.log('=' .repeat(70));
     console.log('');
     console.log('This comprehensive demo will showcase:');

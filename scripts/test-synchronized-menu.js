@@ -92,7 +92,7 @@ console.log('✅ No confusion - same functions everywhere');
 console.log('\n📱 Visual Layout:');
 console.log('=' .repeat(70));
 console.log('┌─────────────────────────────────┐');
-console.log('│ Welcome to Zabardoo Enhanced... │');
+console.log('│ Welcome to bazaarGuru Enhanced... │');
 console.log('│                                 │');
 console.log('│ [🤖 AI] [🔥 Hot] [📖 Guide]    │ ← INLINE BUTTONS');
 console.log('│ [📱 Elec] [👗 Fash] [💄 Beauty] │');
@@ -123,7 +123,7 @@ console.log('   • No extra buttons, no missing buttons');
 
 console.log('\n🚀 Test Commands:');
 console.log('=' .repeat(70));
-console.log('1. Run: node scripts/inline-menu-zabardoo-bot.js');
+console.log('1. Run: node scripts/inline-menu-bazaarGuru-bot.js');
 console.log('2. Send /start to bot');
 console.log('3. Verify inline buttons appear in message');
 console.log('4. Verify reply keyboard has SAME buttons');

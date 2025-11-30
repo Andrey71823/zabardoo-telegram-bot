@@ -428,7 +428,7 @@ WHERE c.status IN ('completed', 'running');
 -- Insert default notification templates
 INSERT INTO notification_templates (id, name, description, category, content, variables, usage, is_active, created_by) VALUES
 ('welcome-template', 'Welcome Message', 'Welcome new users to the platform', 'informational', 
- '{"title": "Welcome to Zabardoo!", "message": "Hi {{firstName}}, welcome to Zabardoo! Start saving with our exclusive coupons.", "actionButtons": [{"text": "Browse Coupons", "url": "https://zabardoo.com/coupons"}]}',
+ '{"title": "Welcome to bazaarGuru!", "message": "Hi {{firstName}}, welcome to bazaarGuru! Start saving with our exclusive coupons.", "actionButtons": [{"text": "Browse Coupons", "url": "https://bazaarGuru.com/coupons"}]}',
  '[{"name": "firstName", "description": "User first name", "type": "string", "required": true}]',
  '{"timesUsed": 0, "averagePerformance": {"openRate": 0, "clickRate": 0, "conversionRate": 0}}',
  true, 'system'),
@@ -440,7 +440,7 @@ INSERT INTO notification_templates (id, name, description, category, content, va
  true, 'system'),
 
 ('cashback-reminder-template', 'Cashback Reminder', 'Remind users about pending cashback', 'reminder',
- '{"title": "Your Cashback is Ready!", "message": "{{firstName}}, you have ₹{{amount}} cashback waiting. Withdraw it now!", "actionButtons": [{"text": "Withdraw Now", "url": "https://zabardoo.com/cashback"}]}',
+ '{"title": "Your Cashback is Ready!", "message": "{{firstName}}, you have ₹{{amount}} cashback waiting. Withdraw it now!", "actionButtons": [{"text": "Withdraw Now", "url": "https://bazaarGuru.com/cashback"}]}',
  '[{"name": "firstName", "description": "User first name", "type": "string", "required": true}, {"name": "amount", "description": "Cashback amount", "type": "number", "required": true}]',
  '{"timesUsed": 0, "averagePerformance": {"openRate": 0, "clickRate": 0, "conversionRate": 0}}',
  true, 'system'),

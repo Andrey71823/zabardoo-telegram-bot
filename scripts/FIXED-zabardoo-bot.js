@@ -15,7 +15,7 @@ const inlineMainMenu = {
     [
       { text: '💰 Cashback', callback_data: 'cashback' },
       { text: '🎲 Random Deal', callback_data: 'random_deal' },
-      { text: '💬 Ask Zabardoo', callback_data: 'ask_zabardoo' }
+      { text: '💬 Ask bazaarGuru', callback_data: 'ask_bazaarGuru' }
     ],
     [
       { text: '⚙️ Settings', callback_data: 'settings' },
@@ -29,7 +29,7 @@ const inlineMainMenu = {
 const replyKeyboard = {
   keyboard: [
     ['🔍 Find Deals', '🎮 My Profile', '📖 Guide'],
-    ['💰 Cashback', '🎲 Random Deal', '💬 Ask Zabardoo'],
+    ['💰 Cashback', '🎲 Random Deal', '💬 Ask bazaarGuru'],
     ['⚙️ Settings', '🌐 Language', '🆘 Help']
   ],
   resize_keyboard: true,
@@ -41,7 +41,7 @@ bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const firstName = msg.from.first_name || 'Friend';
   
-  const welcomeMessage = `🎉 Welcome to Zabardoo Enhanced Bot, ${firstName}! 🌟
+  const welcomeMessage = `🎉 Welcome to bazaarGuru Enhanced Bot, ${firstName}! 🌟
 
 🚀 I'm your AI-powered deal discovery assistant!
 
@@ -141,7 +141,7 @@ Keep shopping to unlock more rewards! 🌟`, { parse_mode: 'Markdown' });
         break;
       
       case 'guide':
-        await bot.sendMessage(chatId, `📖 *Zabardoo Shopping Guide*
+        await bot.sendMessage(chatId, `📖 *bazaarGuru Shopping Guide*
 
 🛍️ *How to Shop Smart:*
 
@@ -211,8 +211,8 @@ Ready to earn more cashback? 💎`, { parse_mode: 'Markdown' });
 🔗 Grab this deal now!`, { parse_mode: 'Markdown' });
         break;
       
-      case 'ask_zabardoo':
-        await bot.sendMessage(chatId, `💬 *Ask Zabardoo*
+      case 'ask_bazaarGuru':
+        await bot.sendMessage(chatId, `💬 *Ask bazaarGuru*
 
 🤖 I'm here to help you with:
 
@@ -295,7 +295,7 @@ Which language would you like to switch to?`, { parse_mode: 'Markdown' });
 🛍️ **Shopping Help:**
 • 🔍 Find Deals - search any product
 • 🎲 Random Deal - discover surprise offers
-• 💬 Ask Zabardoo - get shopping advice
+• 💬 Ask bazaarGuru - get shopping advice
 • 💰 Cashback - track your earnings
 
 📞 **Contact Support:**
@@ -391,7 +391,7 @@ Keep shopping to unlock more rewards! 🌟`, { parse_mode: 'Markdown' });
       
       case '📖 Guide':
         console.log('✅ Calling Guide for lower button');
-        await bot.sendMessage(chatId, `📖 *Zabardoo Shopping Guide*
+        await bot.sendMessage(chatId, `📖 *bazaarGuru Shopping Guide*
 
 🛍️ *How to Shop Smart:*
 
@@ -463,9 +463,9 @@ Ready to earn more cashback? 💎`, { parse_mode: 'Markdown' });
 🔗 Grab this deal now!`, { parse_mode: 'Markdown' });
         break;
       
-      case '💬 Ask Zabardoo':
-        console.log('✅ Calling Ask Zabardoo for lower button');
-        await bot.sendMessage(chatId, `💬 *Ask Zabardoo*
+      case '💬 Ask bazaarGuru':
+        console.log('✅ Calling Ask bazaarGuru for lower button');
+        await bot.sendMessage(chatId, `💬 *Ask bazaarGuru*
 
 🤖 I'm here to help you with:
 
@@ -551,7 +551,7 @@ Which language would you like to switch to?`, { parse_mode: 'Markdown' });
 🛍️ **Shopping Help:**
 • 🔍 Find Deals - search any product
 • 🎲 Random Deal - discover surprise offers
-• 💬 Ask Zabardoo - get shopping advice
+• 💬 Ask bazaarGuru - get shopping advice
 • 💰 Cashback - track your earnings
 
 📞 **Contact Support:**
@@ -600,7 +600,7 @@ bot.on('polling_error', (error) => {
   console.error('Polling error:', error);
 });
 
-console.log('🚀 FIXED Zabardoo Bot is running!');
+console.log('🚀 FIXED bazaarGuru Bot is running!');
 console.log('✅ UPPER buttons (inline) work correctly');
 console.log('✅ LOWER buttons (reply) now work correctly too!');
 console.log('🎯 Test: Press "📖 Guide" in lower menu - should show guide, not product search');

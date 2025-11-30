@@ -76,7 +76,7 @@ class FixBottomMenuBot {
         [
           { text: '💰 Cashback' },
           { text: '🎲 Random Deal' },
-          { text: '🧠 Ask Zabardoo' }
+          { text: '🧠 Ask bazaarGuru' }
         ],
         [
           { text: '⚙️ Settings' },
@@ -101,7 +101,7 @@ class FixBottomMenuBot {
         [
           { text: '💰 Cashback', callback_data: 'cashback' },
           { text: '🎲 Random Deal', callback_data: 'random_deal' },
-          { text: '🧠 Ask Zabardoo', callback_data: 'ask_zabardoo' }
+          { text: '🧠 Ask bazaarGuru', callback_data: 'ask_bazaarGuru' }
         ],
         [
           { text: '⚙️ Settings', callback_data: 'settings' },
@@ -117,7 +117,7 @@ class FixBottomMenuBot {
     
     this.isRunning = true;
     console.log('✅ Bot started - will fix bottom menu!');
-    console.log('📱 English bottom menu: Find Deals, My Profile, Guide, Cashback, Random Deal, Ask Zabardoo, Settings, Language, Help');
+    console.log('📱 English bottom menu: Find Deals, My Profile, Guide, Cashback, Random Deal, Ask bazaarGuru, Settings, Language, Help');
     
     this.pollUpdates();
   }
@@ -232,10 +232,10 @@ You pressed the bottom menu button: Random Deal
 🎁 +7 XP for random deal!`;
         break;
 
-      case '🧠 Ask Zabardoo':
-        responseText = `🧠 <b>Ask Zabardoo</b>
+      case '🧠 Ask bazaarGuru':
+        responseText = `🧠 <b>Ask bazaarGuru</b>
 
-You pressed the bottom menu button: Ask Zabardoo
+You pressed the bottom menu button: Ask bazaarGuru
 
 🎁 +8 XP for AI assistant!`;
         break;
@@ -320,7 +320,7 @@ The bottom menu is now in English!`;
 }
 
 // Start the bot
-const token = process.env.TELEGRAM_BOT_TOKEN || '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
+const token = process.env.TELEGRAM_BOT_TOKEN || '8381471660:AAEK_I4XHl3emmH1s5K_hwuzMeNQbjtqsB0';
 
 const bot = new FixBottomMenuBot(token);
 bot.start().catch(console.error);

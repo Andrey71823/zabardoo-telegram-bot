@@ -6,7 +6,7 @@ const colors = require('colors');
 // Telegram bot token
 const token = '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
 
-class CompactUIZabardooBot {
+class CompactUIbazaarGuruBot {
   constructor() {
     this.bot = new TelegramBot(token, { polling: true });
     this.users = new Map();
@@ -74,7 +74,7 @@ class CompactUIZabardooBot {
       this.handleCallbackQuery(callbackQuery);
     });
 
-    console.log('🤖 Compact UI Zabardoo Bot is running...'.green.bold);
+    console.log('🤖 Compact UI bazaarGuru Bot is running...'.green.bold);
   }
 
   setupPersistentMenu() {
@@ -102,7 +102,7 @@ class CompactUIZabardooBot {
   }
 
   async showCompactMenu(chatId) {
-    const menuMessage = `🏠 **Zabardoo Menu**
+    const menuMessage = `🏠 **bazaarGuru Menu**
 
 Choose an option:`;
 
@@ -382,7 +382,7 @@ ${this.formatCompactDealsList(storeDeals)}
   }
 
   start() {
-    console.log('🚀 Starting Compact UI Zabardoo Bot...'.green.bold);
+    console.log('🚀 Starting Compact UI bazaarGuru Bot...'.green.bold);
     console.log('✅ Bot ready with compact design!'.green);
     
     process.on('SIGINT', () => {
@@ -395,8 +395,8 @@ ${this.formatCompactDealsList(storeDeals)}
 
 // Start the bot
 if (require.main === module) {
-  const bot = new CompactUIZabardooBot();
+  const bot = new CompactUIbazaarGuruBot();
   bot.start();
 }
 
-module.exports = CompactUIZabardooBot;
+module.exports = CompactUIbazaarGuruBot;

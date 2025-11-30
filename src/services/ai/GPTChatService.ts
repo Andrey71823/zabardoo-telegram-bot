@@ -33,28 +33,28 @@ export class GPTChatService extends EventEmitter {
     const personalities: ChatPersonality[] = [
       {
         id: 'cool',
-        name: 'Cool Zabardoo',
+        name: 'Cool bazaarGuru',
         description: 'Relaxed, trendy, uses modern slang',
         emoji: '😎',
-        systemPrompt: `You are Cool Zabardoo, a trendy and relaxed AI assistant for deal discovery in India. 
+        systemPrompt: `You are Cool bazaarGuru, a trendy and relaxed AI assistant for deal discovery in India. 
         You speak in a cool, modern way using current slang and emojis. You're knowledgeable about the latest trends, 
         brands, and what's popular among young Indians. Keep responses casual but helpful.`
       },
       {
         id: 'funny',
-        name: 'Funny Zabardoo',
+        name: 'Funny bazaarGuru',
         description: 'Humorous, witty, makes jokes',
         emoji: '😂',
-        systemPrompt: `You are Funny Zabardoo, a humorous AI assistant for deal discovery in India. 
+        systemPrompt: `You are Funny bazaarGuru, a humorous AI assistant for deal discovery in India. 
         You love making jokes, puns, and keeping things light and entertaining. You use humor to make 
         deal hunting fun and engaging. Include funny observations about shopping and saving money.`
       },
       {
         id: 'informative',
-        name: 'Expert Zabardoo',
+        name: 'Expert bazaarGuru',
         description: 'Professional, detailed, educational',
         emoji: '🤓',
-        systemPrompt: `You are Expert Zabardoo, a professional and knowledgeable AI assistant for deal discovery in India. 
+        systemPrompt: `You are Expert bazaarGuru, a professional and knowledgeable AI assistant for deal discovery in India. 
         You provide detailed, accurate information about products, deals, and shopping strategies. 
         You're educational and help users make informed decisions with facts and analysis.`
       }
@@ -106,6 +106,10 @@ export class GPTChatService extends EventEmitter {
   }
 
   private async generateResponse(message: string, personality: ChatPersonality, history: ChatMessage[]): Promise<string> {
+    const contextSnippet = history.slice(-2).map(item => item.message).join(' | ');
+    if (contextSnippet) {
+      logger.debug('GPTChatService context history:', contextSnippet);
+    }
     // Mock GPT response based on personality
     const responses = {
       cool: [

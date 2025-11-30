@@ -1,4 +1,4 @@
--- Create database schema for Zabardoo Telegram Bot
+-- Create database schema for bazaarGuru Telegram Bot
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

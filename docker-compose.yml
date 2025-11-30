@@ -4,11 +4,11 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
-    container_name: zabardoo-postgres
+    container_name: bazaarGuru-postgres
     environment:
-      POSTGRES_DB: zabardoo
-      POSTGRES_USER: zabardoo_user
-      POSTGRES_PASSWORD: zabardoo_password
+      POSTGRES_DB: bazaarGuru
+      POSTGRES_USER: bazaarGuru_user
+      POSTGRES_PASSWORD: bazaarGuru_password
     ports:
       - "5432:5432"
     volumes:
@@ -16,19 +16,19 @@ services:
       - ./database/init:/docker-entrypoint-initdb.d
       - ./database/migrations:/docker-entrypoint-initdb.d/migrations
     networks:
-      - zabardoo-network
+      - bazaarGuru-network
     restart: unless-stopped
 
   # Redis Cache
   redis:
     image: redis:7-alpine
-    container_name: zabardoo-redis
+    container_name: bazaarGuru-redis
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
-      - zabardoo-network
+      - bazaarGuru-network
     restart: unless-stopped
     command: redis-server --appendonly yes
 
@@ -37,7 +37,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.gateway
-    container_name: zabardoo-gateway
+    container_name: bazaarGuru-gateway
     ports:
       - "3000:3000"
     environment:
@@ -45,16 +45,16 @@ services:
       - PORT=3000
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
-      - POSTGRES_DB=zabardoo
-      - POSTGRES_USER=zabardoo_user
-      - POSTGRES_PASSWORD=zabardoo_password
+      - POSTGRES_DB=bazaarGuru
+      - POSTGRES_USER=bazaarGuru_user
+      - POSTGRES_PASSWORD=bazaarGuru_password
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
       - postgres
       - redis
     networks:
-      - zabardoo-network
+      - bazaarGuru-network
     restart: unless-stopped
 
   # Channel Manager Service
@@ -64,7 +64,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: channel-manager
-    container_name: zabardoo-channel-manager
+    container_name: bazaarGuru-channel-manager
     ports:
       - "3001:3001"
     environment:
@@ -77,7 +77,7 @@ services:
       - postgres
       - redis
     networks:
-      - zabardoo-network
+      - bazaarGuru-network
     restart: unless-stopped
 
   # Group Manager Service
@@ -87,7 +87,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: group-manager
-    container_name: zabardoo-group-manager
+    container_name: bazaarGuru-group-manager
     ports:
       - "3007:3007"
     environment:
@@ -100,7 +100,7 @@ services:
       - postgres
       - redis
     networks:
-      - zabardoo-network
+      - bazaarGuru-network
     restart: unless-stopped
 
   # Sync Manager Service
@@ -110,7 +110,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: sync-manager
-    container_name: zabardoo-sync-manager
+    container_name: bazaarGuru-sync-manager
     ports:
       - "3008:3008"
     environment:
@@ -123,7 +123,7 @@ services:
       - postgres
       - redis
     networks:
-      - zabardoo-network
+      - bazaarGuru-network
     restart: unless-stopped
 
   # AI Assistant Service
@@ -133,7 +133,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: ai-assistant
-    container_name: zabardoo-ai-assistant
+    container_name: bazaarGuru-ai-assistant
     ports:
       - "3002:3002"
     environment:
@@ -147,7 +147,7 @@ services:
       - postgres
       - redis
     networks:
-      - zabardoo-network
+      - bazaarGuru-network
     restart: unless-stopped
 
   # Recommendation Service
@@ -157,7 +157,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: recommendation-service
-    container_name: zabardoo-recommendation-service
+    container_name: bazaarGuru-recommendation-service
     ports:
       - "3009:3009"
     environment:
@@ -170,7 +170,7 @@ services:
       - postgres
       - redis
     networks:
-      - zabardoo-network
+      - bazaarGuru-network
     restart: unless-stopped
 
   # Proactive Notification Service
@@ -180,7 +180,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: proactive-notification-service
-    container_name: zabardoo-proactive-notification-service
+    container_name: bazaarGuru-proactive-notification-service
     ports:
       - "3010:3010"
     environment:
@@ -193,26 +193,26 @@ services:
       - postgres
       - redis
     networks:
-      - zabardoo-network
+      - bazaarGuru-network
     restart: unless-stopped
 
   # Prometheus for monitoring
   prometheus:
     image: prom/prometheus:latest
-    container_name: zabardoo-prometheus
+    container_name: bazaarGuru-prometheus
     ports:
       - "9090:9090"
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     networks:
-      - zabardoo-network
+      - bazaarGuru-network
     restart: unless-stopped
 
   # Grafana for visualization
   grafana:
     image: grafana/grafana:latest
-    container_name: zabardoo-grafana
+    container_name: bazaarGuru-grafana
     ports:
       - "3001:3000"
     environment:
@@ -220,7 +220,7 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
     networks:
-      - zabardoo-network
+      - bazaarGuru-network
     restart: unless-stopped
 
 volumes:
@@ -230,5 +230,5 @@ volumes:
   grafana_data:
 
 networks:
-  zabardoo-network:
+  bazaarGuru-network:
     driver: bridge

@@ -20,7 +20,7 @@ const testCoupon = {
   discount_type: 'percentage',
   discount_value: 70,
   coupon_code: 'BIGSALE70',
-  site_page_url: 'https://zabardoo.com/coupons/flipkart-big-sale',
+  site_page_url: 'https://bazaarGuru.com/coupons/flipkart-big-sale',
   expiry_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
 };
 

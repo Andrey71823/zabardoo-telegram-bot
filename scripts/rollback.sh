@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Zabardoo Telegram Bot Rollback Script
+# bazaarGuru Telegram Bot Rollback Script
 # This script handles rollback operations for staging and production environments
 
 set -e  # Exit on any error
@@ -37,7 +37,7 @@ log_error() {
 # Help function
 show_help() {
     cat << EOF
-Zabardoo Rollback Script
+bazaarGuru Rollback Script
 
 Usage: $0 [OPTIONS] ENVIRONMENT
 
@@ -132,24 +132,24 @@ fi
 # Set deployment configuration based on environment
 case $ENVIRONMENT in
     staging)
-        DEPLOY_HOST="${STAGING_HOST:-staging.zabardoo.com}"
+        DEPLOY_HOST="${STAGING_HOST:-staging.bazaarGuru.com}"
         DEPLOY_USER="${STAGING_USER:-deploy}"
-        DEPLOY_PATH="${STAGING_PATH:-/opt/zabardoo}"
+        DEPLOY_PATH="${STAGING_PATH:-/opt/bazaarGuru}"
         ;;
     production)
-        DEPLOY_HOST="${PRODUCTION_HOST:-zabardoo.com}"
+        DEPLOY_HOST="${PRODUCTION_HOST:-bazaarGuru.com}"
         DEPLOY_USER="${PRODUCTION_USER:-deploy}"
-        DEPLOY_PATH="${PRODUCTION_PATH:-/opt/zabardoo}"
+        DEPLOY_PATH="${PRODUCTION_PATH:-/opt/bazaarGuru}"
         ;;
 esac
 
 # Function to get available versions
 get_available_versions() {
     ssh "$DEPLOY_USER@$DEPLOY_HOST" << 'EOF'
-        cd /opt/zabardoo
+        cd /opt/bazaarGuru
         
         echo "Available Docker images:"
-        docker images --format "table {{.Repository}}:{{.Tag}}\t{{.CreatedAt}}" | grep zabardoo/telegram-bot | head -10
+        docker images --format "table {{.Repository}}:{{.Tag}}\t{{.CreatedAt}}" | grep bazaarGuru/telegram-bot | head -10
         
         echo -e "\nAvailable database backups:"
         if [[ -d backups ]]; then
@@ -177,9 +177,9 @@ fi
 # Get current version
 get_current_version() {
     ssh "$DEPLOY_USER@$DEPLOY_HOST" << 'EOF'
-        cd /opt/zabardoo
+        cd /opt/bazaarGuru
         if [[ -f docker-compose.prod.yml ]]; then
-            grep "image: zabardoo/telegram-bot:" docker-compose.prod.yml | head -1 | sed 's/.*zabardoo\/telegram-bot://' | sed 's/[[:space:]]*$//'
+            grep "image: bazaarGuru/telegram-bot:" docker-compose.prod.yml | head -1 | sed 's/.*bazaarGuru\/telegram-bot://' | sed 's/[[:space:]]*$//'
         else
             echo "unknown"
         fi
@@ -195,7 +195,7 @@ if [[ -z "$VERSION" ]]; then
     
     # Get the previous version from deployment log
     PREVIOUS_VERSION=$(ssh "$DEPLOY_USER@$DEPLOY_HOST" << 'EOF'
-        cd /opt/zabardoo
+        cd /opt/bazaarGuru
         if [[ -f deployment.log ]]; then
             # Get the second most recent successful deployment
             grep ",success$" deployment.log | tail -2 | head -1 | cut -d',' -f3
@@ -254,7 +254,7 @@ if ! ssh -o ConnectTimeout=10 "$DEPLOY_USER@$DEPLOY_HOST" "echo 'Connection test
 fi
 
 # Check if target version exists
-VERSION_EXISTS=$(ssh "$DEPLOY_USER@$DEPLOY_HOST" "docker images -q zabardoo/telegram-bot:$VERSION")
+VERSION_EXISTS=$(ssh "$DEPLOY_USER@$DEPLOY_HOST" "docker images -q bazaarGuru/telegram-bot:$VERSION")
 if [[ -z "$VERSION_EXISTS" ]]; then
     log_error "Target version $VERSION not found on deployment host"
     log_info "Available versions:"
@@ -327,10 +327,10 @@ ssh "$DEPLOY_USER@$DEPLOY_HOST" << EOF
     cd $DEPLOY_PATH
     
     # Update docker-compose to use target version
-    sed -i "s|image: zabardoo/telegram-bot:.*|image: zabardoo/telegram-bot:$VERSION|g" docker-compose.prod.yml
+    sed -i "s|image: bazaarGuru/telegram-bot:.*|image: bazaarGuru/telegram-bot:$VERSION|g" docker-compose.prod.yml
     
     # Pull the target image (in case it's not local)
-    docker pull zabardoo/telegram-bot:$VERSION || true
+    docker pull bazaarGuru/telegram-bot:$VERSION || true
     
     # Stop current services
     docker-compose -f docker-compose.prod.yml down

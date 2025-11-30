@@ -154,7 +154,7 @@ class RecommendationDemo {
   }
 
   async runDemo() {
-    console.log('🎯 Zabardoo Recommendation System Demo'.cyan.bold);
+    console.log('🎯 bazaarGuru Recommendation System Demo'.cyan.bold);
     console.log('=' .repeat(50).cyan);
     console.log();
 

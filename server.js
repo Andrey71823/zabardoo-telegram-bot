@@ -15,19 +15,25 @@ app.set('trust proxy', 1);
 
 // Helmet with relaxed CSP to allow our CDN resources
 app.use(helmet({
+  // X-Frame-Options is legacy and conflicts with modern CSP in some browsers when
+  // scheme is auto-upgraded. We rely on CSP frame-ancestors instead.
+  frameguard: false,
   contentSecurityPolicy: {
     useDefaults: true,
     directives: {
-      "default-src": ["'self'"],
-      "script-src": ["'self'", "'unsafe-inline'", 'https:'],
+      // Be explicit to avoid browser fallbacks that block iframes
+      "default-src": ["'self'", 'data:', 'blob:', 'https:'],
+      "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https:'],
       // allow inline event handlers (onclick) used by restored local UI
       "script-src-attr": ["'unsafe-inline'"],
       "style-src": ["'self'", "'unsafe-inline'", 'https:'],
-      "img-src": ["'self'", 'data:', 'https:'],
+      "img-src": ["'self'", 'data:', 'blob:', 'https:'],
       "font-src": ["'self'", 'https:', 'data:'],
-      "connect-src": ["'self'", 'https:'],
-      // explicitly allow same-origin iframes for unified-dashboard content
-      "frame-src": ["'self'"],
+      "connect-src": ["'self'", 'http:', 'https:'],
+      // explicitly allow iframes on same-origin and tolerate scheme changes
+      "frame-src": ["'self'", 'http:', 'https:'],
+      // child-src is respected by some engines as the effective frame-src
+      "child-src": ["'self'", 'http:', 'https:'],
       "frame-ancestors": ["'self'"],
       "object-src": ["'none'"]
     }
@@ -51,11 +57,12 @@ app.use(express.json({ limit: '200kb' }));
 app.use(express.static(path.join(__dirname, 'public'), {
   dotfiles: 'ignore',
   etag: false,
-  maxAge: '1h',
+  maxAge: 0, // disable caching to ensure prod matches local 1:1
   fallthrough: true,
   setHeaders: (res) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('Cache-Control', 'no-store');
   }
 }));
 
@@ -72,7 +79,7 @@ app.get('/health', (req, res) => {
 // Root route
 app.get('/', (req, res) => {
   res.json({
-    message: 'Zabardoo Telegram Bot API',
+    message: 'BazaarGuru Telegram Bot API',
     version: '1.0.0',
     status: 'running',
     endpoints: {
@@ -318,7 +325,7 @@ app.post('/api/admin/data-compliance/process/expired-data', (req, res) => {
 
 // Start server
 app.listen(port, () => {
-  console.log(`🚀 Zabardoo Telegram Bot started on port ${port}`);
+  console.log(`🚀 BazaarGuru Telegram Bot started on port ${port}`);
   console.log(`📱 Environment: ${process.env.NODE_ENV || 'production'}`);
   console.log(`🌐 Health check: http://localhost:${port}/health`);
   console.log(`👨‍💼 Admin dashboard: http://localhost:${port}/admin`);

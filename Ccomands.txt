@@ -1,0 +1,6 @@
+# 1. Запуск основного сервера с веб-интерфейсами
+node server.js
+
+# В новом терминале:
+# 2. Запуск демо-бота
+node scripts/demo-enhanced-telegram-bot.js

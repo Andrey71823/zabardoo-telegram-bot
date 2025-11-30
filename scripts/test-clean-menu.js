@@ -47,7 +47,7 @@ console.log('❌ Navigation between different menus');
 console.log('\n🔧 Files to Test:');
 console.log('=' .repeat(60));
 console.log('1. scripts/clean-fixed-menu-bot.js - Clean version (recommended)');
-console.log('2. scripts/real-data-zabardoo-bot.js - Updated version');
+console.log('2. scripts/real-data-bazaarGuru-bot.js - Updated version');
 
 console.log('\n🚀 Test Commands:');
 console.log('=' .repeat(60));

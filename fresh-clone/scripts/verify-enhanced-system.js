@@ -46,7 +46,7 @@ class EnhancedSystemVerifier {
   }
 
   async verifySystem() {
-    console.log('🔍 ZABARDOO ENHANCED SYSTEM VERIFICATION');
+    console.log('🔍 bazaarGuru ENHANCED SYSTEM VERIFICATION');
     console.log('=' .repeat(60));
     console.log('');
 

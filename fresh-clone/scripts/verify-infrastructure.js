@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-console.log('🔍 Verifying Zabardoo Telegram Bot Infrastructure...\n');
+console.log('🔍 Verifying bazaarGuru Telegram Bot Infrastructure...\n');
 
 // Check if all required files exist
 const requiredFiles = [

@@ -84,7 +84,7 @@ module.exports = {
         filename: 'jest-report.html',
         expand: true,
         hideIcon: false,
-        pageTitle: 'Zabardoo Test Report'
+        pageTitle: 'bazaarGuru Test Report'
       }
     ],
     [

@@ -9,17 +9,17 @@ console.log('🔧 Fixing all bot menus to English...');
 // List of bot files to fix
 const botFiles = [
   'scripts/demo-fixed-menu-bot.js',
-  'scripts/complete-zabardoo-bot.js',
+  'scripts/complete-bazaarGuru-bot.js',
   'scripts/enhanced-guide-bot.js',
   'scripts/working-bot.js',
-  'scripts/exact-zabardoo-bot.js'
+  'scripts/exact-bazaarGuru-bot.js'
 ];
 
 // English menu configuration
 const englishMenu = {
   keyboard: [
     ['🔍 Find Deals', '🎮 My Profile', '📖 Guide'],
-    ['💰 Cashback', '🎲 Random Deal', '🧠 Ask Zabardoo'],
+    ['💰 Cashback', '🎲 Random Deal', '🧠 Ask bazaarGuru'],
     ['⚙️ Settings', '🌐 Language', '🆘 Help']
   ],
   resize_keyboard: true,
@@ -53,7 +53,7 @@ function fixBotFile(filePath) {
       content = content.replace(russianKeyboardPattern, 
         `keyboard: [
         ['🔍 Find Deals', '🎮 My Profile', '📖 Guide'],
-        ['💰 Cashback', '🎲 Random Deal', '🧠 Ask Zabardoo'],
+        ['💰 Cashback', '🎲 Random Deal', '🧠 Ask bazaarGuru'],
         ['⚙️ Settings', '🌐 Language', '🆘 Help']
       ]`);
       modified = true;
@@ -67,7 +67,7 @@ function fixBotFile(filePath) {
       ['💻.*Ноутбуки?', '📖 Guide'],
       ['🏠.*Товары.*дома?', '💰 Cashback'],
       ['💬.*Пожелание', '🎲 Random Deal'],
-      ['😋.*Жалоба', '🧠 Ask Zabardoo'],
+      ['😋.*Жалоба', '🧠 Ask bazaarGuru'],
       ['ℹ️.*Помощь', '🆘 Help']
     ];
 
@@ -108,7 +108,7 @@ console.log(`✅ Fixed ${fixedCount} bot files`);
 console.log('');
 console.log('📱 New English menu structure:');
 console.log('   Row 1: 🔍 Find Deals | 🎮 My Profile | 📖 Guide');
-console.log('   Row 2: 💰 Cashback | 🎲 Random Deal | 🧠 Ask Zabardoo');
+console.log('   Row 2: 💰 Cashback | 🎲 Random Deal | 🧠 Ask bazaarGuru');
 console.log('   Row 3: ⚙️ Settings | 🌐 Language | 🆘 Help');
 console.log('');
 console.log('🔄 Restart your bots to see the changes!');

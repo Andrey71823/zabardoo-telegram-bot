@@ -152,7 +152,7 @@ class ProactiveNotificationTester {
         content: {
           title: '⚡ Flash Sale Alert!',
           message: 'Limited time: {{discount}}% OFF on {{store}}!',
-          media_url: 'https://zabardoo.com/images/flash-sale.jpg',
+          media_url: 'https://bazaarGuru.com/images/flash-sale.jpg',
           buttons: [
             {
               text: '🛒 Shop Now',

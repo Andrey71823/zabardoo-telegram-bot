@@ -30,6 +30,7 @@ module.exports = {
   verbose: true,
   detectOpenHandles: true,
   forceExit: true,
+  passWithNoTests: true,
   
   // Coverage thresholds
   coverageThreshold: {
@@ -42,7 +43,7 @@ module.exports = {
   },
 
   // Module name mapping for absolute imports
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@config/(.*)$': '<rootDir>/src/config/$1',
     '^@services/(.*)$': '<rootDir>/src/services/$1',
@@ -69,6 +70,11 @@ module.exports = {
     '/coverage/'
   ],
 
+  modulePathIgnorePatterns: [
+    '<rootDir>/clean-project/',
+    '<rootDir>/fresh-clone/'
+  ],
+
   // Transform ignore patterns
   transformIgnorePatterns: [
     'node_modules/(?!(some-esm-package)/)'
@@ -84,7 +90,7 @@ module.exports = {
         filename: 'jest-report.html',
         expand: true,
         hideIcon: false,
-        pageTitle: 'Zabardoo Test Report'
+        pageTitle: 'bazaarGuru Test Report'
       }
     ],
     [
@@ -122,7 +128,6 @@ module.exports = {
       setupFilesAfterEnv: [
         '<rootDir>/src/__tests__/setup/test-setup.ts'
       ],
-      testTimeout: 60000
     },
     {
       displayName: 'e2e',
@@ -133,7 +138,6 @@ module.exports = {
       setupFilesAfterEnv: [
         '<rootDir>/src/__tests__/setup/test-setup.ts'
       ],
-      testTimeout: 120000
     }
   ]
 };

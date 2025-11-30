@@ -1,7 +1,7 @@
 {
-  "name": "zabardoo-telegram-bot",
+  "name": "bazaarGuru-telegram-bot",
   "version": "1.0.0",
-  "description": "Zabardoo Telegram Bot - Coupon and Cashback Platform for India",
+  "description": "bazaarGuru Telegram Bot - Coupon and Cashback Platform for India",
   "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main.js",
@@ -39,7 +39,7 @@
     "rollback:staging": "bash scripts/rollback.sh staging",
     "rollback:production": "bash scripts/rollback.sh production",
     
-    "docker:build": "docker build -t zabardoo/telegram-bot .",
+    "docker:build": "docker build -t bazaarGuru/telegram-bot .",
     "docker:run": "docker-compose up -d",
     "docker:stop": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
@@ -89,16 +89,16 @@
     "nodejs",
     "typescript"
   ],
-  "author": "Zabardoo Team <dev@zabardoo.com>",
+  "author": "bazaarGuru Team <dev@bazaarGuru.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Andrey7823/zabardoo-telegram-bot.git"
+    "url": "https://github.com/Andrey7823/bazaarGuru-telegram-bot.git"
   },
   "bugs": {
-    "url": "https://github.com/Andrey7823/zabardoo-telegram-bot/issues"
+    "url": "https://github.com/Andrey7823/bazaarGuru-telegram-bot/issues"
   },
-  "homepage": "https://zabardoo.com",
+  "homepage": "https://bazaarGuru.com",
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"

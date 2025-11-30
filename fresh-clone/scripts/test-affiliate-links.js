@@ -19,7 +19,7 @@ async function testAffiliateLinkSystem() {
   const pool = new Pool({
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '5432'),
-    database: process.env.DB_NAME || 'zabardoo_test',
+    database: process.env.DB_NAME || 'bazaarGuru_test',
     user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || 'password'
   });
@@ -60,7 +60,7 @@ async function testAffiliateLinkSystem() {
         direct: '{original_url}?subid={sub_id}'
       },
       customParameters: {
-        'partner': 'zabardoo',
+        'partner': 'bazaarGuru',
         'source': 'telegram'
       }
     };
@@ -109,7 +109,7 @@ async function testAffiliateLinkSystem() {
       telegramSubId: affiliateLink.telegramSubId,
       ipAddress: '192.168.1.100',
       userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15',
-      referrer: 'https://t.me/zabardoo_bot',
+      referrer: 'https://t.me/bazaarGuru_bot',
       sessionId: 'session-test-123',
       deviceInfo: {
         platform: 'iOS',

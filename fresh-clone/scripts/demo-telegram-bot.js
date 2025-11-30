@@ -6,7 +6,7 @@ const colors = require('colors');
 // Telegram bot token
 const token = '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
 
-class ZabardooTelegramBot {
+class bazaarGuruTelegramBot {
   constructor() {
     this.bot = new TelegramBot(token, { polling: true });
     this.users = new Map(); // Simple in-memory user storage for demo
@@ -20,7 +20,7 @@ class ZabardooTelegramBot {
         discount: '80% OFF',
         description: 'Massive discounts on smartphones, laptops, and accessories during Big Billion Days sale',
         code: 'BIGBILLION80',
-        link: 'https://zabardoo.com/coupons/flipkart-big-billion-days',
+        link: 'https://bazaarGuru.com/coupons/flipkart-big-billion-days',
         expiry: '7 days left'
       },
       {
@@ -31,7 +31,7 @@ class ZabardooTelegramBot {
         discount: 'Buy 2 Get 1 Free',
         description: 'Buy any 2 beauty products and get 1 absolutely free on Nykaa',
         code: 'BEAUTY2GET1',
-        link: 'https://zabardoo.com/coupons/nykaa-beauty-bonanza',
+        link: 'https://bazaarGuru.com/coupons/nykaa-beauty-bonanza',
         expiry: '10 days left'
       },
       {
@@ -42,7 +42,7 @@ class ZabardooTelegramBot {
         discount: '70% OFF',
         description: 'Flat 70% discount on fashion and lifestyle products',
         code: 'EORS70',
-        link: 'https://zabardoo.com/coupons/myntra-end-of-reason-sale',
+        link: 'https://bazaarGuru.com/coupons/myntra-end-of-reason-sale',
         expiry: '3 days left'
       },
       {
@@ -53,7 +53,7 @@ class ZabardooTelegramBot {
         discount: '60% OFF',
         description: 'Get 60% off on food orders with free delivery',
         code: 'SUPERSAVER60',
-        link: 'https://zabardoo.com/coupons/swiggy-super-saver',
+        link: 'https://bazaarGuru.com/coupons/swiggy-super-saver',
         expiry: '2 days left'
       }
     ];
@@ -97,7 +97,7 @@ class ZabardooTelegramBot {
       console.log('Polling error:'.red, error);
     });
 
-    console.log('🤖 Zabardoo Telegram Bot is running...'.green.bold);
+    console.log('🤖 bazaarGuru Telegram Bot is running...'.green.bold);
     console.log('Bot token configured and polling started.'.green);
     console.log('Try sending /start to the bot!'.yellow);
   }
@@ -123,7 +123,7 @@ class ZabardooTelegramBot {
     }
 
     const welcomeMessage = `
-🎉 Welcome to Zabardoo, ${userName}! 
+🎉 Welcome to bazaarGuru, ${userName}! 
 
 I'm your AI-powered coupon assistant, ready to help you find the best deals and discounts in India! 
 
@@ -171,7 +171,7 @@ Let's start saving money together! 💸✨
     const chatId = msg.chat.id;
 
     const helpMessage = `
-🤖 **Zabardoo Bot Commands**
+🤖 **bazaarGuru Bot Commands**
 
 **Main Commands:**
 /start - Welcome message and main menu
@@ -415,7 +415,7 @@ Choose a category to see the latest deals:
         break;
 
       case 'feedback_positive':
-        await this.bot.sendMessage(chatId, '🎉 Thank you! Your feedback helps improve our recommendations. Keep using Zabardoo for better deals!');
+        await this.bot.sendMessage(chatId, '🎉 Thank you! Your feedback helps improve our recommendations. Keep using bazaarGuru for better deals!');
         break;
 
       case 'feedback_negative':
@@ -462,8 +462,8 @@ Choose a category to see the latest deals:
   }
 
   start() {
-    console.log('🚀 Starting Zabardoo Telegram Bot...'.green.bold);
-    console.log(`📱 Bot Username: @zabardoo_deals_bot`.cyan);
+    console.log('🚀 Starting bazaarGuru Telegram Bot...'.green.bold);
+    console.log(`📱 Bot Username: @bazaarGuru_deals_bot`.cyan);
     console.log(`🔑 Token: ${token.substring(0, 10)}...`.gray);
     console.log('✅ Bot is ready to receive messages!'.green);
     
@@ -478,8 +478,8 @@ Choose a category to see the latest deals:
 
 // Start the bot if run directly
 if (require.main === module) {
-  const zabardooBot = new ZabardooTelegramBot();
-  zabardooBot.start();
+  const bazaarGuruBot = new bazaarGuruTelegramBot();
+  bazaarGuruBot.start();
 }
 
-module.exports = ZabardooTelegramBot;
+module.exports = bazaarGuruTelegramBot;

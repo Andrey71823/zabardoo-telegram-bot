@@ -239,7 +239,7 @@ INSERT INTO click_tracking_config (
 ) VALUES (
     'Default Tracking Config',
     true,
-    ARRAY['zabardoo.com', 'flipkart.com', 'amazon.in', 'myntra.com', 'nykaa.com'],
+    ARRAY['bazaarGuru.com', 'flipkart.com', 'amazon.in', 'myntra.com', 'nykaa.com'],
     30,
     true,
     true,

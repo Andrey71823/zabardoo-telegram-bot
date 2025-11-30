@@ -39,20 +39,20 @@ FROM base AS production
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S zabardoo -u 1001
+    adduser -S bazaarGuru -u 1001
 
 # Copy built application
-COPY --from=build --chown=zabardoo:nodejs /app/dist ./dist
-COPY --from=build --chown=zabardoo:nodejs /app/node_modules ./node_modules
-COPY --from=build --chown=zabardoo:nodejs /app/package*.json ./
-COPY --from=build --chown=zabardoo:nodejs /app/public ./public
+COPY --from=build --chown=bazaarGuru:nodejs /app/dist ./dist
+COPY --from=build --chown=bazaarGuru:nodejs /app/node_modules ./node_modules
+COPY --from=build --chown=bazaarGuru:nodejs /app/package*.json ./
+COPY --from=build --chown=bazaarGuru:nodejs /app/public ./public
 
 # Create necessary directories
 RUN mkdir -p logs temp uploads && \
-    chown -R zabardoo:nodejs logs temp uploads
+    chown -R bazaarGuru:nodejs logs temp uploads
 
 # Switch to non-root user
-USER zabardoo
+USER bazaarGuru
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
@@ -66,7 +66,7 @@ ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "dist/index.js"]
 
 # Labels for metadata
-LABEL maintainer="Zabardoo Team <dev@zabardoo.com>"
+LABEL maintainer="bazaarGuru Team <dev@bazaarGuru.com>"
 LABEL version="1.0.0"
-LABEL description="Zabardoo Telegram Bot - Coupon and Cashback Platform"
-LABEL org.opencontainers.image.source="https://github.com/zabardoo/telegram-bot"
+LABEL description="bazaarGuru Telegram Bot - Coupon and Cashback Platform"
+LABEL org.opencontainers.image.source="https://github.com/bazaarGuru/telegram-bot"

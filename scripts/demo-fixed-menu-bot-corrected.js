@@ -5,7 +5,7 @@ const TelegramBot = require('node-telegram-bot-api');
 // Telegram bot token
 const token = '7315076864:AAGZ5N4dwhUrSw2tygw4wiCPY74cROKWzsE';
 
-class FixedMenuZabardooBot {
+class FixedMenubazaarGuruBot {
   constructor() {
     this.bot = new TelegramBot(token, { polling: true });
     this.users = new Map();
@@ -65,7 +65,7 @@ class FixedMenuZabardooBot {
       this.handleCallbackQuery(callbackQuery);
     });
 
-    console.log('🤖 Fixed Menu Zabardoo Bot is running...');
+    console.log('🤖 Fixed Menu bazaarGuru Bot is running...');
     console.log('Menu will always stay at the bottom!');
   }
 
@@ -83,7 +83,7 @@ class FixedMenuZabardooBot {
       });
     }
 
-    const welcomeMessage = `🎉 Welcome to Zabardoo, ${userName}!
+    const welcomeMessage = `🎉 Welcome to bazaarGuru, ${userName}!
 
 I'm your AI-powered coupon assistant for India! 
 
@@ -109,7 +109,7 @@ Just tap any option to get started.`;
     return {
       keyboard: [
         ['🔍 Find Deals', '🎮 My Profile', '📖 Guide'],
-        ['💰 Cashback', '🎲 Random Deal', '🧠 Ask Zabardoo'],
+        ['💰 Cashback', '🎲 Random Deal', '🧠 Ask bazaarGuru'],
         ['⚙️ Settings', '🌐 Language', '🆘 Help']
       ],
       resize_keyboard: true,
@@ -143,8 +143,8 @@ Just tap any option to get started.`;
         await this.handleRandomDeal(chatId);
         break;
 
-      case '🧠 Ask Zabardoo':
-        await this.handleAskZabardoo(chatId, userName);
+      case '🧠 Ask bazaarGuru':
+        await this.handleAskbazaarGuru(chatId, userName);
         break;
 
       case '⚙️ Settings':
@@ -178,7 +178,7 @@ Just tap any option to get started.`;
   }
 
   async handleMyProfile(chatId, userName) {
-    const profileMessage = `🎮 **Your Zabardoo Profile**
+    const profileMessage = `🎮 **Your bazaarGuru Profile**
 
 👤 **User:** ${userName}
 💎 **Level:** 5
@@ -201,13 +201,13 @@ Keep exploring to unlock more rewards!`;
   }
 
   async handleGuide(chatId) {
-    const guideMessage = `📖 **Complete Zabardoo Guide**
+    const guideMessage = `📖 **Complete bazaarGuru Guide**
 
 🔍 **Find Deals** - Browse top deals and offers
 🎮 **My Profile** - View your level, XP, and achievements
 💰 **Cashback** - Check your balance and withdraw
 🎲 **Random Deal** - Get surprise deals
-🧠 **Ask Zabardoo** - Chat with AI assistant
+🧠 **Ask bazaarGuru** - Chat with AI assistant
 ⚙️ **Settings** - Manage notifications
 🌐 **Language** - Change language preferences
 🆘 **Help** - Get support and assistance
@@ -272,8 +272,8 @@ Ready to start saving? Use the menu below!`;
     await this.bot.sendMessage(chatId, dealMessage, { parse_mode: 'Markdown' });
   }
 
-  async handleAskZabardoo(chatId, userName) {
-    const aiMessage = `🧠 **Ask Zabardoo AI Assistant**
+  async handleAskbazaarGuru(chatId, userName) {
+    const aiMessage = `🧠 **Ask bazaarGuru AI Assistant**
 
 💬 **Hi ${userName}! I'm your personal shopping AI!**
 
@@ -358,7 +358,7 @@ Available languages:`;
   }
 
   async handleHelp(chatId) {
-    const helpMessage = `🆘 **Zabardoo Bot Quick Help**
+    const helpMessage = `🆘 **bazaarGuru Bot Quick Help**
 
 🎯 **Main Functions:**
 • Find deals and get cashback
@@ -426,7 +426,7 @@ ${coupon.title}
     const keyboard = {
       inline_keyboard: [
         [
-          { text: '🛒 Get This Deal', url: 'https://zabardoo.com' },
+          { text: '🛒 Get This Deal', url: 'https://bazaarGuru.com' },
           { text: '📋 Copy Code', callback_data: `copy_code_${coupon.id}` }
         ],
         [
@@ -477,13 +477,13 @@ ${coupon.title}
   }
 
   start() {
-    console.log('🚀 Starting Fixed Menu Zabardoo Bot...');
-    console.log('📱 Bot Username: @zabardoo_deals_bot');
+    console.log('🚀 Starting Fixed Menu bazaarGuru Bot...');
+    console.log('📱 Bot Username: @bazaarGuru_deals_bot');
     console.log('✅ Bot is ready with CORRECTED English menu!');
     console.log('');
     console.log('📋 English Menu Structure:');
     console.log('   Row 1: 🔍 Find Deals | 🎮 My Profile | 📖 Guide');
-    console.log('   Row 2: 💰 Cashback | 🎲 Random Deal | 🧠 Ask Zabardoo');
+    console.log('   Row 2: 💰 Cashback | 🎲 Random Deal | 🧠 Ask bazaarGuru');
     console.log('   Row 3: ⚙️ Settings | 🌐 Language | 🆘 Help');
     
     // Keep the process running
@@ -497,8 +497,8 @@ ${coupon.title}
 
 // Start the bot if run directly
 if (require.main === module) {
-  const zabardooBot = new FixedMenuZabardooBot();
-  zabardooBot.start();
+  const bazaarGuruBot = new FixedMenubazaarGuruBot();
+  bazaarGuruBot.start();
 }
 
-module.exports = FixedMenuZabardooBot;
+module.exports = FixedMenubazaarGuruBot;

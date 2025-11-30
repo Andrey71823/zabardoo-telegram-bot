@@ -97,7 +97,7 @@ bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const firstName = msg.from.first_name || 'Friend';
   
-  const welcomeMessage = `🎉 Welcome to Zabardoo, ${firstName}! 🛍️
+  const welcomeMessage = `🎉 Welcome to bazaarGuru, ${firstName}! 🛍️
 
 🇮🇳 Your ultimate shopping companion for the best deals from top Indian stores!
 
@@ -126,7 +126,7 @@ Ready to save money? Let's start shopping! 🚀`;
 bot.onText(/\/help/, async (msg) => {
   const chatId = msg.chat.id;
   
-  const helpMessage = `🆘 *Zabardoo Help Guide*
+  const helpMessage = `🆘 *bazaarGuru Help Guide*
 
 🔍 *How to Search:*
 • Use "🔍 Find Deals" to search any product
@@ -307,7 +307,7 @@ async function handleHotDeals(chatId) {
 }
 
 async function handleGuide(chatId) {
-  const guideMessage = `📖 *Zabardoo Shopping Guide*
+  const guideMessage = `📖 *bazaarGuru Shopping Guide*
 
 🛍️ *How to Shop Smart:*
 
@@ -669,7 +669,7 @@ bot.on('polling_error', (error) => {
   console.error('Polling error:', error);
 });
 
-console.log('🚀 Zabardoo Fixed Menu Bot is running!');
+console.log('🚀 bazaarGuru Fixed Menu Bot is running!');
 console.log('📱 Features: Fixed main menu with all options always visible');
 console.log('🏪 Stores: Flipkart, Amazon India, Myntra, Nykaa, AJIO');
 console.log('🎯 Menu: All features accessible without navigation');

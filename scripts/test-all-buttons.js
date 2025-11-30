@@ -8,7 +8,7 @@ const bottomMenuButtons = [
   '📖 Guide',
   '💰 Cashback',
   '🎲 Random Deal',
-  '💬 Ask Zabardoo',
+  '💬 Ask bazaarGuru',
   '⚙️ Settings',
   '🌐 Language',
   '🆘 Help'
@@ -21,7 +21,7 @@ const expectedFunctions = {
   '📖 Guide': 'handleGuide - Руководство по покупкам и использованию бота',
   '💰 Cashback': 'handleCashback - Информация о кэшбеке и заработке',
   '🎲 Random Deal': 'handleRandomDeal - Случайное предложение дня',
-  '💬 Ask Zabardoo': 'handleAskZabardoo - Помощник для вопросов о товарах',
+  '💬 Ask bazaarGuru': 'handleAskbazaarGuru - Помощник для вопросов о товарах',
   '⚙️ Settings': 'handleSettings - Настройки бота и предпочтения',
   '🌐 Language': 'handleLanguage - Выбор языка интерфейса',
   '🆘 Help': 'handleHelp - Помощь и поддержка'
@@ -38,26 +38,26 @@ bottomMenuButtons.forEach((button, index) => {
 
 console.log('🔍 ПРОБЛЕМА КОТОРАЯ БЫЛА:');
 console.log('=' .repeat(80));
-console.log('❌ Когда пользователь нажимал "💬 Ask Zabardoo"');
+console.log('❌ Когда пользователь нажимал "💬 Ask bazaarGuru"');
 console.log('❌ Бот обрабатывал это как поиск товара');
-console.log('❌ Выдавал: "I found some relevant deals for: Ask Zabardoo"');
-console.log('❌ Вместо правильной функции Ask Zabardoo');
+console.log('❌ Выдавал: "I found some relevant deals for: Ask bazaarGuru"');
+console.log('❌ Вместо правильной функции Ask bazaarGuru');
 
 console.log('\n✅ ИСПРАВЛЕНИЕ:');
 console.log('=' .repeat(80));
 console.log('✅ Добавлены обработчики для всех кнопок:');
-console.log('   case "💬 Ask Zabardoo": await handleAskZabardoo(chatId);');
+console.log('   case "💬 Ask bazaarGuru": await handleAskbazaarGuru(chatId);');
 console.log('   case "🎲 Random Deal": await handleRandomDeal(chatId);');
 console.log('   case "🌐 Language": await handleLanguage(chatId);');
 
 console.log('\n✅ Добавлены функции-обработчики:');
-console.log('   handleAskZabardoo() - Помощник для вопросов');
+console.log('   handleAskbazaarGuru() - Помощник для вопросов');
 console.log('   handleRandomDeal() - Случайные предложения');
 console.log('   handleLanguage() - Настройки языка');
 
 console.log('\n🎯 ОЖИДАЕМОЕ ПОВЕДЕНИЕ:');
 console.log('=' .repeat(80));
-console.log('✅ Нажатие "💬 Ask Zabardoo" → Показ помощника для вопросов');
+console.log('✅ Нажатие "💬 Ask bazaarGuru" → Показ помощника для вопросов');
 console.log('✅ Нажатие "🎲 Random Deal" → Показ случайного предложения');
 console.log('✅ Нажатие "🌐 Language" → Показ настроек языка');
 console.log('✅ Нажатие "📖 Guide" → Показ руководства');
@@ -65,7 +65,7 @@ console.log('✅ Все остальные кнопки работают пра�
 
 console.log('\n🚀 КАК ТЕСТИРОВАТЬ:');
 console.log('=' .repeat(80));
-console.log('1. Запустить: node scripts/inline-menu-zabardoo-bot.js');
+console.log('1. Запустить: node scripts/inline-menu-bazaarGuru-bot.js');
 console.log('2. Отправить /start боту');
 console.log('3. Нажать каждую кнопку в нижнем меню');
 console.log('4. Проверить что каждая кнопка выдает правильную информацию');

@@ -28,8 +28,8 @@ const buttonFunctions = {
     description: 'Случайное предложение дня',
     expectedContent: 'Random Deal of the Day, Special surprise offer'
   },
-  '💬 Ask Zabardoo': {
-    function: 'handleAskZabardoo',
+  '💬 Ask bazaarGuru': {
+    function: 'handleAskbazaarGuru',
     description: 'Помощник для вопросов о товарах',
     expectedContent: 'Product Questions, Deal Questions, Store Questions, Shopping Advice'
   },
@@ -64,7 +64,7 @@ Object.entries(buttonFunctions).forEach(([button, info], index) => {
 console.log('❌ ПРОБЛЕМА КОТОРАЯ БЫЛА:');
 console.log('=' .repeat(80));
 console.log('• Кнопка "🆘 Help" выдавала поиск товаров');
-console.log('• Кнопка "💬 Ask Zabardoo" выдавала поиск товаров');
+console.log('• Кнопка "💬 Ask bazaarGuru" выдавала поиск товаров');
 console.log('• Кнопка "🎲 Random Deal" выдавала поиск товаров');
 console.log('• Все кнопки попадали в default case');
 console.log('• Пользователи получали неправильную информацию');
@@ -80,7 +80,7 @@ console.log('• Добавлено логирование для отладки
 console.log('\n🎯 ОЖИДАЕМОЕ ПОВЕДЕНИЕ:');
 console.log('=' .repeat(80));
 console.log('✅ "🆘 Help" → Показ помощи и поддержки');
-console.log('✅ "💬 Ask Zabardoo" → Показ помощника для вопросов');
+console.log('✅ "💬 Ask bazaarGuru" → Показ помощника для вопросов');
 console.log('✅ "🎲 Random Deal" → Показ случайного предложения');
 console.log('✅ "📖 Guide" → Показ руководства по покупкам');
 console.log('✅ "💰 Cashback" → Показ информации о кэшбеке');

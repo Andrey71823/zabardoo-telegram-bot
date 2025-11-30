@@ -1,10 +1,10 @@
 # DigitalOcean App Platform Configuration
-name: zabardoo-telegram-bot
+name: bazaarGuru-telegram-bot
 services:
 - name: web
   source_dir: /
   github:
-    repo: Andrey71823/zabardoo-telegram-bot
+    repo: Andrey71823/bazaarGuru-telegram-bot
     branch: main
     deploy_on_push: true
   # build only installs deps; TypeScript build не требуется для server.js
@@ -33,7 +33,7 @@ services:
     type: SECRET
 
 databases:
-- name: zabardoo-db
+- name: bazaarGuru-db
   engine: PG
   version: "15"
   size: db-s-1vcpu-1gb

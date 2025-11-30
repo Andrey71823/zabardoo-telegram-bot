@@ -1,5 +1,5 @@
 @echo off
-echo 🚀 Настройка GitHub репозитория для Zabardoo Telegram Bot
+echo 🚀 Настройка GitHub репозитория для bazaarGuru Telegram Bot
 
 REM Проверяем, установлен ли git
 git --version >nul 2>&1
@@ -19,7 +19,7 @@ git add .
 
 REM Создаем первый коммит
 echo 💾 Создание первого коммита...
-git commit -m "Initial commit: Zabardoo Telegram Bot with AI features"
+git commit -m "Initial commit: bazaarGuru Telegram Bot with AI features"
 
 REM Устанавливаем основную ветку
 echo 🌿 Установка основной ветки...
